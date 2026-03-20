@@ -18,6 +18,14 @@ atualmente estudo Engenharia de Software na FIAP e possuo uma grande paixao por 
 />
 <img 
     align="left" 
+    alt="Git" 
+    title="Git"
+    width="30px" 
+    style="padding-right: 10px;" 
+    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" 
+/>
+<img 
+    align="left" 
     alt="HTML"
     title="HTML" 
     width="30px" 
@@ -42,19 +50,19 @@ atualmente estudo Engenharia de Software na FIAP e possuo uma grande paixao por 
 />
 <img 
     align="left" 
-    alt="Figma" 
-    title="Figma"
+    alt="TypeScript" 
+    title="TypeScript"
     width="30px" 
     style="padding-right: 10px;" 
-    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg" 
+    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"
 />
 <img 
     align="left" 
-    alt="Git" 
-    title="Git"
+    alt="React" 
+    title="React"
     width="30px" 
     style="padding-right: 10px;" 
-    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" 
+    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"
 />
 <img 
     align="left" 
@@ -66,12 +74,22 @@ atualmente estudo Engenharia de Software na FIAP e possuo uma grande paixao por 
 />
 <img 
     align="left" 
-    alt="Django" 
-    title="Django"
+    alt="Flutter" 
+    title="Flutter"
     width="30px" 
     style="padding-right: 10px;" 
-    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg"
+    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg" 
 />
+<img 
+    align="left" 
+    alt="Dart" 
+    title="Dart"
+    width="30px" 
+    style="padding-right: 10px;" 
+    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg" 
+/>
+
+
 
 <br/>
 <br/>

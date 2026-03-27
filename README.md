@@ -94,6 +94,23 @@ atualmente estudo Engenharia de Software na FIAP e possuo uma grande paixao por 
 <br/>
 <br/>
 
+### Projetos
+🔹 Exercícios e mini projetos voltados ao aprendizado de programação  
+🔹 Repositórios utilizados para prática de lógica e organização de código  
+
+
+---
+
+###  Objetivo
+Busco uma oportunidade de **estágio ou primeiro emprego em tecnologia**, onde eu possa aprender na prática, desenvolver minhas habilidades e contribuir com a equipe.
+
+---
+
+###  Conecte-se comigo
+ LinkedIn: https://www.linkedin.com/in/thiagonascimento08/
+
+---
+
 ### 📊 Estatísticas
 
 <img 

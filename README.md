@@ -102,7 +102,7 @@ atualmente estudo Engenharia de Software na FIAP e trabalho como Product Owner I
 ---
 
 ###  Objetivo
-Busco uma oportunidade de **estágio ou primeiro emprego em tecnologia**, onde eu possa aprender na prática, desenvolver minhas habilidades e contribuir com a equipe.
+Busco me desenvolver da melhor forma como profissional de TI e gestor, com amplo conhecimento das masi diversas ferramentas e regras de negócio.
 
 ---
 

@@ -32,24 +32,24 @@ Com um **perfil híbrido** muito claro, consigo transitar com naturalidade entre
 Minha caixa de ferramentas combina o melhor da engenharia e da gestão ágil de produtos:
 
 #### 💼 Gestão de Produtos & Agilidade
-![Scrum](https://img.shields.io/badge/Scrum-0288D1?style=for-the-badge&logo=scrum&logoColor=white)
-![Kanban](https://img.shields.io/badge/Kanban-FF9800?style=for-the-badge&logo=kanban&logoColor=white)
-![Jira](https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=jira&logoColor=white)
+![Scrum](https://img.shields.io/badge/Scrum-16161e?style=for-the-badge&logo=scrum&logoColor=00E5FF)
+![Kanban](https://img.shields.io/badge/Kanban-16161e?style=for-the-badge&logo=kanban&logoColor=FF007F)
+![Jira](https://img.shields.io/badge/Jira-16161e?style=for-the-badge&logo=jira&logoColor=00E5FF)
 * **Práticas:** Escrita de User Stories estruturadas, priorização de backlog baseada em valor (RICE/WSJF), refinamento técnico, facilitação de cerimônias ágeis e alinhamento com stakeholders.
 
 #### ⚙️ Desenvolvimento Backend & IoT
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![Python](https://img.shields.io/badge/Python-16161e?style=for-the-badge&logo=python&logoColor=FF007F)
+![TypeScript](https://img.shields.io/badge/TypeScript-16161e?style=for-the-badge&logo=typescript&logoColor=00E5FF)
+![C++](https://img.shields.io/badge/C%2B%2B-16161e?style=for-the-badge&logo=c%2B%2B&logoColor=FF007F)
 * **Práticas:** Programação Orientada a Objetos (POO), desenvolvimento de APIs RESTful, engenharia com microcontroladores (Arduino), manipulação e estruturação de dados.
 
 #### 🎨 Desenvolvimento Frontend & Mobile
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![React](https://img.shields.io/badge/React-16161e?style=for-the-badge&logo=react&logoColor=00E5FF)
+![Flutter](https://img.shields.io/badge/Flutter-16161e?style=for-the-badge&logo=flutter&logoColor=FF007F)
+![Dart](https://img.shields.io/badge/Dart-16161e?style=for-the-badge&logo=dart&logoColor=00E5FF)
+![HTML5](https://img.shields.io/badge/HTML5-16161e?style=for-the-badge&logo=html5&logoColor=FF007F)
+![CSS3](https://img.shields.io/badge/CSS3-16161e?style=for-the-badge&logo=css3&logoColor=00E5FF)
+![JavaScript](https://img.shields.io/badge/JavaScript-16161e?style=for-the-badge&logo=javascript&logoColor=FF007F)
 * **Práticas:** Criação de interfaces responsivas, consumo de APIs, gerenciamento de estado e desenvolvimento cross-platform.
 
 ---

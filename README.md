@@ -94,20 +94,23 @@ atualmente estudo Engenharia de Software na FIAP e trabalho como Product Owner I
 <br/>
 <br/>
 
-### Projetos
-🔹 Exercícios e mini projetos voltados ao aprendizado de programação  
-🔹 Repositórios utilizados para prática de lógica e organização de código  
+### 🚀 Projetos em Destaque
 
+- 🎸 **[music-store-cli](https://github.com/BrThiagoN/music-store-cli)**  
+  Aplicação CLI em **Python** que simula um sistema de gestão para uma loja de instrumentos musicais. O projeto implementa operações CRUD, controle de estoque e conceitos sólidos de Programação Orientada a Objetos.
 
+- 🍷 **[vinharia-agnelo-arduino](https://github.com/BrThiagoN/vinharia-agnelo-arduino)**  
+  Sistema inteligente em **C++** para monitoramento ambiental com hardware Arduino (LDR e DHT11) visando a preservação de vinhos. Exibe dados em tempo real no display LCD com alertas visuais e sonoros.
+
+- 🐾 **[Landing-Page---Pet-Shop-Patas-Pelos](https://github.com/BrThiagoN/Landing-Page---Pet-Shop-Patas-Pelos)**  
+  Landing page premium e responsiva desenvolvida com **HTML, CSS e JS**, apresentando modo escuro (Dark Mode), design moderno e uma calculadora de preços interativa.
+
+- 📖 **[projetoTradutorDeTermoTecnico](https://github.com/BrThiagoN/projetoTradutorDeTermoTecnico)**  
+  Interface leve no navegador desenvolvida para ajudar estudantes iniciantes a entender termos técnicos de tecnologia de forma clara e acessível. *(Projeto temporário - em breve será substituído)*
 ---
 
 ###  Objetivo
 Busco me desenvolver da melhor forma como profissional de TI e gestor, com amplo conhecimento das masi diversas ferramentas e regras de negócio.
-
----
-
-###  Conecte-se comigo
- LinkedIn: https://www.linkedin.com/in/thiagonascimento08/
 
 ---
 
@@ -119,5 +122,12 @@ Busco me desenvolver da melhor forma como profissional de TI e gestor, com amplo
       height="200" 
       src="https://github-readme-stats.vercel.app/api/top-langs/?username=BrThiagoN&theme=tokyonight&layout=compact&custom_title=Tecnologias&langs_count=9" 
   />
+
+---
+### 🤝 Conecte-se comigo
+
+<a href="https://www.linkedin.com/in/thiagonascimento08/" target="_blank">
+  <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn do Thiago">
+</a>
 
 </p>

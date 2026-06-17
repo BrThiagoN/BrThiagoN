@@ -2,7 +2,10 @@
 
 <p align="center">
   <a href="https://www.linkedin.com/in/thiagonascimento08/" target="_blank">
-    <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+    <img src="https://img.shields.io/badge/LinkedIn-16161e?style=for-the-badge&logo=linkedin&logoColor=00E5FF" alt="LinkedIn">
+  </a>
+  <a href="https://www.instagram.com/brthiago_n?igsh=cHAxZzlncWtha3l4&utm_source=qr" target="_blank">
+    <img src="https://img.shields.io/badge/Instagram-16161e?style=for-the-badge&logo=instagram&logoColor=FF007F" alt="Instagram">
   </a>
 </p>
 
@@ -79,6 +82,9 @@ Estou sempre aberto a trocar ideias sobre produto, tecnologia, agilidade e intel
 
 <p align="center">
   <a href="https://www.linkedin.com/in/thiagonascimento08/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+    <img src="https://img.shields.io/badge/LinkedIn-16161e?style=for-the-badge&logo=linkedin&logoColor=00E5FF" alt="LinkedIn" />
+  </a>
+  <a href="https://www.instagram.com/brthiago_n?igsh=cHAxZzlncWtha3l4&utm_source=qr" target="_blank">
+    <img src="https://img.shields.io/badge/Instagram-16161e?style=for-the-badge&logo=instagram&logoColor=FF007F" alt="Instagram" />
   </a>
 </p>

@@ -1,5 +1,5 @@
 # 💻 Thiago Nascimento
-**`FullStack developer`**
+**`Product Owner / Fullstack Software Engineer`**
 
 Me chamo Thiago Nascimento, tenho 18 anos e moro em São Paulo,
 atualmente estudo Engenharia de Software na FIAP e trabalho como Product Owner Intern, focado em soluções inteligentes com tecnologia e IA.

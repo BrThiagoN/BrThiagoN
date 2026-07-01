@@ -38,24 +38,28 @@ Minha caixa de ferramentas combina o melhor da engenharia e da gestão ágil de 
 * **Práticas:** Escrita de User Stories estruturadas, priorização de backlog baseada em valor (RICE/WSJF), refinamento técnico, facilitação de cerimônias ágeis e alinhamento com stakeholders.
 
 #### ⚙️ Desenvolvimento Backend & IoT
+![Go](https://img.shields.io/badge/Go-16161e?style=for-the-badge&logo=go&logoColor=00E5FF)
 ![Python](https://img.shields.io/badge/Python-16161e?style=for-the-badge&logo=python&logoColor=FF007F)
 ![TypeScript](https://img.shields.io/badge/TypeScript-16161e?style=for-the-badge&logo=typescript&logoColor=00E5FF)
 ![C++](https://img.shields.io/badge/C%2B%2B-16161e?style=for-the-badge&logo=c%2B%2B&logoColor=FF007F)
-* **Práticas:** Programação Orientada a Objetos (POO), desenvolvimento de APIs RESTful, engenharia com microcontroladores (Arduino), manipulação e estruturação de dados.
+* **Práticas:** Programação Orientada a Objetos (POO), desenvolvimento de APIs de alta performance (com e sem IA), servidores web leves, microcontroladores (Arduino), manipulação e estruturação de dados.
 
 #### 🎨 Desenvolvimento Frontend & Mobile
+![Chrome Extension](https://img.shields.io/badge/Chrome%20Extension-16161e?style=for-the-badge&logo=googlechrome&logoColor=FF007F)
 ![React](https://img.shields.io/badge/React-16161e?style=for-the-badge&logo=react&logoColor=00E5FF)
 ![Flutter](https://img.shields.io/badge/Flutter-16161e?style=for-the-badge&logo=flutter&logoColor=FF007F)
 ![Dart](https://img.shields.io/badge/Dart-16161e?style=for-the-badge&logo=dart&logoColor=00E5FF)
 ![HTML5](https://img.shields.io/badge/HTML5-16161e?style=for-the-badge&logo=html5&logoColor=FF007F)
 ![CSS3](https://img.shields.io/badge/CSS3-16161e?style=for-the-badge&logo=css3&logoColor=00E5FF)
 ![JavaScript](https://img.shields.io/badge/JavaScript-16161e?style=for-the-badge&logo=javascript&logoColor=FF007F)
-* **Práticas:** Criação de interfaces responsivas, consumo de APIs, gerenciamento de estado e desenvolvimento cross-platform.
+* **Práticas:** Extensões de navegador (Manifest V3), criação de interfaces responsivas com estilo premium (Glassmorphism), consumo de APIs RESTful, gerenciamento de estado e desenvolvimento cross-platform.
 
 ---
 
 ### 🚀 Projetos em Destaque
 
+*   🤖 **[serah-googleExtension](https://github.com/BrThiagoN/serah-googleExtension)** — *Inteligência Artificial (Gemini 3.5), Extensão Chrome & Go Backend*
+    *   Solução de ponta para combate à desinformação digital. Trata-se de uma **extensão para Google Chrome (Manifest V3)** integrada nativamente ao painel lateral (`sidePanel`) do navegador. Ela captura seleções de texto do usuário em tempo real via injeção de scripts, enviando-os a um **backend Go super leve e rápido** (construído do zero, sem frameworks externos). O backend faz chamadas seguras à API do **Google Gemini 3.5 Flash** forçando **Structured Outputs** (JSON Schema rígido) para obter vereditos confiáveis, explicações fundamentadas e referências oficiais de fact-checking. O app conta com design responsivo *Glassmorphic*, suporte a tema escuro/claro do sistema, histórico local persistente e banners informativos para tratamento detalhado de erros do usuário.
 *   🎸 **[music-store-cli](https://github.com/BrThiagoN/music-store-cli)** — *Arquitetura de Software & CLI*
     *   Aplicação de terminal em **Python** construída sobre sólidos princípios de **Programação Orientada a Objetos (POO)**. Implementa um fluxo robusto de gerenciamento de inventário (CRUD), persistência e validações rigorosas de dados para simular cenários reais de gestão comercial.
 *   🍷 **[vinharia-agnelo-arduino](https://github.com/BrThiagoN/vinharia-agnelo-arduino)** — *IoT & Sistemas Embarcados*

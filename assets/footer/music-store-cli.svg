@@ -31,7 +31,7 @@ text{fill:#24292f}
 }
 </style>
 <g data-panel="project" data-bounds="0 0 880 112">
-<text x="24" y="28" font-size="18" fill="#ef8fb4" class="pink" text-anchor="start">Music Store CLI</text>
+<text x="24" y="28" font-size="18" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">Music Store CLI</text>
 <text x="856" y="28" font-size="14" fill="#a5a1ad" class="muted" text-anchor="end">Python</text>
 <text x="24" y="60" font-size="16" fill="#f3ece8" class="" text-anchor="start">Gestão de uma loja pelo terminal: CRUD, estruturas de dados e validação de</text>
 <text x="24" y="84" font-size="16" fill="#f3ece8" class="" text-anchor="start">entrada.</text>

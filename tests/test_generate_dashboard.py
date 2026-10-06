@@ -243,11 +243,17 @@ class DashboardTests(unittest.TestCase):
                     # Mobile bands are checked independently in their visual order.
                     band = 1 if mobile and float(cell.attrib['y']) >= 524 else 0
                     columns.setdefault(band, {}).setdefault(float(cell.attrib['x']), []).append(delay)
-                    self.assertLessEqual(delay + dashboard.WAVE_DURATION_MS, 2000)
+                    self.assertLessEqual(delay + dashboard.WAVE_DURATION_MS, 7500)
                     self.assertIn('contribution-cell', cell.attrib['class'])
                 for band in columns.values():
                     column_delays = [min(band[x]) for x in sorted(band)]
                     self.assertEqual(column_delays, sorted(column_delays))
+                    self.assertGreaterEqual(column_delays[-1] - column_delays[0], 5900)
+                    ordered = [band[x] for x in sorted(band)]
+                    for earlier, later in zip(ordered, ordered[1:]):
+                        self.assertLess(max(earlier), min(later))
+                    completion = max(delay for delays in ordered for delay in delays) + dashboard.WAVE_DURATION_MS
+                    self.assertGreaterEqual(completion, 7000)
                 styles = root.find('svg:style', NS).text
                 self.assertIn('@media (prefers-reduced-motion: no-preference)', styles)
                 self.assertIn('to{opacity:1;transform:translateY(0)}', styles)
@@ -321,9 +327,16 @@ class DashboardTests(unittest.TestCase):
             for suffix in ('', '-mobile'):
                 root = ET.fromstring(outputs[f'footer/{project["slug"]}{suffix}.svg'])
                 texts = [node.text for node in root.findall('.//svg:text', NS)]
+                nodes = root.findall('.//svg:text', NS)
+                self.assertEqual(nodes[0].attrib.get('text-decoration'), 'underline')
+                self.assertTrue(all('text-decoration' not in node.attrib for node in nodes[1:]))
                 self.assertEqual(texts[0], project['name'])
                 self.assertEqual(texts[1], ' / '.join(project['stack']))
                 self.assertEqual(' '.join(texts[2:]), project['description'])
+        for contact in ('linkedin', 'email', 'github'):
+            for suffix in ('', '-mobile'):
+                root = ET.fromstring(outputs[f'footer/{contact}{suffix}.svg'])
+                self.assertEqual(root.find('.//svg:text', NS).attrib.get('text-decoration'), 'underline')
 
         class Links(HTMLParser):
             def __init__(self):

@@ -38,8 +38,8 @@ THEMES = {
         "levels": ("#ebe8ee", "#efc9d8", "#d990af", "#b9507e", "#832044"),
     },
 }
-WAVE_DURATION_MS = 420
-WAVE_SPAN_MS = 1350
+WAVE_DURATION_MS = 900
+WAVE_SPAN_MS = 6000
 WAVE_START_MS = 120
 # Keep the full seven-day stagger below one weekly step, including 54-week grids.
 WAVE_ROW_STAGGER_MS = 4
@@ -385,9 +385,10 @@ class Canvas:
             attributes += f' style="animation-delay:{delay}ms"'
         self.parts.append(f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" rx="{radius:g}" fill="{fill}" stroke="{stroke}"{attributes}/>')
 
-    def text(self, x, y, value, size=16, style='', anchor='start'):
+    def text(self, x, y, value, size=16, style='', anchor='start', underline=False):
         fill = THEMES['dark'].get(style, THEMES['dark']['foreground'])
-        self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" fill="{fill}" class="{style}" text-anchor="{anchor}">{escape(str(value))}</text>')
+        decoration = ' text-decoration="underline"' if underline else ''
+        self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" fill="{fill}" class="{style}" text-anchor="{anchor}"{decoration}>{escape(str(value))}</text>')
 
     def line(self, x1, y1, x2, y2):
         self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" class="rule" stroke="{THEMES["dark"]["rule"]}" fill="none"/>')
@@ -590,7 +591,7 @@ def render_project(config: dict, project: dict, mobile=False) -> str:
     height = ((baseline + max(0, len(lines) - 1) * 24 + 24 + 7) // 8) * 8
     svg = Canvas(width, height, config, title=project['name'], description=project['description'], animate=False)
     svg.group('project', 0, 0, width, height)
-    svg.text(padding, 28, project['name'], 20 if mobile else 18, 'pink')
+    svg.text(padding, 28, project['name'], 20 if mobile else 18, 'pink', underline=True)
     stack = ' / '.join(project['stack'])
     if mobile:
         svg.text(padding, 56, stack, 16, 'muted')
@@ -625,7 +626,7 @@ def render_footer_assets(config: dict) -> dict[str, str]:
             width = ((round(len(label) * 17 * .62) + padding * 2 + 7) // 8) * 8
             svg = Canvas(width, 40, config, title=label, description=f'Contato: {label}', animate=False)
             svg.group('contact', 0, 0, width, 40)
-            svg.text(padding, 26, label, 17, 'pink')
+            svg.text(padding, 26, label, 17, 'pink', underline=True)
             svg.end_panel()
             outputs[f'footer/{key}{suffix}.svg'] = svg.finish()
     return outputs

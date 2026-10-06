@@ -199,7 +199,7 @@ class DashboardTests(unittest.TestCase):
         config["name"][0] = '<script>&"'
         root = ET.fromstring(dashboard.render_svg(config, self.snapshot, None))
         self.assertEqual(root.findall(".//svg:script", NS), [])
-        self.assertTrue(any('<script>&"' in (node.text or '') for node in root.findall(".//svg:text", NS)))
+        self.assertTrue(any('<script>&"' in ''.join(node.itertext()) for node in root.findall(".//svg:text", NS)))
 
     def test_adaptive_svg_has_no_background_and_dark_fallback(self):
         for mobile in (False, True):
@@ -268,15 +268,48 @@ class DashboardTests(unittest.TestCase):
                 x, y, width, height = map(float, group.attrib["data-bounds"].split())
                 for node in group.findall(".//svg:text", NS):
                     left, baseline, size = float(node.attrib["x"]), float(node.attrib["y"]), float(node.attrib["font-size"])
-                    advance = len(node.text or "") * size * 0.62
+                    content = ''.join(node.itertext())
+                    advance = len(content) * size * 0.62
                     if node.attrib.get("class") == "label":
-                        advance += max(0, len(node.text or "") - 1) * 1.2
+                        advance += max(0, len(content) - 1) * 1.2
                     if node.attrib.get("text-anchor") == "end":
                         left -= advance
-                    self.assertGreaterEqual(left, x + 8, node.text)
-                    self.assertLessEqual(left + advance, x + width - 8, node.text)
-                    self.assertGreaterEqual(baseline - size, y + 8, node.text)
-                    self.assertLessEqual(baseline + size * 0.25, y + height - 8, node.text)
+                    self.assertGreaterEqual(left, x + 8, content)
+                    self.assertLessEqual(left + advance, x + width - 8, content)
+                    self.assertGreaterEqual(baseline - size, y + 8, content)
+                    self.assertLessEqual(baseline + size * 0.25, y + height - 8, content)
+
+    def test_header_writing_preserves_text_and_finishes_in_reading_order(self):
+        for mobile in (False, True):
+            root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
+            profile = next(group for group in root.findall('svg:g', NS) if group.attrib.get('data-panel') == 'profile')
+            expected = (
+                self.config['name'] if mobile else [' '.join(self.config['name'])]
+            ) + ['Engenharia de Software @ FIAP'] + (
+                self.config['role'] if mobile else [' '.join(self.config['role'])]
+            ) + [self.config['building'], ' / '.join(self.config['focus'])]
+            lines = profile.findall('svg:text', NS)
+            self.assertEqual([''.join(line.itertext()) for line in lines], expected)
+            previous_end = 0
+            for line in lines:
+                self.assertIn('handwriting-line', line.attrib['class'])
+                self.assertEqual(line.attrib['{http://www.w3.org/XML/1998/namespace}space'], 'preserve')
+                letters = line.findall('svg:tspan', NS)
+                timings = [re.fullmatch(r'animation-delay:(\d+)ms;animation-duration:(\d+)ms', letter.attrib['style']) for letter in letters]
+                self.assertTrue(all(timings))
+                delays = [int(timing[1]) for timing in timings]
+                self.assertTrue(all(earlier < later for earlier, later in zip(delays, delays[1:])))
+                self.assertGreater(delays[0], previous_end)
+                previous_end = delays[-1] + int(timings[-1][2])
+                self.assertTrue(all(letter.attrib['class'] == 'handwriting-letter' for letter in letters))
+            self.assertLess(previous_end, 7500)
+            styles = root.find('svg:style', NS).text
+            self.assertIn('@keyframes handwriting-ink', styles)
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('}', 2)[1]
+            self.assertIn('animation-name:handwriting-ink', motion)
+            self.assertIn('.handwriting-letter{stroke-opacity:0;', styles)
+            self.assertNotIn('infinite', styles)
+            self.assertNotIn('handwriting', dashboard.svg_styles(animate=False))
 
     def test_leap_calendar_cells_and_legend_do_not_overlap(self):
         data = deepcopy(self.snapshot)

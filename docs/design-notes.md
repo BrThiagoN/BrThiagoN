@@ -52,7 +52,7 @@ As prévias devem mostrar o retângulo completo do README, incluindo projetos e 
 
 A superfície preta da versão anterior ainda criava um segundo retângulo dentro do README. Removê-la faz o documento pertencer ao GitHub nos dois temas; a versão clara ganha cores mais profundas para manter contraste. O selo continua sendo a principal marca visual.
 
-O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. Textos, métricas e selo permanecem estáticos. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
+O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. Métricas e selo permanecem estáticos. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
 
 ## Continuidade do rodapé
 
@@ -65,3 +65,9 @@ O painel principal permanece igual. Os assets do rodapé são separados porque i
 Os nomes dos quatro projetos e os três contatos recebem sublinhado permanente na mesma cor rosa do texto. A linha inteira continua clicável, mas stack e descrição conservam a leitura de texto normal. Isso torna os destinos reconhecíveis sem acrescentar badges, ícones ou outra cor.
 
 A onda atravessa o calendário em seis segundos, com uma entrada de 900 ms por célula e 120 ms de espera inicial: aproximadamente sete segundos ao todo, quase quatro vezes a duração anterior. A defasagem de 4 ms entre dias mantém as colunas em ordem. A revisão preserva a paleta, as proporções e o comportamento de movimento reduzido; só o ritmo e a identificação dos links mudam.
+
+## Escrita do cabeçalho
+
+O cabeçalho recebe uma única sequência de escrita: contornos de letras aparecem progressivamente e ganham preenchimento, primeiro no nome e depois nas quatro linhas de apresentação. A tipografia industrial e monoespaçada, as cores, as posições e os textos continuam iguais. A quebra de linhas do celular acompanha a mesma ordem de leitura.
+
+O nome usa traços mais lentos; as linhas menores têm uma cadência mais rápida para terminar junto da entrada do calendário. O efeito evita cursor, repetição e fonte cursiva, que destoariam da direção aprovada. A barra lateral e o selo permanecem fixos. O texto fica completo por padrão; somente a preferência explícita por movimento ativa a escrita em SVG/CSS. Prévias PNG e movimento reduzido mostram o estado final.

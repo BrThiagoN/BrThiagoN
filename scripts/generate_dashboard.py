@@ -43,6 +43,12 @@ WAVE_SPAN_MS = 6000
 WAVE_START_MS = 120
 # Keep the full seven-day stagger below one weekly step, including 54-week grids.
 WAVE_ROW_STAGGER_MS = 4
+WRITE_START_MS = 180
+WRITE_TITLE_DURATION_MS = 480
+WRITE_TITLE_STEP_MS = 100
+WRITE_BODY_DURATION_MS = 320
+WRITE_BODY_STEP_MS = 16
+WRITE_LINE_GAP_MS = 90
 CONTRIBUTION_LEVELS = {
     "NONE": 0,
     "FIRST_QUARTILE": 1,
@@ -344,6 +350,12 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             f'.mark-outline{{stroke:{palette["seal"]}}}',
         ]
         rules.extend(f'.level-{i}{{fill:{color}}}' for i, color in enumerate(palette['levels']))
+        if animate:
+            rules.extend((
+                f'.handwriting-line{{stroke:{palette["foreground"]}}}',
+                f'.handwriting-line.muted{{stroke:{palette["muted"]}}}',
+                f'.handwriting-line.pink{{stroke:{palette["pink"]}}}',
+            ))
         return '\n'.join(rules)
 
     rules = [
@@ -356,10 +368,13 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
         rules.append('@media (prefers-color-scheme: light){\n' + palette_rules(THEMES['light']) + '\n}')
     if animate:
         rules.extend([
+            '.handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}',
             '@media (prefers-reduced-motion: no-preference){\n'
             f'.contribution-cell{{animation:contribution-wave {WAVE_DURATION_MS}ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}}\n'
+            '.handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
+            '@keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}',
         ])
     return '\n'.join(rules)
 
@@ -369,6 +384,7 @@ class Canvas:
 
     def __init__(self, width: int, height: int, config: dict, title=None, description=None, animate=True):
         self.width, self.height = width, height
+        self.writing_cursor = WRITE_START_MS
         name = ' '.join(config['name'])
         title = title or f'{name} / engineering profile'
         description = description or f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
@@ -385,10 +401,23 @@ class Canvas:
             attributes += f' style="animation-delay:{delay}ms"'
         self.parts.append(f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" rx="{radius:g}" fill="{fill}" stroke="{stroke}"{attributes}/>')
 
-    def text(self, x, y, value, size=16, style='', anchor='start', underline=False):
+    def text(self, x, y, value, size=16, style='', anchor='start', underline=False, writing=False):
         fill = THEMES['dark'].get(style, THEMES['dark']['foreground'])
         decoration = ' text-decoration="underline"' if underline else ''
-        self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" fill="{fill}" class="{style}" text-anchor="{anchor}"{decoration}>{escape(str(value))}</text>')
+        content = escape(str(value))
+        if writing:
+            # Keep normal SVG text flow and font fallbacks; no pre-measured glyphs.
+            duration = WRITE_TITLE_DURATION_MS if style == 'display' else WRITE_BODY_DURATION_MS
+            step = WRITE_TITLE_STEP_MS if style == 'display' else WRITE_BODY_STEP_MS
+            start = self.writing_cursor
+            content = ''.join(
+                f'<tspan class="handwriting-letter" style="animation-delay:{start + index * step}ms;animation-duration:{duration}ms">{escape(character)}</tspan>'
+                for index, character in enumerate(str(value))
+            )
+            self.writing_cursor = start + max(0, len(str(value)) - 1) * step + duration + WRITE_LINE_GAP_MS
+            style = (style + ' handwriting-line').strip()
+            decoration += ' xml:space="preserve"'
+        self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" fill="{fill}" class="{style}" text-anchor="{anchor}"{decoration}>{content}</text>')
 
     def line(self, x1, y1, x2, y2):
         self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" class="rule" stroke="{THEMES["dark"]["rule"]}" fill="none"/>')
@@ -549,21 +578,21 @@ def render_svg(config: dict, data: dict, avatar: bytes | None, mobile=False) -> 
     svg.group('profile', 0, 0, svg.width, 280 if mobile else 204)
     svg.rect(0, 16, 3, 248 if mobile else 172, fill=THEMES['dark']['accent'], style='accent-fill')
     if mobile:
-        svg.text(20, 60, config['name'][0], 46, 'display')
-        svg.text(20, 106, config['name'][1], 46, 'display')
+        svg.text(20, 60, config['name'][0], 46, 'display', writing=True)
+        svg.text(20, 106, config['name'][1], 46, 'display', writing=True)
         svg.development_mark(344, 18, 76)
-        svg.text(20, 148, 'Engenharia de Software @ FIAP', 18, 'muted')
-        svg.text(20, 180, config['role'][0], 18)
-        svg.text(20, 206, config['role'][1], 18)
-        svg.text(20, 238, config['building'], 17)
-        svg.text(20, 264, ' / '.join(config['focus']), 18, 'pink')
+        svg.text(20, 148, 'Engenharia de Software @ FIAP', 18, 'muted', writing=True)
+        svg.text(20, 180, config['role'][0], 18, writing=True)
+        svg.text(20, 206, config['role'][1], 18, writing=True)
+        svg.text(20, 238, config['building'], 17, writing=True)
+        svg.text(20, 264, ' / '.join(config['focus']), 18, 'pink', writing=True)
     else:
-        svg.text(24, 68, ' '.join(config['name']), 54, 'display')
+        svg.text(24, 68, ' '.join(config['name']), 54, 'display', writing=True)
         svg.development_mark(744, 20, 104)
-        svg.text(24, 102, 'Engenharia de Software @ FIAP', 17, 'muted')
-        svg.text(24, 130, ' '.join(config['role']), 17)
-        svg.text(24, 162, config['building'], 17)
-        svg.text(24, 190, ' / '.join(config['focus']), 17, 'pink')
+        svg.text(24, 102, 'Engenharia de Software @ FIAP', 17, 'muted', writing=True)
+        svg.text(24, 130, ' '.join(config['role']), 17, writing=True)
+        svg.text(24, 162, config['building'], 17, writing=True)
+        svg.text(24, 190, ' / '.join(config['focus']), 17, 'pink', writing=True)
     svg.end_panel()
     svg.line(20 if mobile else 24, 280 if mobile else 204, svg.width - (20 if mobile else 24), 280 if mobile else 204)
 

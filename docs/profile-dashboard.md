@@ -1,6 +1,6 @@
 # Manutenção do dashboard
 
-O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG, com tema escuro fixo, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. Não há dependência de widgets externos.
+O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG transparente, com temas claro e escuro automáticos, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. O calendário tem uma única onda de entrada. Não há dependência de widgets externos.
 
 ## Arquivos
 
@@ -13,8 +13,8 @@ O README apresenta o perfil e os quatro projetos originais. A composição visua
 | `assets/development-mark.svg` | Selo “開発” (desenvolvimento), com glifos convertidos em contornos SVG. |
 | `assets/dashboard.svg` | Documento para a coluna do README, `viewBox="0 0 880 808"`. |
 | `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 440 1224"`, com o mesmo calendário em duas faixas. |
-| `assets/previews/*.png` | Prévias estáticas do dashboard e do retângulo completo do README, em desktop e mobile. |
-| `scripts/render_previews.py` | Ferramenta opcional de revisão local para exportar as quatro prévias PNG. |
+| `assets/previews/*.png` | Oito prévias estáticas: dashboard e retângulo do README, desktop/mobile, claro/escuro. |
+| `scripts/render_previews.py` | Ferramenta opcional de revisão local para exportar as prévias PNG com tema explícito e calendário completo. |
 | `docs/design-notes.md` | Paleta, tipografia, proporções e decisões da direção visual. |
 | `.github/workflows/update-profile.yml` | Validação e atualização diária, manual ou por push relevante. |
 | `tests/test_generate_dashboard.py` | Falhas de API, integridade de dados, segurança e limites dos painéis. |
@@ -73,31 +73,41 @@ Se a política da branch padrão proibir commits diretos, a geração continua v
 
 ## Compatibilidade e revisão visual
 
-O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o layout compacto. O `<img>` desktop é o fallback. Os SVGs têm `viewBox`, título, descrição e textos XML escapados. O selo japonês usa contornos, sem exigir uma fonte CJK no navegador. Não usam JavaScript, `foreignObject`, fontes externas, animação ou imagens remotas.
+O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o layout compacto. O `<img>` desktop é o fallback. Os SVGs têm `viewBox`, título, descrição e textos XML escapados. O selo japonês usa contornos, sem exigir uma fonte CJK no navegador. Não usam JavaScript, `foreignObject`, fontes externas ou imagens remotas.
+
+**Tema:** cada SVG contém a base escura e uma paleta clara em `@media (prefers-color-scheme: light)`. Em SVGs carregados por `<img>`, essa consulta herda o `color-scheme` do elemento que incorpora a imagem. O CSS atual do GitHub define essa propriedade conforme o tema do site, inclusive quando difere do sistema. A troca foi revisada no Firefox com o CSS real do GitHub e tema do sistema claro: alternar o site entre claro e escuro também alternou a imagem, sem recarregá-la. Sem suporte à consulta, a base permanece escura. O próprio SVG não desenha fundo; ele se integra ao fundo nativo, inclusive em dark dimmed. Não são necessários quatro arquivos separados por tema.
+
+**Movimento:** o calendário surge em colunas da esquerda para a direita, com leve defasagem entre os dias. A onda dura menos de dois segundos, executa uma vez ao carregar a imagem e termina com todos os dias visíveis. As duas faixas do calendário mobile fazem a entrada simultaneamente. Os dados, as cores de intensidade, os números e as datas não mudam com a animação. Não há loop, flashes ou animação nos outros elementos.
+
+A animação CSS só é ativada por `@media (prefers-reduced-motion: no-preference)`. Com movimento reduzido, CSS desativado ou renderizador sem animações, o calendário completo aparece imediatamente. PNGs são exportados sem animação e com tema explícito; mostram o estado final, enquanto o README usa os SVGs animados. Para observar a onda localmente, abra o SVG em um navegador e recarregue a página.
 
 SVGs exibidos por `<img>` não oferecem links internos clicáveis. Por isso os contatos permanecem em Markdown, junto aos projetos, abaixo do dashboard.
 
-Os textos foram revisados nos dois layouts e os testes verificam limites conservadores de fonte monoespaçada. O calendário também é verificado com 54 semanas em um ano bissexto, para evitar cortes e sobreposição com a legenda. O tema escuro é preservado em light mode para manter a identidade visual.
+Os textos foram revisados nos dois layouts e os testes verificam limites conservadores de fonte monoespaçada. As cores de texto têm contraste mínimo de 4,5:1 nos fundos do GitHub light, dark e dark dimmed. O calendário também é verificado com 54 semanas em um ano bissexto, para evitar cortes e sobreposição com a legenda.
 
 ### Prévias para revisão
 
 Estas imagens registram o layout com dados de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow. As prévias em contexto simulam a moldura do GitHub e o Markdown nativo, sem representar uma versão publicada.
 
-**README no desktop — moldura de 896 px, conteúdo de 848 px**
+| Tema | README desktop (896 px) | README mobile (390 px) |
+| --- | --- | --- |
+| Escuro | [Abrir prévia](../assets/previews/readme-desktop.png) | [Abrir prévia](../assets/previews/readme-mobile.png) |
+| Claro | [Abrir prévia](../assets/previews/readme-desktop-light.png) | [Abrir prévia](../assets/previews/readme-mobile-light.png) |
+
+**README escuro — moldura de 896 px, conteúdo de 848 px**
 
 ![Prévia do README dentro do seu retângulo no GitHub](../assets/previews/readme-desktop.png)
 
-**README no celular — moldura de 390 px**
+**README claro — o mesmo SVG, com fundo nativo do GitHub**
 
-![Prévia do README dentro do seu retângulo no celular](../assets/previews/readme-mobile.png)
+![Prévia do README no tema claro](../assets/previews/readme-desktop-light.png)
 
-**Desktop**
+As exportações isoladas do dashboard preservam a transparência:
 
-![Prévia desktop do dashboard de Thiago Nascimento](../assets/previews/dashboard-desktop.png)
-
-**Mobile**
-
-![Prévia mobile do dashboard de Thiago Nascimento](../assets/previews/dashboard-mobile.png)
+| Tema | Dashboard desktop | Dashboard mobile |
+| --- | --- | --- |
+| Escuro | [Abrir PNG](../assets/previews/dashboard-desktop.png) | [Abrir PNG](../assets/previews/dashboard-mobile.png) |
+| Claro | [Abrir PNG](../assets/previews/dashboard-desktop-light.png) | [Abrir PNG](../assets/previews/dashboard-mobile-light.png) |
 
 Para refazer as prévias em uma máquina com PyGObject/GdkPixbuf e pycairo disponíveis no sistema:
 
@@ -110,3 +120,5 @@ Essas bibliotecas são usadas apenas na exportação PNG local. O gerador de dad
 Os contornos do selo foram derivados da fonte Noto Sans CJK JP (Google, SIL Open Font License 1.1), disponível no sistema durante a criação. O asset versionado contém somente os contornos dos dois glifos, sem um arquivo de fonte. Fonte: [Noto CJK](https://github.com/notofonts/noto-cjk).
 
 Fontes técnicas: [contribuições na API GraphQL](https://docs.github.com/en/graphql/reference/users#contributioncalendar), [permissões e comportamento do GITHUB_TOKEN](https://docs.github.com/en/actions/concepts/security/github_token), [classificação de linguagens pelo Linguist](https://github.com/github-linguist/linguist/blob/main/docs/how-linguist-works.md).
+
+Tema e movimento: [herança de color-scheme em SVGs incorporados](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme#inherited_color_scheme_in_embedded_elements), [preferência de movimento reduzido](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion).

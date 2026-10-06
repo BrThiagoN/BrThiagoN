@@ -25,6 +25,23 @@ TIMEOUT = 15
 MAX_RESPONSE = 4 * 1024 * 1024
 MONTHS = ("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez")
 LEVELS = ("#1e1b26", "#482437", "#7b304c", "#bf4b76", "#ef8fb4")
+THEMES = {
+    "dark": {
+        "foreground": "#f3ece8", "muted": "#a5a1ad", "accent": "#f05c73",
+        "pink": "#ef8fb4", "rule": "#3d3342", "seal": "#803044",
+        "levels": LEVELS,
+    },
+    "light": {
+        "foreground": "#24292f", "muted": "#59636e", "accent": "#b91f45",
+        "pink": "#96335f", "rule": "#d1d9e0", "seal": "#dba7b6",
+        "levels": ("#ebe8ee", "#efc9d8", "#d990af", "#b9507e", "#832044"),
+    },
+}
+WAVE_DURATION_MS = 420
+WAVE_SPAN_MS = 1350
+WAVE_START_MS = 120
+# Keep the full seven-day stagger below one weekly step, including 54-week grids.
+WAVE_ROW_STAGGER_MS = 4
 CONTRIBUTION_LEVELS = {
     "NONE": 0,
     "FIRST_QUARTILE": 1,
@@ -309,6 +326,43 @@ def write_if_changed(path: Path, content: bytes) -> bool:
     return True
 
 
+def svg_styles(theme: str | None = None, animate: bool = True) -> str:
+    """Adaptive image CSS; an explicit theme is only used by local PNG previews.
+
+    SVG images inherit the embedding element's color scheme. GitHub sets that
+    scheme from its site theme, even when it differs from the operating system.
+    Unsupported media queries leave the dark palette and a complete calendar.
+    """
+    def palette_rules(palette: dict) -> str:
+        rules = [
+            f'text{{fill:{palette["foreground"]}}}',
+            f'.muted{{fill:{palette["muted"]}}}',
+            f'.accent,.accent-fill{{fill:{palette["accent"]}}}',
+            f'.pink{{fill:{palette["pink"]}}}',
+            f'.rule{{stroke:{palette["rule"]}}}',
+            f'.mark-outline{{stroke:{palette["seal"]}}}',
+        ]
+        rules.extend(f'.level-{i}{{fill:{color}}}' for i, color in enumerate(palette['levels']))
+        return '\n'.join(rules)
+
+    rules = [
+        'text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}',
+        '.display{font-family:"Bahnschrift","DIN Condensed","Nimbus Sans Narrow","Arial Narrow","Liberation Sans Narrow",sans-serif;font-weight:700}',
+        '.strong{font-weight:700}',
+        palette_rules(THEMES[theme or 'dark']),
+    ]
+    if theme is None:
+        rules.append('@media (prefers-color-scheme: light){\n' + palette_rules(THEMES['light']) + '\n}')
+    if animate:
+        rules.extend([
+            '@media (prefers-reduced-motion: no-preference){\n'
+            f'.contribution-cell{{animation:contribution-wave {WAVE_DURATION_MS}ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}}\n'
+            '}',
+            '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
+        ])
+    return '\n'.join(rules)
+
+
 class Canvas:
     """SVG document sized for the README column, with escaped text and local paths."""
 
@@ -320,18 +374,21 @@ class Canvas:
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">',
             f'<title id="title">{escape(name)} / engineering profile</title>',
             f'<desc id="description">{escape(description)}</desc>',
-            '<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;fill:#f3ece8}.display{font-family:"Bahnschrift","DIN Condensed","Nimbus Sans Narrow","Arial Narrow","Liberation Sans Narrow",sans-serif;font-weight:700}.strong{font-weight:700}.muted{fill:#a5a1ad}.accent{fill:#ed4259}.pink{fill:#ef8fb4}</style>',
+            '<style>\n' + svg_styles() + '\n</style>',
         ]
-        self.rect(0, 0, width, height, fill='#08090d')
 
-    def rect(self, x, y, width, height, fill='#171820', radius=0, stroke='none'):
-        self.parts.append(f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" rx="{radius:g}" fill="{fill}" stroke="{stroke}"/>')
+    def rect(self, x, y, width, height, fill='#171820', radius=0, stroke='none', style='', delay=None):
+        attributes = f' class="{style}"' if style else ''
+        if delay is not None:
+            attributes += f' style="animation-delay:{delay}ms"'
+        self.parts.append(f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" rx="{radius:g}" fill="{fill}" stroke="{stroke}"{attributes}/>')
 
     def text(self, x, y, value, size=16, style='', anchor='start'):
-        self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" class="{style}" text-anchor="{anchor}">{escape(str(value))}</text>')
+        fill = THEMES['dark'].get(style, THEMES['dark']['foreground'])
+        self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" fill="{fill}" class="{style}" text-anchor="{anchor}">{escape(str(value))}</text>')
 
-    def line(self, x1, y1, x2, y2, color='#302b36'):
-        self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" stroke="{color}" fill="none"/>')
+    def line(self, x1, y1, x2, y2):
+        self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" class="rule" stroke="{THEMES["dark"]["rule"]}" fill="none"/>')
 
     def group(self, name, x, y, width, height):
         self.parts.append(f'<g data-panel="{name}" data-bounds="{x} {y} {width} {height}">')
@@ -347,12 +404,12 @@ class Canvas:
         mark = ET.parse(ROOT / 'assets/development-mark.svg').getroot()
         scale = width / 120
         self.parts.append(f'<g aria-label="開発 / desenvolvimento" transform="translate({x} {y}) scale({scale:g})">')
-        self.parts.append('<path d="M0 0H96L120 24V144H0Z" fill="none" stroke="#7b283b" stroke-width="1.5"/>')
+        self.parts.append(f'<path d="M0 0H96L120 24V144H0Z" class="mark-outline" fill="none" stroke="{THEMES["dark"]["seal"]}" stroke-width="1.5"/>')
         for node in mark.findall('{http://www.w3.org/2000/svg}path'):
             outline = node.attrib['d']
             if not re.fullmatch(r'[MLCZ0-9.,\s-]+', outline):
                 raise DataError('Selo vetorial contém comandos inesperados.')
-            self.parts.append(f'<path d="{outline}" fill="#ed4259"/>')
+            self.parts.append(f'<path d="{outline}" class="accent-fill" fill="{THEMES["dark"]["accent"]}"/>')
         self.parts.append('</g>')
 
     def finish(self) -> str:
@@ -419,7 +476,9 @@ def draw_weeks(svg: Canvas, weeks: list[list[dict]], x: int, y: int, pitch: floa
                 previous_month = current.month
             row = (current.weekday() + 1) % 7
             svg.parts.append(f'<g><title>{day["date"]}: {day["count"]} contribuições</title>')
-            svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day['level']], radius=1)
+            delay = round(WAVE_START_MS + column * WAVE_SPAN_MS / max(1, len(weeks) - 1)) + row * WAVE_ROW_STAGGER_MS
+            svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day['level']], radius=1,
+                     style=f'contribution-cell level-{day["level"]}', delay=delay)
             svg.parts.append('</g>')
 
 
@@ -450,7 +509,7 @@ def render_contributions(svg: Canvas, data: dict, mobile=False):
     legend_x = width - (126 if mobile else 146)
     svg.text(legend_x - 10, baseline, 'menos', 11, 'muted', 'end')
     for level, color in enumerate(LEVELS):
-        svg.rect(legend_x + level * 13, baseline - 10, 10, 10, fill=color, radius=1)
+        svg.rect(legend_x + level * 13, baseline - 10, 10, 10, fill=color, radius=1, style=f'level-{level}')
     svg.text(legend_x + 72, baseline, 'mais', 11, 'muted')
     svg.end_panel()
 
@@ -485,7 +544,7 @@ def render_svg(config: dict, data: dict, avatar: bytes | None, mobile=False) -> 
     # The GitHub page already provides the profile sidebar and the real avatar.
     svg = Canvas(440 if mobile else 880, 1224 if mobile else 808, config)
     svg.group('profile', 0, 0, svg.width, 280 if mobile else 204)
-    svg.rect(0, 16, 3, 248 if mobile else 172, fill='#ed4259')
+    svg.rect(0, 16, 3, 248 if mobile else 172, fill=THEMES['dark']['accent'], style='accent-fill')
     if mobile:
         svg.text(20, 60, config['name'][0], 46, 'display')
         svg.text(20, 106, config['name'][1], 46, 'display')

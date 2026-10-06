@@ -6,14 +6,16 @@ Perfil de um estudante de Engenharia de Software da FIAP, estagiário de Produto
 
 ## Tokens
 
-- Fundo: `#08090d`.
-- Grafite: `#171820`.
-- Texto principal: `#f3ece8`.
-- Texto secundário: `#a5a1ad`.
-- Vermelho: `#ed4259`.
-- Rosa: `#ef8fb4`.
+- Fundo: transparente, herdando visualmente o README do GitHub.
+- Texto principal: `#f3ece8` no escuro / `#24292f` no claro.
+- Texto secundário: `#a5a1ad` no escuro / `#59636e` no claro.
+- Vermelho: `#f05c73` no escuro / `#b91f45` no claro.
+- Rosa: `#ef8fb4` no escuro / `#96335f` no claro.
+- Divisórias: `#3d3342` no escuro / `#d1d9e0` no claro.
 
 O vermelho marca a identidade. O rosa aparece no foco profissional e no calendário. A intensidade do gráfico continua vindo do GitHub; apenas sua escala de cores muda.
+
+O SVG usa a paleta escura como base e troca as cores com `prefers-color-scheme: light`. Em uma imagem SVG, essa consulta acompanha o `color-scheme` do elemento que a incorpora; o GitHub define essa propriedade conforme seu tema. Assim, o tema escolhido no site tem prioridade sobre um tema diferente no sistema. A ausência de suporte à consulta mantém a base escura. Não precisamos duplicar arquivos por tema.
 
 O nome usa uma fonte industrial condensada, com fallbacks locais Bahnschrift, DIN Condensed, Nimbus Sans Narrow e Arial Narrow. Os dados e os comandos usam fontes monoespaçadas do sistema. O selo japonês “開発” significa desenvolvimento; seus glifos são vetoriais, sem depender de uma fonte japonesa no navegador.
 
@@ -45,3 +47,9 @@ Alinhamento à esquerda, viewBox desktop de 880 px, pensado para aproximadamente
 A primeira composição repetia uma sidebar e uma barra de aplicativo dentro do perfil, com cards arredondados e índices sem sequência real. A revisão remove esses elementos: o próprio GitHub já oferece essa estrutura. A personalidade fica concentrada na tipografia e no selo do cabeçalho. O restante prioriza texto legível, dados verificáveis e espaço consistente.
 
 As prévias devem mostrar o retângulo completo do README, incluindo projetos e contatos, na largura realista de desktop e celular. São simulações para revisão visual, e não capturas de uma versão publicada.
+
+## Movimento e nova revisão
+
+A superfície preta da versão anterior ainda criava um segundo retângulo dentro do README. Removê-la faz o documento pertencer ao GitHub nos dois temas; a versão clara ganha cores mais profundas para manter contraste. O selo continua sendo a principal marca visual.
+
+O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente dois segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. Textos, métricas e selo permanecem estáticos. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.

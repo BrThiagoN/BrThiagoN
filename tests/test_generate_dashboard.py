@@ -6,6 +6,7 @@ from datetime import date, timedelta
 import io
 import json
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
@@ -198,6 +199,59 @@ class DashboardTests(unittest.TestCase):
         root = ET.fromstring(dashboard.render_svg(config, self.snapshot, None))
         self.assertEqual(root.findall(".//svg:script", NS), [])
         self.assertTrue(any('<script>&"' in (node.text or '') for node in root.findall(".//svg:text", NS)))
+
+    def test_adaptive_svg_has_no_background_and_dark_fallback(self):
+        for mobile in (False, True):
+            root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
+            self.assertEqual(root.findall('svg:rect', NS), [])
+            styles = root.find('svg:style', NS).text
+            base, light = styles.split('@media (prefers-color-scheme: light)', 1)
+            for key in ('foreground', 'muted', 'accent', 'pink'):
+                self.assertIn(dashboard.THEMES['dark'][key], base)
+                self.assertIn(dashboard.THEMES['light'][key], light)
+            self.assertNotIn('background', styles)
+
+    def test_palette_text_contrast_in_github_light_dark_and_dimmed(self):
+        def luminance(color):
+            channels = [int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            linear = [value / 12.92 if value <= .04045 else ((value + .055) / 1.055) ** 2.4 for value in channels]
+            return sum(weight * value for weight, value in zip((.2126, .7152, .0722), linear))
+
+        for theme, backgrounds in (('light', ('#ffffff',)), ('dark', ('#0d1117', '#22272e'))):
+            for background in backgrounds:
+                for key in ('foreground', 'muted', 'accent', 'pink'):
+                    low, high = sorted((luminance(background), luminance(dashboard.THEMES[theme][key])))
+                    self.assertGreaterEqual((high + .05) / (low + .05), 4.5, (theme, background, key))
+
+    def test_wave_reveals_columns_in_order_without_changing_real_days(self):
+        calendars = [self.snapshot['contributions']]
+        # Partial first weeks must start first on every weekday, also in leap years.
+        for offset in range(7):
+            start, end = dashboard.contribution_period(date(2028, 12, 31) + timedelta(days=offset))
+            days = [{'date':(start + timedelta(days=i)).isoformat(), 'count':0, 'level':0} for i in range((end - start).days + 1)]
+            calendars.append(dashboard.calendar_snapshot(days, start, end, 'test fixture'))
+        for calendar in calendars:
+            for mobile in (False, True):
+                data = {**self.snapshot, 'contributions':calendar}
+                root = ET.fromstring(dashboard.render_svg(self.config, data, None, mobile))
+                cells = root.findall('.//svg:rect[@style]', NS)
+                self.assertEqual(len(cells), len(calendar['days']))
+                columns = {}
+                for cell in cells:
+                    delay = int(re.fullmatch(r'animation-delay:(\d+)ms', cell.attrib['style'])[1])
+                    # Mobile bands are checked independently in their visual order.
+                    band = 1 if mobile and float(cell.attrib['y']) >= 524 else 0
+                    columns.setdefault(band, {}).setdefault(float(cell.attrib['x']), []).append(delay)
+                    self.assertLessEqual(delay + dashboard.WAVE_DURATION_MS, 2000)
+                    self.assertIn('contribution-cell', cell.attrib['class'])
+                for band in columns.values():
+                    column_delays = [min(band[x]) for x in sorted(band)]
+                    self.assertEqual(column_delays, sorted(column_delays))
+                styles = root.find('svg:style', NS).text
+                self.assertIn('@media (prefers-reduced-motion: no-preference)', styles)
+                self.assertIn('to{opacity:1;transform:translateY(0)}', styles)
+                self.assertNotIn('infinite', styles)
+                self.assertNotIn('animation', dashboard.svg_styles(animate=False))
 
     def test_panel_text_bounds_in_both_layouts(self):
         # Conservative monospace advance (0.62 em) also covers Courier fallback.

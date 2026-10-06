@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 
 import cairo
 import gi
+from generate_dashboard import svg_styles
 
 gi.require_version('GdkPixbuf', '2.0')
 from gi.repository import GdkPixbuf
@@ -59,51 +60,62 @@ def projects_from_readme() -> list[tuple[str, str, str]]:
     return projects
 
 
-def readme_preview(width: int, mobile=False) -> str:
+def static_dashboard(mobile=False, theme='dark') -> ET.Element:
+    dashboard = ET.parse(ROOT / 'assets' / ('dashboard-mobile.svg' if mobile else 'dashboard.svg')).getroot()
+    # PNG is a frozen review frame: fix the requested theme and show the full grid.
+    dashboard.find(f'{{{SVG_NS}}}style').text = svg_styles(theme=theme, animate=False)
+    return dashboard
+
+
+def readme_preview(width: int, mobile=False, theme='dark') -> str:
+    colors = {
+        'dark': {'background':'#0d1117', 'border':'#3d444d', 'text':'#e6edf3', 'muted':'#9198a1', 'stack':'#c9d1d9', 'link':'#4493f8'},
+        'light': {'background':'#ffffff', 'border':'#d1d9e0', 'text':'#24292f', 'muted':'#59636e', 'stack':'#59636e', 'link':'#0969da'},
+    }[theme]
     padding = 16 if mobile else 24
     available = width - padding * 2
-    dashboard = ET.parse(ROOT / 'assets' / ('dashboard-mobile.svg' if mobile else 'dashboard.svg')).getroot()
+    dashboard = static_dashboard(mobile, theme)
     dashboard.set('id', 'preview-dashboard')
     style = dashboard.find(f'{{{SVG_NS}}}style')
     # An actual README loads the SVG as an image, isolating its CSS from Markdown.
     # Scope the nested SVG styles to reproduce that isolation in this simulation.
-    style.text = re.sub(r'(^|})([^{}]+)\{', lambda match: match[1] + '#preview-dashboard ' + match[2] + '{', style.text)
+    style.text = re.sub(r'(^|})([^{}]+)\{', lambda match: match[1] + ','.join('#preview-dashboard ' + selector.strip() for selector in match[2].split(',')) + '{', style.text)
     intrinsic_width, intrinsic_height = map(float, (dashboard.attrib['width'], dashboard.attrib['height']))
     dashboard.set('x', str(padding))
     dashboard.set('y', '64')
     dashboard.set('width', str(available))
     dashboard.set('height', str(intrinsic_height * available / intrinsic_width))
     dashboard.attrib.pop('role', None)
-    fragments = [text(padding, 34, 'BrThiagoN / README.md', 12, mono=True), ET.tostring(dashboard, encoding='unicode')]
+    fragments = [text(padding, 34, 'BrThiagoN / README.md', 12, color=colors['text'], mono=True), ET.tostring(dashboard, encoding='unicode')]
     y = 64 + intrinsic_height * available / intrinsic_width + 44
-    fragments.append(text(padding, y, '$ ls ~/featured-projects', 18, bold=True, mono=True))
+    fragments.append(text(padding, y, '$ ls ~/featured-projects', 18, color=colors['text'], bold=True, mono=True))
     y += 38
     left = padding + 20
     prose_size = 14 if mobile else 16
     for name, stack, description in projects_from_readme():
-        fragments.append(text(padding, y, '•', prose_size, color='#9198a1'))
-        fragments.append(text(left, y, name, prose_size, color='#4493f8', bold=True))
+        fragments.append(text(padding, y, '•', prose_size, color=colors['muted']))
+        fragments.append(text(left, y, name, prose_size, color=colors['link'], bold=True))
         name_width = measure(name, prose_size, bold=True)
         stack_width = measure(' · ' + stack, 13, mono=True)
         if name_width + stack_width > available - 20:
             y += 23
-            fragments.append(text(left, y, stack, 13, color='#c9d1d9', mono=True))
+            fragments.append(text(left, y, stack, 13, color=colors['stack'], mono=True))
         else:
-            fragments.append(text(left + name_width + 8, y, '· ' + stack, 13, color='#c9d1d9', mono=True))
+            fragments.append(text(left + name_width + 8, y, '· ' + stack, 13, color=colors['stack'], mono=True))
         for line in wrap(description, prose_size, available - 20):
             y += 23
-            fragments.append(text(left, y, line, prose_size))
+            fragments.append(text(left, y, line, prose_size, color=colors['text']))
         y += 34
     y += 10
-    fragments.append(text(padding, y, '$ contact', 18, bold=True, mono=True))
+    fragments.append(text(padding, y, '$ contact', 18, color=colors['text'], bold=True, mono=True))
     y += 32
     contact = 'LinkedIn · thiagotgn6@gmail.com · GitHub'
     for line in wrap(contact, prose_size, available):
-        fragments.append(text(padding, y, line, prose_size, color='#4493f8'))
+        fragments.append(text(padding, y, line, prose_size, color=colors['link']))
         y += 23
     height = round(y + 16)
     root = f'<svg xmlns="{SVG_NS}" width="{width}" height="{height}" viewBox="0 0 {width} {height}">'
-    background = f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="6" fill="#0d1117" stroke="#3d444d"/>'
+    background = f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="6" fill="{colors["background"]}" stroke="{colors["border"]}"/>'
     return root + background + ''.join(fragments) + '</svg>'
 
 
@@ -122,13 +134,15 @@ def write_png(content: bytes, path: Path, width: int | None = None):
 def main():
     output = ROOT / 'assets/previews'
     output.mkdir(exist_ok=True)
-    for variant, width in (('desktop', 846), ('mobile', 336)):
-        source = ROOT / 'assets' / ('dashboard-mobile.svg' if variant == 'mobile' else 'dashboard.svg')
-        write_png(source.read_bytes(), output / f'dashboard-{variant}.png', width)
-    for variant, width in (('desktop', 896), ('mobile', 390)):
-        document = readme_preview(width, mobile=variant == 'mobile')
-        ET.fromstring(document)
-        write_png(document.encode('utf-8'), output / f'readme-{variant}.png')
+    for theme in ('dark', 'light'):
+        suffix = '-light' if theme == 'light' else ''
+        for variant, width in (('desktop', 846), ('mobile', 336)):
+            document = ET.tostring(static_dashboard(mobile=variant == 'mobile', theme=theme))
+            write_png(document, output / f'dashboard-{variant}{suffix}.png', width)
+        for variant, width in (('desktop', 896), ('mobile', 390)):
+            document = readme_preview(width, mobile=variant == 'mobile', theme=theme)
+            ET.fromstring(document)
+            write_png(document.encode('utf-8'), output / f'readme-{variant}{suffix}.png')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,19 @@
+{
+  "login": "BrThiagoN",
+  "name": ["Thiago", "Nascimento"],
+  "education": ["Engenharia de Software", "FIAP · estudante"],
+  "location": "São Paulo, Brasil",
+  "focus": ["Backend / Cloud", "IA aplicada"],
+  "role": ["Estagiário de Produto", "e Desenvolvimento."],
+  "building": "APIs, produtos digitais e automações.",
+  "learning": "Testes · Arquitetura · Cloud · IA aplicada",
+  "practice": "Desenvolvimento ágil",
+  "languages": ["Java", "Python", "TypeScript", "JavaScript", "Go"],
+  "backend": ["Node.js", "Spring", "Express"],
+  "data": ["APIs REST", "PostgreSQL"],
+  "tools": ["Linux", "Git", "GitHub", "Jira", "n8n"],
+  "contact": {
+    "linkedin": "https://www.linkedin.com/in/thiagonascimento08/",
+    "email": "thiagotgn6@gmail.com"
+  }
+}

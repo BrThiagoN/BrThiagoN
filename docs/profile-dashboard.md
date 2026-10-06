@@ -12,6 +12,7 @@ O README apresenta o perfil e os quatro projetos originais. A composição visua
 | `assets/avatar.jpg` | Avatar real obtido do CDN do GitHub. Incorporado nos SVGs como JPEG. |
 | `assets/dashboard.svg` | Dashboard horizontal, `viewBox="0 0 1120 776"`. |
 | `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 520 1536"`, com o mesmo calendário em duas faixas. |
+| `assets/previews/*.png` | Prévias estáticas dos layouts desktop e mobile para revisão visual. |
 | `.github/workflows/update-profile.yml` | Validação e atualização diária, manual ou por push relevante. |
 | `tests/test_generate_dashboard.py` | Falhas de API, integridade de dados, segurança e limites dos painéis. |
 
@@ -74,5 +75,17 @@ O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o
 SVGs exibidos por `<img>` não oferecem links internos clicáveis. Por isso os contatos permanecem em Markdown, junto aos projetos, abaixo do dashboard.
 
 Os textos foram revisados nos dois layouts e os testes verificam limites conservadores de fonte monoespaçada. O calendário também é verificado com 54 semanas em um ano bissexto, para evitar cortes e sobreposição com a legenda. O tema escuro é preservado em light mode para manter a identidade visual.
+
+### Prévias para revisão
+
+Estas imagens registram o dashboard de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow.
+
+**Desktop**
+
+![Prévia desktop do dashboard de Thiago Nascimento](../assets/previews/dashboard-desktop.png)
+
+**Mobile**
+
+![Prévia mobile do dashboard de Thiago Nascimento](../assets/previews/dashboard-mobile.png)
 
 Fontes técnicas: [contribuições na API GraphQL](https://docs.github.com/en/graphql/reference/users#contributioncalendar), [permissões e comportamento do GITHUB_TOKEN](https://docs.github.com/en/actions/concepts/security/github_token), [classificação de linguagens pelo Linguist](https://github.com/github-linguist/linguist/blob/main/docs/how-linguist-works.md).

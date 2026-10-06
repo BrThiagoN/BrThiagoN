@@ -188,10 +188,13 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(root.attrib["role"], "img")
             self.assertIsNotNone(root.find("svg:title", NS))
             self.assertIsNotNone(root.find("svg:desc", NS))
+            ids = [node.attrib['id'] for node in root.iter() if 'id' in node.attrib]
+            self.assertEqual(len(ids), len(set(ids)))
             for node in root.iter():
                 self.assertNotIn(node.tag.split("}")[-1], ("script", "foreignObject", "animate", "iframe"))
                 if "href" in node.attrib:
-                    self.assertTrue(node.attrib["href"].startswith("data:image/jpeg;base64,"))
+                    target = node.attrib['href']
+                    self.assertTrue(target.startswith('data:image/jpeg;base64,') or (target.startswith('#') and target[1:] in ids))
             self.assertIn('"Courier New",monospace', output)
 
     def test_svg_text_escapes_untrusted_content(self):
@@ -310,6 +313,58 @@ class DashboardTests(unittest.TestCase):
             self.assertIn('.handwriting-letter{stroke-opacity:0;', styles)
             self.assertNotIn('infinite', styles)
             self.assertNotIn('handwriting', dashboard.svg_styles(animate=False))
+
+    def test_stack_decode_keeps_correct_fallback_and_decorative_frames(self):
+        for mobile in (False, True):
+            root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
+            stack = root.find('svg:g[@data-panel="stack"]', NS)
+            frames = stack.findall('svg:g[@aria-hidden="true"]', NS)
+            self.assertEqual(len(frames), 3)
+            self.assertEqual([frame.find('svg:text', NS).text for frame in frames], list(dashboard.STACK_DECODE_FRAMES))
+            self.assertTrue(all(frame.attrib['opacity'] == '0' for frame in frames))
+            final = stack.find('svg:g[@class="decode-final"]/svg:text', NS)
+            self.assertEqual(final.text, '$ cat stack.json')
+            self.assertNotIn('opacity', final.attrib)
+            for frame in frames:
+                text = frame.find('svg:text', NS)
+                self.assertEqual(len(text.text), len(final.text))
+                for key in ('x', 'y', 'font-size', 'text-anchor'):
+                    self.assertEqual(text.attrib[key], final.attrib[key])
+            styles = root.find('svg:style', NS).text
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+            self.assertIn('.decode-final{animation:decode-resolved', motion)
+            self.assertIn('.decode-frame-2{animation-name:decode-stage-2}', motion)
+            self.assertLessEqual(dashboard.DECODE_START_MS + dashboard.DECODE_DURATION_MS, 1200)
+            self.assertNotIn('decode-', dashboard.svg_styles(animate=False))
+
+    def test_seal_fragments_partition_original_artwork_and_keep_complete_fallback(self):
+        original = ET.parse(dashboard.ROOT / 'assets/development-mark.svg').getroot()
+        for mobile in (False, True):
+            root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
+            ink = root.find('.//svg:g[@id="development-ink"]', NS)
+            self.assertEqual([node.attrib['d'] for node in ink.findall('svg:path', NS)], [node.attrib['d'] for node in original.findall('svg:path', NS)])
+            clips = root.findall('.//svg:clipPath', NS)
+            self.assertEqual(len(clips), 8)
+            rectangles = [tuple(float(node.attrib[key]) for key in ('x', 'y', 'width', 'height')) for clip in clips for node in clip.findall('svg:rect', NS)]
+            self.assertEqual(set(rectangles), {(x, y, 60, 36) for x in (0, 60) for y in (0, 36, 72, 108)})
+            pieces = root.find('.//svg:g[@class="seal-pieces"]', NS)
+            self.assertEqual(pieces.attrib['opacity'], '0')
+            self.assertEqual(pieces.attrib['aria-hidden'], 'true')
+            tiles = [int(re.fullmatch(r'url\(#seal-tile-(\d)\)', node.attrib['clip-path'])[1]) for node in pieces.findall('svg:g', NS)]
+            self.assertEqual(sorted(tiles), list(range(8)))
+            self.assertNotEqual(tiles, sorted(tiles))
+            delays = [int(re.fullmatch(r'animation-delay:(\d+)ms', node.attrib['style'])[1]) for node in pieces.findall('.//svg:use', NS)]
+            self.assertEqual(delays, sorted(set(delays)))
+            self.assertEqual(delays[-1] + dashboard.SEAL_FRAGMENT_DURATION_MS, dashboard.SEAL_TOTAL_MS)
+            final = root.find('.//svg:use[@class="seal-final"]', NS)
+            self.assertEqual(final.attrib['href'], '#development-ink')
+            self.assertNotIn('opacity', final.attrib)
+            self.assertLessEqual(dashboard.SEAL_TOTAL_MS, 1200)
+            styles = root.find('svg:style', NS).text
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+            self.assertIn('.seal-pieces{animation:seal-pieces', motion)
+            self.assertIn('.seal-fragment{animation:seal-fragment', motion)
+            self.assertNotIn('seal-fragment', dashboard.svg_styles(animate=False))
 
     def test_leap_calendar_cells_and_legend_do_not_overlap(self):
         data = deepcopy(self.snapshot)

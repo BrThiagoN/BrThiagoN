@@ -52,7 +52,7 @@ As prévias devem mostrar o retângulo completo do README, incluindo projetos e 
 
 A superfície preta da versão anterior ainda criava um segundo retângulo dentro do README. Removê-la faz o documento pertencer ao GitHub nos dois temas; a versão clara ganha cores mais profundas para manter contraste. O selo continua sendo a principal marca visual.
 
-O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. Métricas e selo permanecem estáticos. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
+O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. As métricas permanecem estáticas. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
 
 ## Continuidade do rodapé
 
@@ -70,4 +70,10 @@ A onda atravessa o calendário em seis segundos, com uma entrada de 900 ms por c
 
 O cabeçalho recebe uma única sequência de escrita: contornos de letras aparecem progressivamente e ganham preenchimento, primeiro no nome e depois nas quatro linhas de apresentação. A tipografia industrial e monoespaçada, as cores, as posições e os textos continuam iguais. A quebra de linhas do celular acompanha a mesma ordem de leitura.
 
-O nome usa traços mais lentos; as linhas menores têm uma cadência mais rápida para terminar junto da entrada do calendário. O efeito evita cursor, repetição e fonte cursiva, que destoariam da direção aprovada. A barra lateral e o selo permanecem fixos. O texto fica completo por padrão; somente a preferência explícita por movimento ativa a escrita em SVG/CSS. Prévias PNG e movimento reduzido mostram o estado final.
+O nome usa traços mais lentos; as linhas menores têm uma cadência mais rápida para terminar junto da entrada do calendário. O efeito evita cursor, repetição e fonte cursiva, que destoariam da direção aprovada. A barra lateral permanece fixa. O texto fica completo por padrão; somente a preferência explícita por movimento ativa a escrita em SVG/CSS. Prévias PNG e movimento reduzido mostram o estado final.
+
+## Decodificação tech / Arasaka
+
+Dois detalhes recebem uma abertura curta de decodificação. O comando da stack passa por três estados com caracteres parcialmente substituídos, em cinza, até assumir o texto completo em vermelho. Todos têm o mesmo comprimento, fonte e posição; a sequência é fixa e reproduzível. O selo japonês reconstrói seus glifos em oito regiões que surgem numa ordem irregular, dentro da moldura fixa.
+
+A paleta e a composição continuam as mesmas. A escolha concentra a textura de decodificação em tooling e identidade, enquanto tecnologias, links e números reais conservam a leitura normal. As duas entradas terminam em aproximadamente um segundo, dentro da abertura existente. Movimento reduzido, ausência de CSS e exportações PNG mostram imediatamente o comando correto e o selo completo. Os fragmentos dão lugar ao vetor original ao final, preservando as bordas do desenho.

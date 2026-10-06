@@ -49,6 +49,15 @@ WRITE_TITLE_STEP_MS = 100
 WRITE_BODY_DURATION_MS = 320
 WRITE_BODY_STEP_MS = 16
 WRITE_LINE_GAP_MS = 90
+DECODE_START_MS = 100
+DECODE_DURATION_MS = 900
+STACK_COMMAND = '$ cat stack.json'
+STACK_DECODE_FRAMES = ('$ cat st#c_.j#on', '$ cat stac_.js#n', '$ cat stack.jso_')
+SEAL_START_MS = 100
+SEAL_FRAGMENT_DURATION_MS = 220
+SEAL_FRAGMENT_STEP_MS = 90
+SEAL_FRAGMENT_ORDER = (3, 4, 0, 7, 2, 5, 1, 6)
+SEAL_TOTAL_MS = SEAL_START_MS + (len(SEAL_FRAGMENT_ORDER) - 1) * SEAL_FRAGMENT_STEP_MS + SEAL_FRAGMENT_DURATION_MS
 CONTRIBUTION_LEVELS = {
     "NONE": 0,
     "FIRST_QUARTILE": 1,
@@ -372,9 +381,23 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '@media (prefers-reduced-motion: no-preference){\n'
             f'.contribution-cell{{animation:contribution-wave {WAVE_DURATION_MS}ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}}\n'
             '.handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}\n'
+            f'.decode-final{{animation:decode-resolved {DECODE_DURATION_MS}ms step-end {DECODE_START_MS}ms both}}\n'
+            f'.decode-frame{{animation-duration:{DECODE_DURATION_MS}ms;animation-delay:{DECODE_START_MS}ms;animation-timing-function:step-end;animation-fill-mode:both}}\n'
+            '.decode-frame-0{animation-name:decode-stage-0}\n'
+            '.decode-frame-1{animation-name:decode-stage-1}\n'
+            '.decode-frame-2{animation-name:decode-stage-2}\n'
+            f'.seal-final{{animation:decode-resolved {SEAL_TOTAL_MS}ms step-end both}}\n'
+            f'.seal-pieces{{animation:seal-pieces {SEAL_TOTAL_MS}ms step-end both}}\n'
+            f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
             '@keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}',
+            '@keyframes decode-resolved{from{opacity:0}to{opacity:1}}',
+            '@keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}',
+            '@keyframes decode-stage-1{0%{opacity:0}33.333%{opacity:1}66.667%{opacity:0}100%{opacity:0}}',
+            '@keyframes decode-stage-2{0%{opacity:0}66.667%{opacity:1}100%{opacity:0}}',
+            '@keyframes seal-pieces{from{opacity:1}to{opacity:0}}',
+            '@keyframes seal-fragment{from{opacity:0}to{opacity:1}}',
         ])
     return '\n'.join(rules)
 
@@ -425,9 +448,25 @@ class Canvas:
     def group(self, name, x, y, width, height):
         self.parts.append(f'<g data-panel="{name}" data-bounds="{x} {y} {width} {height}">')
 
-    def panel(self, name, x, y, width, height, title, mobile=False):
+    def panel(self, name, x, y, width, height, title, mobile=False, decode=False):
         self.group(name, x, y, width, height)
-        self.text(x + (20 if mobile else 24), y + 28, title, 20 if mobile else 18, 'accent')
+        left, size = x + (20 if mobile else 24), 20 if mobile else 18
+        if decode:
+            self.decode_command(left, y + 28, title, STACK_DECODE_FRAMES, size)
+        else:
+            self.text(left, y + 28, title, size, 'accent')
+
+    def decode_command(self, x, y, value, frames, size):
+        """Hidden deterministic frames are decorative; correct text is the fallback."""
+        if any(len(frame) != len(value) for frame in frames):
+            raise DataError('Estados da decodificação precisam conservar a largura do comando.')
+        for index, frame in enumerate(frames):
+            self.parts.append(f'<g class="decode-frame decode-frame-{index}" opacity="0" aria-hidden="true">')
+            self.text(x, y, frame, size, 'muted')
+            self.parts.append('</g>')
+        self.parts.append('<g class="decode-final">')
+        self.text(x, y, value, size, 'accent')
+        self.parts.append('</g>')
 
     def end_panel(self):
         self.parts.append('</g>')
@@ -437,11 +476,21 @@ class Canvas:
         scale = width / 120
         self.parts.append(f'<g aria-label="開発 / desenvolvimento" transform="translate({x} {y}) scale({scale:g})">')
         self.parts.append(f'<path d="M0 0H96L120 24V144H0Z" class="mark-outline" fill="none" stroke="{THEMES["dark"]["seal"]}" stroke-width="1.5"/>')
+        self.parts.append('<defs><g id="development-ink">')
         for node in mark.findall('{http://www.w3.org/2000/svg}path'):
             outline = node.attrib['d']
             if not re.fullmatch(r'[MLCZ0-9.,\s-]+', outline):
                 raise DataError('Selo vetorial contém comandos inesperados.')
             self.parts.append(f'<path d="{outline}" class="accent-fill" fill="{THEMES["dark"]["accent"]}"/>')
+        self.parts.append('</g>')
+        for tile in range(len(SEAL_FRAGMENT_ORDER)):
+            left, top = (tile % 2) * 60, (tile // 2) * 36
+            self.parts.append(f'<clipPath id="seal-tile-{tile}" clipPathUnits="userSpaceOnUse"><rect x="{left}" y="{top}" width="60" height="36"/></clipPath>')
+        self.parts.append('</defs><g class="seal-pieces" opacity="0" aria-hidden="true">')
+        for order, tile in enumerate(SEAL_FRAGMENT_ORDER):
+            delay = SEAL_START_MS + order * SEAL_FRAGMENT_STEP_MS
+            self.parts.append(f'<g clip-path="url(#seal-tile-{tile})"><use href="#development-ink" class="seal-fragment" style="animation-delay:{delay}ms"/></g>')
+        self.parts.append('</g><use href="#development-ink" class="seal-final"/>')
         self.parts.append('</g>')
 
     def finish(self) -> str:
@@ -548,7 +597,7 @@ def render_contributions(svg: Canvas, data: dict, mobile=False):
 
 def render_stack(svg: Canvas, config: dict, mobile=False):
     x, y, width, height = (0, 900, 440, 284) if mobile else (0, 600, 880, 164)
-    svg.panel('stack', x, y, width, height, '$ cat stack.json', mobile)
+    svg.panel('stack', x, y, width, height, STACK_COMMAND, mobile, decode=True)
     if mobile:
         svg.text(20, y + 58, 'Languages', 15, 'muted')
         svg.text(20, y + 86, ' / '.join(config['languages'][:3]), 20)

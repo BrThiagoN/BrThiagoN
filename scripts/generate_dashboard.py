@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import textwrap
 import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse
@@ -366,15 +367,16 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
 class Canvas:
     """SVG document sized for the README column, with escaped text and local paths."""
 
-    def __init__(self, width: int, height: int, config: dict):
+    def __init__(self, width: int, height: int, config: dict, title=None, description=None, animate=True):
         self.width, self.height = width, height
         name = ' '.join(config['name'])
-        description = f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
+        title = title or f'{name} / engineering profile'
+        description = description or f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
         self.parts = [
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">',
-            f'<title id="title">{escape(name)} / engineering profile</title>',
+            f'<title id="title">{escape(title)}</title>',
             f'<desc id="description">{escape(description)}</desc>',
-            '<style>\n' + svg_styles() + '\n</style>',
+            '<style>\n' + svg_styles(animate=animate) + '\n</style>',
         ]
 
     def rect(self, x, y, width, height, fill='#171820', radius=0, stroke='none', style='', delay=None):
@@ -574,6 +576,61 @@ def render_svg(config: dict, data: dict, avatar: bytes | None, mobile=False) -> 
     return svg.finish()
 
 
+def wrap_svg_text(value: str, width: int, size: int) -> list[str]:
+    """Conservative monospace wrapping, keeping prose below 80 characters."""
+    columns = min(78, int(width / (size * .62)))
+    return textwrap.wrap(value, width=columns, break_on_hyphens=False)
+
+
+def render_project(config: dict, project: dict, mobile=False) -> str:
+    width, padding = (440, 20) if mobile else (880, 24)
+    size = 18 if mobile else 16
+    baseline = 88 if mobile else 60
+    lines = wrap_svg_text(project['description'], width - padding * 2, size)
+    height = ((baseline + max(0, len(lines) - 1) * 24 + 24 + 7) // 8) * 8
+    svg = Canvas(width, height, config, title=project['name'], description=project['description'], animate=False)
+    svg.group('project', 0, 0, width, height)
+    svg.text(padding, 28, project['name'], 20 if mobile else 18, 'pink')
+    stack = ' / '.join(project['stack'])
+    if mobile:
+        svg.text(padding, 56, stack, 16, 'muted')
+    else:
+        svg.text(width - padding, 28, stack, 14, 'muted', 'end')
+    for index, line in enumerate(lines):
+        svg.text(padding, baseline + index * 24, line, size)
+    svg.end_panel()
+    svg.line(padding, height - 1, width - padding, height - 1)
+    return svg.finish()
+
+
+def render_footer_assets(config: dict) -> dict[str, str]:
+    """Separate SVG rows allow native HTML links around each image in the README."""
+    outputs = {}
+    for mobile in (False, True):
+        suffix = '-mobile' if mobile else ''
+        width, padding = (440, 20) if mobile else (880, 24)
+        for key, title in (('projects-heading', '$ ls ~/featured-projects'), ('contact-heading', '$ contact')):
+            svg = Canvas(width, 48, config, title=title, description=title, animate=False)
+            svg.group('heading', 0, 0, width, 48)
+            svg.text(padding, 32, title, 20 if mobile else 18, 'accent')
+            svg.end_panel()
+            outputs[f'footer/{key}{suffix}.svg'] = svg.finish()
+        for project in config['projects']:
+            if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', project['slug']):
+                raise DataError('Identificador de projeto inválido.')
+            outputs[f'footer/{project["slug"]}{suffix}.svg'] = render_project(config, project, mobile)
+    for mobile in (False, True):
+        suffix, padding = ('-mobile', 16) if mobile else ('', 24)
+        for key, label in (('linkedin', 'LinkedIn'), ('email', config['contact']['email']), ('github', 'GitHub')):
+            width = ((round(len(label) * 17 * .62) + padding * 2 + 7) // 8) * 8
+            svg = Canvas(width, 40, config, title=label, description=f'Contato: {label}', animate=False)
+            svg.group('contact', 0, 0, width, 40)
+            svg.text(padding, 26, label, 17, 'pink')
+            svg.end_panel()
+            outputs[f'footer/{key}{suffix}.svg'] = svg.finish()
+    return outputs
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     modes = parser.add_mutually_exclusive_group()
@@ -611,6 +668,7 @@ def main(argv: list[str] | None = None) -> int:
         avatar_path = assets / "avatar.jpg"
         avatar = avatar_path.read_bytes() if avatar_path.exists() else None
         outputs = {"dashboard.svg": render_svg(config, data, avatar), "dashboard-mobile.svg": render_svg(config, data, avatar, mobile=True)}
+        outputs.update(render_footer_assets(config))
         for content in outputs.values():
             ET.fromstring(content)
         if args.check:

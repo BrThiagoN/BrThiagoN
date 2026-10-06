@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """Render review PNGs, including a bounded GitHub README simulation.
 
-Optional local tool: needs system PyGObject/GdkPixbuf and pycairo.
+Optional local tool: needs system PyGObject/GdkPixbuf.
 Never imported by the generator or used in the GitHub Actions workflow.
 """
 
 from __future__ import annotations
 
 from html import escape
+from html.parser import HTMLParser
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
 
-import cairo
 import gi
 from generate_dashboard import svg_styles
 
@@ -24,44 +24,37 @@ SVG_NS = 'http://www.w3.org/2000/svg'
 ET.register_namespace('', SVG_NS)
 
 
-def measure(value: str, size: int, bold=False, mono=False) -> float:
-    context = cairo.Context(cairo.ImageSurface(cairo.FORMAT_ARGB32, 1, 1))
-    context.select_font_face('Liberation Mono' if mono else 'Noto Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD if bold else cairo.FONT_WEIGHT_NORMAL)
-    context.set_font_size(size)
-    return context.text_extents(value).x_advance
-
-
-def wrap(value: str, size: int, width: float) -> list[str]:
-    lines, current = [], ''
-    for word in value.split():
-        candidate = current + (' ' if current else '') + word
-        if current and measure(candidate, size) > width:
-            lines.append(current)
-            current = word
-        else:
-            current = candidate
-    if current:
-        lines.append(current)
-    return lines
-
-
 def text(x, y, value, size=16, color='#e6edf3', bold=False, mono=False):
     family = 'Liberation Mono,monospace' if mono else 'Noto Sans,Arial,sans-serif'
     return f'<text x="{x:g}" y="{y:g}" font-family="{family}" font-size="{size}" fill="{color}" font-weight="{700 if bold else 400}">{escape(value)}</text>'
 
 
-def projects_from_readme() -> list[tuple[str, str, str]]:
-    lines = (ROOT / 'README.md').read_text().splitlines()
-    projects = []
-    for index, line in enumerate(lines):
-        match = re.match(r'- \*\*\[(.+?)\]\([^)]+\)\*\* · (.+)', line)
-        if match:
-            projects.append((match[1], match[2].replace('`', '').rstrip('\\').strip(), lines[index + 1].strip()))
-    return projects
+class ReadmeImages(HTMLParser):
+    """Read the real README's image order, responsive sources and block breaks."""
+
+    def __init__(self, mobile=False):
+        super().__init__()
+        self.mobile, self.block, self.source, self.images = mobile, 0, None, []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == 'div':
+            self.block += 1
+        elif tag == 'picture':
+            self.source = None
+        elif tag == 'source' and self.mobile:
+            self.source = attrs['srcset']
+        elif tag == 'img':
+            self.images.append((self.source or attrs['src'], attrs.get('width') == '100%', self.block))
+            self.source = None
 
 
 def static_dashboard(mobile=False, theme='dark') -> ET.Element:
-    dashboard = ET.parse(ROOT / 'assets' / ('dashboard-mobile.svg' if mobile else 'dashboard.svg')).getroot()
+    return static_svg('assets/dashboard-mobile.svg' if mobile else 'assets/dashboard.svg', theme)
+
+
+def static_svg(source: str, theme='dark') -> ET.Element:
+    dashboard = ET.parse(ROOT / source).getroot()
     # PNG is a frozen review frame: fix the requested theme and show the full grid.
     dashboard.find(f'{{{SVG_NS}}}style').text = svg_styles(theme=theme, animate=False)
     return dashboard
@@ -69,51 +62,37 @@ def static_dashboard(mobile=False, theme='dark') -> ET.Element:
 
 def readme_preview(width: int, mobile=False, theme='dark') -> str:
     colors = {
-        'dark': {'background':'#0d1117', 'border':'#3d444d', 'text':'#e6edf3', 'muted':'#9198a1', 'stack':'#c9d1d9', 'link':'#4493f8'},
-        'light': {'background':'#ffffff', 'border':'#d1d9e0', 'text':'#24292f', 'muted':'#59636e', 'stack':'#59636e', 'link':'#0969da'},
+        'dark': {'background':'#0d1117', 'border':'#3d444d', 'text':'#e6edf3'},
+        'light': {'background':'#ffffff', 'border':'#d1d9e0', 'text':'#24292f'},
     }[theme]
     padding = 16 if mobile else 24
     available = width - padding * 2
-    dashboard = static_dashboard(mobile, theme)
-    dashboard.set('id', 'preview-dashboard')
-    style = dashboard.find(f'{{{SVG_NS}}}style')
-    # An actual README loads the SVG as an image, isolating its CSS from Markdown.
-    # Scope the nested SVG styles to reproduce that isolation in this simulation.
-    style.text = re.sub(r'(^|})([^{}]+)\{', lambda match: match[1] + ','.join('#preview-dashboard ' + selector.strip() for selector in match[2].split(',')) + '{', style.text)
-    intrinsic_width, intrinsic_height = map(float, (dashboard.attrib['width'], dashboard.attrib['height']))
-    dashboard.set('x', str(padding))
-    dashboard.set('y', '64')
-    dashboard.set('width', str(available))
-    dashboard.set('height', str(intrinsic_height * available / intrinsic_width))
-    dashboard.attrib.pop('role', None)
-    fragments = [text(padding, 34, 'BrThiagoN / README.md', 12, color=colors['text'], mono=True), ET.tostring(dashboard, encoding='unicode')]
-    y = 64 + intrinsic_height * available / intrinsic_width + 44
-    fragments.append(text(padding, y, '$ ls ~/featured-projects', 18, color=colors['text'], bold=True, mono=True))
-    y += 38
-    left = padding + 20
-    prose_size = 14 if mobile else 16
-    for name, stack, description in projects_from_readme():
-        fragments.append(text(padding, y, '•', prose_size, color=colors['muted']))
-        fragments.append(text(left, y, name, prose_size, color=colors['link'], bold=True))
-        name_width = measure(name, prose_size, bold=True)
-        stack_width = measure(' · ' + stack, 13, mono=True)
-        if name_width + stack_width > available - 20:
-            y += 23
-            fragments.append(text(left, y, stack, 13, color=colors['stack'], mono=True))
-        else:
-            fragments.append(text(left + name_width + 8, y, '· ' + stack, 13, color=colors['stack'], mono=True))
-        for line in wrap(description, prose_size, available - 20):
-            y += 23
-            fragments.append(text(left, y, line, prose_size, color=colors['text']))
-        y += 34
-    y += 10
-    fragments.append(text(padding, y, '$ contact', 18, color=colors['text'], bold=True, mono=True))
-    y += 32
-    contact = 'LinkedIn · thiagotgn6@gmail.com · GitHub'
-    for line in wrap(contact, prose_size, available):
-        fragments.append(text(padding, y, line, prose_size, color=colors['link']))
-        y += 23
-    height = round(y + 16)
+    parser = ReadmeImages(mobile)
+    parser.feed((ROOT / 'README.md').read_text())
+    fragments = [text(padding, 34, 'BrThiagoN / README.md', 12, color=colors['text'], mono=True)]
+    left, top, line_height, previous_block = padding, 64, 0, None
+    for index, (source, full_width, block) in enumerate(parser.images):
+        document = static_svg(source, theme)
+        image_id = f'preview-image-{index}'
+        document.set('id', image_id)
+        style = document.find(f'{{{SVG_NS}}}style')
+        # External images isolate CSS. Scope every nested SVG independently.
+        style.text = re.sub(r'(^|})([^{}]+)\{', lambda match: match[1] + ','.join(f'#{image_id} ' + selector.strip() for selector in match[2].split(',')) + '{', style.text)
+        intrinsic_width, intrinsic_height = map(float, (document.attrib['width'], document.attrib['height']))
+        image_width = available if full_width else min(available, intrinsic_width)
+        image_height = intrinsic_height * image_width / intrinsic_width
+        if (previous_block is not None and block != previous_block) or left + image_width > width - padding:
+            top += line_height + 4
+            left, line_height = padding, 0
+        document.set('x', str(left))
+        document.set('y', str(top))
+        document.set('width', str(image_width))
+        document.set('height', str(image_height))
+        fragments.append(ET.tostring(document, encoding='unicode'))
+        line_height = max(line_height, image_height)
+        left += image_width + 4
+        previous_block = block
+    height = round(top + line_height + 24)
     root = f'<svg xmlns="{SVG_NS}" width="{width}" height="{height}" viewBox="0 0 {width} {height}">'
     background = f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="6" fill="{colors["background"]}" stroke="{colors["border"]}"/>'
     return root + background + ''.join(fragments) + '</svg>'

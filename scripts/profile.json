@@ -15,5 +15,35 @@
   "contact": {
     "linkedin": "https://www.linkedin.com/in/thiagonascimento08/",
     "email": "thiagotgn6@gmail.com"
-  }
+  },
+  "projects": [
+    {
+      "slug": "serah",
+      "name": "Serah",
+      "url": "https://github.com/BrThiagoN/serah-googleExtension",
+      "stack": ["Go", "JavaScript", "LLM"],
+      "description": "Extensão do Chrome para verificar informações com IA e respostas em JSON. Vice-campeão da 2ª edição do hackathon da EJUV."
+    },
+    {
+      "slug": "api-performance",
+      "name": "Desempenho de APIs",
+      "url": "https://github.com/BrThiagoN/Limite-de-desempenho-de-API",
+      "stack": ["Python", "Streamlit"],
+      "description": "Modelagem de saturação de APIs com limites, derivadas e teoria de filas. Notebook e aplicação interativa."
+    },
+    {
+      "slug": "music-store-cli",
+      "name": "Music Store CLI",
+      "url": "https://github.com/BrThiagoN/music-store-cli",
+      "stack": ["Python"],
+      "description": "Gestão de uma loja pelo terminal: CRUD, estruturas de dados e validação de entrada."
+    },
+    {
+      "slug": "vinharia-agnello",
+      "name": "Vinharia Agnello",
+      "url": "https://github.com/BrThiagoN/vinharia-agnelo-arduino",
+      "stack": ["C++", "Arduino"],
+      "description": "Monitoramento de luminosidade e temperatura com sensores e alertas visuais e sonoros."
+    }
+  ]
 }

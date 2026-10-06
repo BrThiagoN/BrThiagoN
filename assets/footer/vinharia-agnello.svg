@@ -16,6 +16,10 @@ text{fill:#f3ece8}
 .level-2{fill:#7b304c}
 .level-3{fill:#bf4b76}
 .level-4{fill:#ef8fb4}
+.stack-scan{stroke:#ef8fb4}
+.handwriting-line{stroke:#f3ece8}
+.handwriting-line.muted{stroke:#a5a1ad}
+.handwriting-line.pink{stroke:#ef8fb4}
 @media (prefers-color-scheme: light){
 text{fill:#24292f}
 .muted{fill:#59636e}
@@ -28,7 +32,38 @@ text{fill:#24292f}
 .level-2{fill:#d990af}
 .level-3{fill:#b9507e}
 .level-4{fill:#832044}
+.stack-scan{stroke:#96335f}
+.handwriting-line{stroke:#24292f}
+.handwriting-line.muted{stroke:#59636e}
+.handwriting-line.pink{stroke:#96335f}
 }
+.handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion: no-preference){
+.contribution-cell{animation:contribution-wave 900ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}
+.handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}
+.decode-final{animation:decode-resolved 900ms step-end 100ms both}
+.decode-frame{animation-duration:900ms;animation-delay:100ms;animation-timing-function:step-end;animation-fill-mode:both}
+.decode-frame-0{animation-name:decode-stage-0}
+.decode-frame-1{animation-name:decode-stage-1}
+.decode-frame-2{animation-name:decode-stage-2}
+.divider{stroke-dasharray:1;animation:divider-draw 900ms cubic-bezier(.4,0,.2,1) 120ms both}
+.stack-aperture{transform-box:view-box;animation:stack-reveal 900ms steps(18,end) both}
+.stack-scan{animation:stack-register 900ms steps(18,end) forwards}
+.seal-final{animation:decode-resolved 950ms step-end both}
+.seal-pieces{animation:seal-pieces 950ms step-end both}
+.seal-fragment{animation:seal-fragment 220ms ease-out both}
+}
+@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}
+@keyframes decode-resolved{from{opacity:0}to{opacity:1}}
+@keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}
+@keyframes decode-stage-1{0%{opacity:0}33.333%{opacity:1}66.667%{opacity:0}100%{opacity:0}}
+@keyframes decode-stage-2{0%{opacity:0}66.667%{opacity:1}100%{opacity:0}}
+@keyframes divider-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes stack-reveal{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}
+@keyframes seal-pieces{from{opacity:1}to{opacity:0}}
+@keyframes seal-fragment{from{opacity:0}to{opacity:1}}
 </style>
 <g data-panel="project" data-bounds="0 0 880 112">
 <text x="24" y="28" font-size="18" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">Vinharia Agnello</text>
@@ -36,5 +71,5 @@ text{fill:#24292f}
 <text x="24" y="60" font-size="16" fill="#f3ece8" class="" text-anchor="start">Monitoramento de luminosidade e temperatura com sensores e alertas visuais e</text>
 <text x="24" y="84" font-size="16" fill="#f3ece8" class="" text-anchor="start">sonoros.</text>
 </g>
-<path d="M24 111L856 111" class="rule" stroke="#3d3342" fill="none"/>
+<path d="M24 111L856 111" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
 </svg>

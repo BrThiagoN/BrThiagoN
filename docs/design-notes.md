@@ -58,7 +58,7 @@ O calendário recebe uma única onda de entrada da esquerda para a direita: cada
 
 Na renderização real do GitHub, os títulos em código, links azuis e chips de stack do Markdown interrompiam a identidade do dashboard. O rodapé passa a usar a mesma paleta adaptativa e tipografia monoespaçada, em linhas SVG compactas e transparentes. Cada projeto mantém nome, stack e descrição; a linha inteira é um link HTML para o repositório. Os contatos usam links de texto desenhados em SVG, sem fundo de badge ou logos.
 
-O painel principal permanece igual. Os assets do rodapé são separados porque imagens SVG no GitHub não permitem clicar em links internos. As linhas têm versões desktop/mobile e alturas calculadas pelo conteúdo. Os textos dos projetos ficam em `scripts/profile.json`; o README mantém apenas a composição e os destinos clicáveis. Todos os elementos do rodapé são estáticos, para concentrar o movimento no calendário.
+Os assets do rodapé são separados porque imagens SVG no GitHub não permitem clicar em links internos. As linhas têm versões desktop/mobile e alturas calculadas pelo conteúdo. Os textos dos projetos ficam em `scripts/profile.json`; o README mantém apenas a composição e os destinos clicáveis. Textos e links ficam estáticos; a revisão de movimento abaixo inclui os comandos e as divisórias.
 
 ## Refinamento de links e ritmo
 
@@ -77,3 +77,9 @@ O nome usa traços mais lentos; as linhas menores têm uma cadência mais rápid
 Dois detalhes recebem uma abertura curta de decodificação. O comando da stack passa por três estados com caracteres parcialmente substituídos, em cinza, até assumir o texto completo em vermelho. Todos têm o mesmo comprimento, fonte e posição; a sequência é fixa e reproduzível. O selo japonês reconstrói seus glifos em oito regiões que surgem numa ordem irregular, dentro da moldura fixa.
 
 A paleta e a composição continuam as mesmas. A escolha concentra a textura de decodificação em tooling e identidade, enquanto tecnologias, links e números reais conservam a leitura normal. As duas entradas terminam em aproximadamente um segundo, dentro da abertura existente. Movimento reduzido, ausência de CSS e exportações PNG mostram imediatamente o comando correto e o selo completo. Os fragmentos dão lugar ao vetor original ao final, preservando as bordas do desenho.
+
+## Comandos, divisórias e carregamento da stack
+
+A extensão mantém os tokens, as fontes e todas as posições aprovadas. Cada comando iniciado por `$`, inclusive os dois títulos do rodapé, recebe três estados de decodificação: a resolução avança da esquerda para a direita, preservando espaços e pontuação. Os números continuam estáticos. As divisórias horizontais são traçadas da esquerda para a direita; os separadores verticais de métricas permanecem fixos.
+
+A stack recebe uma varredura de registro: um traço rosa fino atravessa o texto em pequenos passos e revela as tecnologias, linha por linha. A leitura começa depois da resolução do comando e termina em menos de três segundos. Os nomes conservam o fluxo normal da fonte e o conteúdo real; não há barras de domínio, ruído sobre as tecnologias ou repetição. Essa escolha dá à stack um movimento próprio sem repetir a escrita do cabeçalho. O estado final deve ser visualmente idêntico ao anterior. Movimento reduzido, ausência de CSS e PNGs exibem imediatamente todo o conteúdo e todas as divisórias.

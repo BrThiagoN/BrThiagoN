@@ -16,6 +16,7 @@ text{fill:#f3ece8}
 .level-2{fill:#7b304c}
 .level-3{fill:#bf4b76}
 .level-4{fill:#ef8fb4}
+.stack-scan{stroke:#ef8fb4}
 .handwriting-line{stroke:#f3ece8}
 .handwriting-line.muted{stroke:#a5a1ad}
 .handwriting-line.pink{stroke:#ef8fb4}
@@ -31,6 +32,7 @@ text{fill:#24292f}
 .level-2{fill:#d990af}
 .level-3{fill:#b9507e}
 .level-4{fill:#832044}
+.stack-scan{stroke:#96335f}
 .handwriting-line{stroke:#24292f}
 .handwriting-line.muted{stroke:#59636e}
 .handwriting-line.pink{stroke:#96335f}
@@ -44,6 +46,9 @@ text{fill:#24292f}
 .decode-frame-0{animation-name:decode-stage-0}
 .decode-frame-1{animation-name:decode-stage-1}
 .decode-frame-2{animation-name:decode-stage-2}
+.divider{stroke-dasharray:1;animation:divider-draw 900ms cubic-bezier(.4,0,.2,1) 120ms both}
+.stack-aperture{transform-box:view-box;animation:stack-reveal 900ms steps(18,end) both}
+.stack-scan{animation:stack-register 900ms steps(18,end) forwards}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
@@ -54,6 +59,9 @@ text{fill:#24292f}
 @keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}
 @keyframes decode-stage-1{0%{opacity:0}33.333%{opacity:1}66.667%{opacity:0}100%{opacity:0}}
 @keyframes decode-stage-2{0%{opacity:0}66.667%{opacity:1}100%{opacity:0}}
+@keyframes divider-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes stack-reveal{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}
 @keyframes seal-pieces{from{opacity:1}to{opacity:0}}
 @keyframes seal-fragment{from{opacity:0}to{opacity:1}}
 </style>
@@ -91,7 +99,7 @@ text{fill:#24292f}
 <text x="20" y="238" font-size="17" fill="#f3ece8" class="handwriting-line" text-anchor="start" xml:space="preserve"><tspan class="handwriting-letter" style="animation-delay:4990ms;animation-duration:320ms">A</tspan><tspan class="handwriting-letter" style="animation-delay:5006ms;animation-duration:320ms">P</tspan><tspan class="handwriting-letter" style="animation-delay:5022ms;animation-duration:320ms">I</tspan><tspan class="handwriting-letter" style="animation-delay:5038ms;animation-duration:320ms">s</tspan><tspan class="handwriting-letter" style="animation-delay:5054ms;animation-duration:320ms">,</tspan><tspan class="handwriting-letter" style="animation-delay:5070ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:5086ms;animation-duration:320ms">p</tspan><tspan class="handwriting-letter" style="animation-delay:5102ms;animation-duration:320ms">r</tspan><tspan class="handwriting-letter" style="animation-delay:5118ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:5134ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:5150ms;animation-duration:320ms">u</tspan><tspan class="handwriting-letter" style="animation-delay:5166ms;animation-duration:320ms">t</tspan><tspan class="handwriting-letter" style="animation-delay:5182ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:5198ms;animation-duration:320ms">s</tspan><tspan class="handwriting-letter" style="animation-delay:5214ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:5230ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:5246ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:5262ms;animation-duration:320ms">g</tspan><tspan class="handwriting-letter" style="animation-delay:5278ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:5294ms;animation-duration:320ms">t</tspan><tspan class="handwriting-letter" style="animation-delay:5310ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:5326ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:5342ms;animation-duration:320ms">s</tspan><tspan class="handwriting-letter" style="animation-delay:5358ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:5374ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:5390ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:5406ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:5422ms;animation-duration:320ms">u</tspan><tspan class="handwriting-letter" style="animation-delay:5438ms;animation-duration:320ms">t</tspan><tspan class="handwriting-letter" style="animation-delay:5454ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:5470ms;animation-duration:320ms">m</tspan><tspan class="handwriting-letter" style="animation-delay:5486ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:5502ms;animation-duration:320ms">ç</tspan><tspan class="handwriting-letter" style="animation-delay:5518ms;animation-duration:320ms">õ</tspan><tspan class="handwriting-letter" style="animation-delay:5534ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:5550ms;animation-duration:320ms">s</tspan><tspan class="handwriting-letter" style="animation-delay:5566ms;animation-duration:320ms">.</tspan></text>
 <text x="20" y="264" font-size="18" fill="#ef8fb4" class="pink handwriting-line" text-anchor="start" xml:space="preserve"><tspan class="handwriting-letter" style="animation-delay:5976ms;animation-duration:320ms">B</tspan><tspan class="handwriting-letter" style="animation-delay:5992ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:6008ms;animation-duration:320ms">c</tspan><tspan class="handwriting-letter" style="animation-delay:6024ms;animation-duration:320ms">k</tspan><tspan class="handwriting-letter" style="animation-delay:6040ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:6056ms;animation-duration:320ms">n</tspan><tspan class="handwriting-letter" style="animation-delay:6072ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:6088ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:6104ms;animation-duration:320ms">/</tspan><tspan class="handwriting-letter" style="animation-delay:6120ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:6136ms;animation-duration:320ms">C</tspan><tspan class="handwriting-letter" style="animation-delay:6152ms;animation-duration:320ms">l</tspan><tspan class="handwriting-letter" style="animation-delay:6168ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:6184ms;animation-duration:320ms">u</tspan><tspan class="handwriting-letter" style="animation-delay:6200ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:6216ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:6232ms;animation-duration:320ms">/</tspan><tspan class="handwriting-letter" style="animation-delay:6248ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:6264ms;animation-duration:320ms">I</tspan><tspan class="handwriting-letter" style="animation-delay:6280ms;animation-duration:320ms">A</tspan><tspan class="handwriting-letter" style="animation-delay:6296ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:6312ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:6328ms;animation-duration:320ms">p</tspan><tspan class="handwriting-letter" style="animation-delay:6344ms;animation-duration:320ms">l</tspan><tspan class="handwriting-letter" style="animation-delay:6360ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:6376ms;animation-duration:320ms">c</tspan><tspan class="handwriting-letter" style="animation-delay:6392ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:6408ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:6424ms;animation-duration:320ms">a</tspan></text>
 </g>
-<path d="M20 280L420 280" class="rule" stroke="#3d3342" fill="none"/>
+<path d="M20 280L420 280" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
 <g data-panel="contributions" data-bounds="0 296 440 368">
 <text x="20" y="324" font-size="20" fill="#f05c73" class="accent" text-anchor="start">Contribuições</text>
 <text x="20" y="350" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">2025-10-07 / 2026-10-06</text>
@@ -1217,7 +1225,19 @@ text{fill:#24292f}
 <text x="386" y="646" font-size="11" fill="#a5a1ad" class="muted" text-anchor="start">mais</text>
 </g>
 <g data-panel="stats" data-bounds="0 680 440 204">
+<g data-command="$ github --stats">
+<g class="decode-frame decode-frame-0" opacity="0" aria-hidden="true">
+<text x="20" y="708" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ gi01#_ --01#_0</text>
+</g>
+<g class="decode-frame decode-frame-1" opacity="0" aria-hidden="true">
+<text x="20" y="708" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ github --1#_01</text>
+</g>
+<g class="decode-frame decode-frame-2" opacity="0" aria-hidden="true">
+<text x="20" y="708" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ github --st01#</text>
+</g>
+<g class="decode-final">
 <text x="20" y="708" font-size="20" fill="#f05c73" class="accent" text-anchor="start">$ github --stats</text>
+</g></g>
 <text x="20" y="734" font-size="12" fill="#a5a1ad" class="muted" text-anchor="start">snapshot / 2026-10-06</text>
 <text x="20" y="776" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">17</text>
 <text x="20" y="802" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Repos públicos</text>
@@ -1227,30 +1247,51 @@ text{fill:#24292f}
 <text x="20" y="868" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Following</text>
 <text x="228" y="842" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">1</text>
 <text x="228" y="868" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Stars recebidas</text>
-<path d="M20 814L420 814" class="rule" stroke="#3d3342" fill="none"/>
+<path d="M20 814L420 814" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
 </g>
-<path d="M20 884L420 884" class="rule" stroke="#3d3342" fill="none"/>
+<path d="M20 884L420 884" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
 <g data-panel="stack" data-bounds="0 900 440 284">
+<g data-command="$ cat stack.json">
 <g class="decode-frame decode-frame-0" opacity="0" aria-hidden="true">
-<text x="20" y="928" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ cat st#c_.j#on</text>
+<text x="20" y="928" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ cat 1#_01.#_01</text>
 </g>
 <g class="decode-frame decode-frame-1" opacity="0" aria-hidden="true">
-<text x="20" y="928" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ cat stac_.js#n</text>
+<text x="20" y="928" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ cat sta1#._01#</text>
 </g>
 <g class="decode-frame decode-frame-2" opacity="0" aria-hidden="true">
-<text x="20" y="928" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ cat stack.jso_</text>
+<text x="20" y="928" font-size="20" fill="#a5a1ad" class="muted" text-anchor="start">$ cat stack.j1#_</text>
 </g>
 <g class="decode-final">
 <text x="20" y="928" font-size="20" fill="#f05c73" class="accent" text-anchor="start">$ cat stack.json</text>
-</g>
+</g></g>
 <text x="20" y="958" font-size="15" fill="#a5a1ad" class="muted" text-anchor="start">Languages</text>
+<defs><clipPath id="stack-row-0" clipPathUnits="userSpaceOnUse"><rect x="20" y="966" width="324.4" height="26" class="stack-aperture" style="transform-origin:20px 966px;animation-delay:1000ms"/></clipPath></defs>
+<g class="stack-values" clip-path="url(#stack-row-0)">
 <text x="20" y="986" font-size="20" fill="#f3ece8" class="" text-anchor="start">Java / Python / TypeScript</text>
+</g>
+<path d="M20 966V992" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:324.4px;animation-delay:1000ms"/>
+<defs><clipPath id="stack-row-1" clipPathUnits="userSpaceOnUse"><rect x="20" y="992" width="188" height="26" class="stack-aperture" style="transform-origin:20px 992px;animation-delay:1150ms"/></clipPath></defs>
+<g class="stack-values" clip-path="url(#stack-row-1)">
 <text x="20" y="1012" font-size="20" fill="#f3ece8" class="" text-anchor="start">JavaScript / Go</text>
+</g>
+<path d="M20 992V1018" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:188px;animation-delay:1150ms"/>
 <text x="20" y="1046" font-size="15" fill="#a5a1ad" class="muted" text-anchor="start">Backend + data</text>
+<defs><clipPath id="stack-row-2" clipPathUnits="userSpaceOnUse"><rect x="20" y="1054" width="324.4" height="26" class="stack-aperture" style="transform-origin:20px 1054px;animation-delay:1300ms"/></clipPath></defs>
+<g class="stack-values" clip-path="url(#stack-row-2)">
 <text x="20" y="1074" font-size="20" fill="#f3ece8" class="" text-anchor="start">Node.js / Spring / Express</text>
+</g>
+<path d="M20 1054V1080" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:324.4px;animation-delay:1300ms"/>
+<defs><clipPath id="stack-row-3" clipPathUnits="userSpaceOnUse"><rect x="20" y="1080" width="274.8" height="26" class="stack-aperture" style="transform-origin:20px 1080px;animation-delay:1450ms"/></clipPath></defs>
+<g class="stack-values" clip-path="url(#stack-row-3)">
 <text x="20" y="1100" font-size="20" fill="#f3ece8" class="" text-anchor="start">APIs REST / PostgreSQL</text>
+</g>
+<path d="M20 1080V1106" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:274.8px;animation-delay:1450ms"/>
 <text x="20" y="1134" font-size="15" fill="#a5a1ad" class="muted" text-anchor="start">Tools</text>
+<defs><clipPath id="stack-row-4" clipPathUnits="userSpaceOnUse"><rect x="20" y="1146" width="370.28" height="23.4" class="stack-aperture" style="transform-origin:20px 1146px;animation-delay:1600ms"/></clipPath></defs>
+<g class="stack-values" clip-path="url(#stack-row-4)">
 <text x="20" y="1164" font-size="18" fill="#f3ece8" class="" text-anchor="start">Linux / Git / GitHub / Jira / n8n</text>
+</g>
+<path d="M20 1146V1169.4" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:370.28px;animation-delay:1600ms"/>
 </g>
 <text x="20" y="1208" font-size="12" fill="#a5a1ad" class="muted" text-anchor="start">GitHub / calendário consultado em 2026-10-06</text>
 </svg>

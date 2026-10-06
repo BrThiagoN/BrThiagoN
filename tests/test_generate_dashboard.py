@@ -238,7 +238,7 @@ class DashboardTests(unittest.TestCase):
             for mobile in (False, True):
                 data = {**self.snapshot, 'contributions':calendar}
                 root = ET.fromstring(dashboard.render_svg(self.config, data, None, mobile))
-                cells = root.findall('.//svg:rect[@style]', NS)
+                cells = [node for node in root.findall('.//svg:rect', NS) if 'contribution-cell' in node.attrib.get('class', '')]
                 self.assertEqual(len(cells), len(calendar['days']))
                 columns = {}
                 for cell in cells:
@@ -314,22 +314,35 @@ class DashboardTests(unittest.TestCase):
             self.assertNotIn('infinite', styles)
             self.assertNotIn('handwriting', dashboard.svg_styles(animate=False))
 
-    def test_stack_decode_keeps_correct_fallback_and_decorative_frames(self):
+    def test_all_commands_decode_with_correct_fallback_and_decorative_frames(self):
         for mobile in (False, True):
             root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
-            stack = root.find('svg:g[@data-panel="stack"]', NS)
-            frames = stack.findall('svg:g[@aria-hidden="true"]', NS)
-            self.assertEqual(len(frames), 3)
-            self.assertEqual([frame.find('svg:text', NS).text for frame in frames], list(dashboard.STACK_DECODE_FRAMES))
-            self.assertTrue(all(frame.attrib['opacity'] == '0' for frame in frames))
-            final = stack.find('svg:g[@class="decode-final"]/svg:text', NS)
-            self.assertEqual(final.text, '$ cat stack.json')
-            self.assertNotIn('opacity', final.attrib)
-            for frame in frames:
-                text = frame.find('svg:text', NS)
-                self.assertEqual(len(text.text), len(final.text))
-                for key in ('x', 'y', 'font-size', 'text-anchor'):
-                    self.assertEqual(text.attrib[key], final.attrib[key])
+            commands = root.findall('.//svg:g[@data-command]', NS)
+            suffix = '-mobile' if mobile else ''
+            outputs = dashboard.render_footer_assets(self.config)
+            for key in ('projects-heading', 'contact-heading'):
+                footer = ET.fromstring(outputs[f'footer/{key}{suffix}.svg'])
+                commands.extend(footer.findall('.//svg:g[@data-command]', NS))
+            self.assertEqual([node.attrib['data-command'] for node in commands], ['$ github --stats', '$ cat stack.json', '$ ls ~/featured-projects', '$ contact'])
+            for command in commands:
+                frames = command.findall('svg:g[@aria-hidden="true"]', NS)
+                value = command.attrib['data-command']
+                self.assertEqual(len(frames), 3)
+                self.assertEqual([frame.find('svg:text', NS).text for frame in frames], list(dashboard.command_frames(value)))
+                self.assertTrue(all(frame.attrib['opacity'] == '0' for frame in frames))
+                final = command.find('svg:g[@class="decode-final"]/svg:text', NS)
+                self.assertEqual(final.text, value)
+                self.assertNotIn('opacity', final.attrib)
+                resolved = []
+                for frame in frames:
+                    text = frame.find('svg:text', NS)
+                    self.assertEqual(len(text.text), len(value))
+                    resolved.append({index for index, character in enumerate(text.text) if character == value[index]})
+                    self.assertTrue(all(text.text[index] == character for index, character in enumerate(value) if not character.isalnum()))
+                    for key in ('x', 'y', 'font-size', 'text-anchor'):
+                        self.assertEqual(text.attrib[key], final.attrib[key])
+                self.assertLess(resolved[0], resolved[1])
+                self.assertLess(resolved[1], resolved[2])
             styles = root.find('svg:style', NS).text
             motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
             self.assertIn('.decode-final{animation:decode-resolved', motion)
@@ -337,13 +350,74 @@ class DashboardTests(unittest.TestCase):
             self.assertLessEqual(dashboard.DECODE_START_MS + dashboard.DECODE_DURATION_MS, 1200)
             self.assertNotIn('decode-', dashboard.svg_styles(animate=False))
 
+    def test_horizontal_dividers_draw_left_to_right_with_static_fallback(self):
+        documents = [dashboard.render_svg(self.config, self.snapshot, None, mobile) for mobile in (False, True)]
+        documents += list(dashboard.render_footer_assets(self.config).values())
+        count = 0
+        for content in documents:
+            root = ET.fromstring(content)
+            for line in root.findall('.//svg:path', NS):
+                if 'rule' not in line.attrib.get('class', '').split():
+                    continue
+                x1, y1, x2, y2 = map(float, re.fullmatch(r'M([\d.]+) ([\d.]+)L([\d.]+) ([\d.]+)', line.attrib['d']).groups())
+                self.assertNotIn('stroke-dashoffset', line.attrib)
+                self.assertNotIn('stroke-dasharray', line.attrib)
+                if y1 == y2:
+                    self.assertGreater(x2, x1)
+                    self.assertIn('divider', line.attrib['class'])
+                    self.assertEqual(line.attrib['pathLength'], '1')
+                    count += 1
+                else:
+                    self.assertEqual(x1, x2)
+                    self.assertNotIn('divider', line.attrib['class'])
+        self.assertEqual(count, 13)  # Main desktop/mobile (2/3), eight project rows.
+        motion = dashboard.svg_styles().split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+        self.assertIn('.divider{stroke-dasharray:1;animation:divider-draw', motion)
+        self.assertIn('from{stroke-dashoffset:1}to{stroke-dashoffset:0}', dashboard.svg_styles())
+        self.assertNotIn('divider-draw', dashboard.svg_styles(animate=False))
+
+    def test_stack_scanner_preserves_real_text_and_complete_fallback(self):
+        for mobile in (False, True):
+            root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
+            stack = root.find('svg:g[@data-panel="stack"]', NS)
+            values = stack.findall('svg:g[@class="stack-values"]', NS)
+            clips = stack.findall('svg:defs/svg:clipPath', NS)
+            scans = stack.findall('svg:path[@class="stack-scan"]', NS)
+            self.assertEqual(len(values), 5 if mobile else 4)
+            self.assertEqual(len(values), len(clips))
+            self.assertEqual(len(values), len(scans))
+            all_text = ' / '.join(value.find('svg:text', NS).text for value in values)
+            for key in ('languages', 'backend', 'data', 'tools'):
+                for technology in self.config[key]:
+                    self.assertIn(technology, all_text)
+            for index, (value, clip, scan) in enumerate(zip(values, clips, scans)):
+                rect = clip.find('svg:rect', NS)
+                text = value.find('svg:text', NS)
+                self.assertEqual(value.attrib['clip-path'], f'url(#{clip.attrib["id"]})')
+                self.assertEqual(clip.attrib['clipPathUnits'], 'userSpaceOnUse')
+                self.assertNotIn('opacity', value.attrib)
+                self.assertNotIn('transform', rect.attrib)
+                self.assertEqual(rect.attrib['x'], text.attrib['x'])
+                self.assertGreater(float(rect.attrib['width']), len(text.text) * float(text.attrib['font-size']) * .62)
+                delay = dashboard.STACK_START_MS + index * dashboard.STACK_ROW_STEP_MS
+                self.assertEqual(rect.attrib['style'], f'transform-origin:{rect.attrib["x"]}px {rect.attrib["y"]}px;animation-delay:{delay}ms')
+                self.assertIn(f'animation-delay:{delay}ms', scan.attrib['style'])
+                self.assertEqual(scan.attrib['opacity'], '0')
+                self.assertEqual(scan.attrib['aria-hidden'], 'true')
+                self.assertLess(delay + dashboard.STACK_SCAN_DURATION_MS, 3000)
+            motion = root.find('svg:style', NS).text.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+            self.assertIn('.stack-aperture{transform-box:view-box;', motion)
+            self.assertRegex(motion, r'\.stack-scan\{animation:stack-register \d+ms steps\(18,end\) forwards\}')
+            self.assertIn('steps(18,end)', motion)
+            self.assertNotIn('stack-reveal', dashboard.svg_styles(animate=False))
+
     def test_seal_fragments_partition_original_artwork_and_keep_complete_fallback(self):
         original = ET.parse(dashboard.ROOT / 'assets/development-mark.svg').getroot()
         for mobile in (False, True):
             root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
             ink = root.find('.//svg:g[@id="development-ink"]', NS)
             self.assertEqual([node.attrib['d'] for node in ink.findall('svg:path', NS)], [node.attrib['d'] for node in original.findall('svg:path', NS)])
-            clips = root.findall('.//svg:clipPath', NS)
+            clips = [clip for clip in root.findall('.//svg:clipPath', NS) if clip.attrib['id'].startswith('seal-tile-')]
             self.assertEqual(len(clips), 8)
             rectangles = [tuple(float(node.attrib[key]) for key in ('x', 'y', 'width', 'height')) for clip in clips for node in clip.findall('svg:rect', NS)]
             self.assertEqual(set(rectangles), {(x, y, 60, 36) for x in (0, 60) for y in (0, 36, 72, 108)})
@@ -399,7 +473,8 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual((dashboard.ROOT / 'assets' / path).read_text(), content)
             root = ET.fromstring(content)
             self.assertEqual(root.findall('svg:rect', NS), [])
-            self.assertNotIn('@keyframes', content)
+            if Path(path).stem.removesuffix('-mobile') in ('linkedin', 'email', 'github'):
+                self.assertNotIn('@keyframes', content)
             for group in root.findall('svg:g', NS):
                 x, y, width, height = map(float, group.attrib['data-bounds'].split())
                 for node in group.findall('.//svg:text', NS):

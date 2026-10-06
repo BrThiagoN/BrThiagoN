@@ -52,7 +52,11 @@ WRITE_LINE_GAP_MS = 90
 DECODE_START_MS = 100
 DECODE_DURATION_MS = 900
 STACK_COMMAND = '$ cat stack.json'
-STACK_DECODE_FRAMES = ('$ cat st#c_.j#on', '$ cat stac_.js#n', '$ cat stack.jso_')
+DIVIDER_START_MS = 120
+DIVIDER_DURATION_MS = 900
+STACK_START_MS = DECODE_START_MS + DECODE_DURATION_MS
+STACK_SCAN_DURATION_MS = 900
+STACK_ROW_STEP_MS = 150
 SEAL_START_MS = 100
 SEAL_FRAGMENT_DURATION_MS = 220
 SEAL_FRAGMENT_STEP_MS = 90
@@ -342,6 +346,21 @@ def write_if_changed(path: Path, content: bytes) -> bool:
     return True
 
 
+def command_frames(command: str) -> tuple[str, ...]:
+    """Resolve command letters progressively without changing spacing or width."""
+    if not command.startswith('$ '):
+        raise DataError('A decodificação exige um comando iniciado por "$ ".')
+    letters = [index for index, character in enumerate(command) if character.isalnum()]
+    frames = []
+    for stage, fraction in enumerate((.25, .55, .8)):
+        frame = list(command)
+        for position, index in enumerate(letters):
+            if position >= int(len(letters) * fraction):
+                frame[index] = '#_01'[(position + stage) % 4]
+        frames.append(''.join(frame))
+    return tuple(frames)
+
+
 def svg_styles(theme: str | None = None, animate: bool = True) -> str:
     """Adaptive image CSS; an explicit theme is only used by local PNG previews.
 
@@ -361,6 +380,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
         rules.extend(f'.level-{i}{{fill:{color}}}' for i, color in enumerate(palette['levels']))
         if animate:
             rules.extend((
+                f'.stack-scan{{stroke:{palette["pink"]}}}',
                 f'.handwriting-line{{stroke:{palette["foreground"]}}}',
                 f'.handwriting-line.muted{{stroke:{palette["muted"]}}}',
                 f'.handwriting-line.pink{{stroke:{palette["pink"]}}}',
@@ -386,6 +406,9 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '.decode-frame-0{animation-name:decode-stage-0}\n'
             '.decode-frame-1{animation-name:decode-stage-1}\n'
             '.decode-frame-2{animation-name:decode-stage-2}\n'
+            f'.divider{{stroke-dasharray:1;animation:divider-draw {DIVIDER_DURATION_MS}ms cubic-bezier(.4,0,.2,1) {DIVIDER_START_MS}ms both}}\n'
+            f'.stack-aperture{{transform-box:view-box;animation:stack-reveal {STACK_SCAN_DURATION_MS}ms steps(18,end) both}}\n'
+            f'.stack-scan{{animation:stack-register {STACK_SCAN_DURATION_MS}ms steps(18,end) forwards}}\n'
             f'.seal-final{{animation:decode-resolved {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-pieces{{animation:seal-pieces {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
@@ -396,6 +419,9 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '@keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}',
             '@keyframes decode-stage-1{0%{opacity:0}33.333%{opacity:1}66.667%{opacity:0}100%{opacity:0}}',
             '@keyframes decode-stage-2{0%{opacity:0}66.667%{opacity:1}100%{opacity:0}}',
+            '@keyframes divider-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}',
+            '@keyframes stack-reveal{from{transform:scaleX(0)}to{transform:scaleX(1)}}',
+            '@keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}',
             '@keyframes seal-pieces{from{opacity:1}to{opacity:0}}',
             '@keyframes seal-fragment{from{opacity:0}to{opacity:1}}',
         ])
@@ -408,6 +434,7 @@ class Canvas:
     def __init__(self, width: int, height: int, config: dict, title=None, description=None, animate=True):
         self.width, self.height = width, height
         self.writing_cursor = WRITE_START_MS
+        self.stack_rows = 0
         name = ' '.join(config['name'])
         title = title or f'{name} / engineering profile'
         description = description or f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
@@ -443,30 +470,44 @@ class Canvas:
         self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" fill="{fill}" class="{style}" text-anchor="{anchor}"{decoration}>{content}</text>')
 
     def line(self, x1, y1, x2, y2):
-        self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" class="rule" stroke="{THEMES["dark"]["rule"]}" fill="none"/>')
+        horizontal = y1 == y2 and x2 > x1
+        attributes = ' class="rule divider" pathLength="1"' if horizontal else ' class="rule"'
+        self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}"{attributes} stroke="{THEMES["dark"]["rule"]}" fill="none"/>')
 
     def group(self, name, x, y, width, height):
         self.parts.append(f'<g data-panel="{name}" data-bounds="{x} {y} {width} {height}">')
 
-    def panel(self, name, x, y, width, height, title, mobile=False, decode=False):
+    def panel(self, name, x, y, width, height, title, mobile=False):
         self.group(name, x, y, width, height)
         left, size = x + (20 if mobile else 24), 20 if mobile else 18
-        if decode:
-            self.decode_command(left, y + 28, title, STACK_DECODE_FRAMES, size)
+        if title.startswith('$ '):
+            self.decode_command(left, y + 28, title, size)
         else:
             self.text(left, y + 28, title, size, 'accent')
 
-    def decode_command(self, x, y, value, frames, size):
+    def decode_command(self, x, y, value, size):
         """Hidden deterministic frames are decorative; correct text is the fallback."""
-        if any(len(frame) != len(value) for frame in frames):
-            raise DataError('Estados da decodificação precisam conservar a largura do comando.')
-        for index, frame in enumerate(frames):
+        self.parts.append(f'<g data-command="{escape(value, quote=True)}">')
+        for index, frame in enumerate(command_frames(value)):
             self.parts.append(f'<g class="decode-frame decode-frame-{index}" opacity="0" aria-hidden="true">')
             self.text(x, y, frame, size, 'muted')
             self.parts.append('</g>')
         self.parts.append('<g class="decode-final">')
         self.text(x, y, value, size, 'accent')
+        self.parts.append('</g></g>')
+
+    def stack_text(self, x, y, value, size):
+        """A local clipping aperture and registration line reveal each real row."""
+        index = self.stack_rows
+        self.stack_rows += 1
+        delay = STACK_START_MS + index * STACK_ROW_STEP_MS
+        width, top, height = len(value) * size * .62 + 2, y - size, size * 1.3
+        # Explicit user-space origin keeps the aperture edge aligned with the scan.
+        self.parts.append(f'<defs><clipPath id="stack-row-{index}" clipPathUnits="userSpaceOnUse"><rect x="{x:g}" y="{top:g}" width="{width:g}" height="{height:g}" class="stack-aperture" style="transform-origin:{x:g}px {top:g}px;animation-delay:{delay}ms"/></clipPath></defs>')
+        self.parts.append(f'<g class="stack-values" clip-path="url(#stack-row-{index})">')
+        self.text(x, y, value, size)
         self.parts.append('</g>')
+        self.parts.append(f'<path d="M{x:g} {top:g}V{top + height:g}" class="stack-scan" stroke="{THEMES["dark"]["pink"]}" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:{width:g}px;animation-delay:{delay}ms"/>')
 
     def end_panel(self):
         self.parts.append('</g>')
@@ -597,16 +638,16 @@ def render_contributions(svg: Canvas, data: dict, mobile=False):
 
 def render_stack(svg: Canvas, config: dict, mobile=False):
     x, y, width, height = (0, 900, 440, 284) if mobile else (0, 600, 880, 164)
-    svg.panel('stack', x, y, width, height, STACK_COMMAND, mobile, decode=True)
+    svg.panel('stack', x, y, width, height, STACK_COMMAND, mobile)
     if mobile:
         svg.text(20, y + 58, 'Languages', 15, 'muted')
-        svg.text(20, y + 86, ' / '.join(config['languages'][:3]), 20)
-        svg.text(20, y + 112, ' / '.join(config['languages'][3:]), 20)
+        svg.stack_text(20, y + 86, ' / '.join(config['languages'][:3]), 20)
+        svg.stack_text(20, y + 112, ' / '.join(config['languages'][3:]), 20)
         svg.text(20, y + 146, 'Backend + data', 15, 'muted')
-        svg.text(20, y + 174, ' / '.join(config['backend']), 20)
-        svg.text(20, y + 200, ' / '.join(config['data']), 20)
+        svg.stack_text(20, y + 174, ' / '.join(config['backend']), 20)
+        svg.stack_text(20, y + 200, ' / '.join(config['data']), 20)
         svg.text(20, y + 234, 'Tools', 15, 'muted')
-        svg.text(20, y + 264, ' / '.join(config['tools']), 18)
+        svg.stack_text(20, y + 264, ' / '.join(config['tools']), 18)
     else:
         rows = (
             ('languages', config['languages']),
@@ -617,7 +658,7 @@ def render_stack(svg: Canvas, config: dict, mobile=False):
         for i, (label, values) in enumerate(rows):
             baseline = y + 66 + i * 26
             svg.text(24, baseline, label, 14, 'muted')
-            svg.text(176, baseline, ' / '.join(values), 17)
+            svg.stack_text(176, baseline, ' / '.join(values), 17)
     svg.end_panel()
 
 
@@ -667,7 +708,7 @@ def render_project(config: dict, project: dict, mobile=False) -> str:
     baseline = 88 if mobile else 60
     lines = wrap_svg_text(project['description'], width - padding * 2, size)
     height = ((baseline + max(0, len(lines) - 1) * 24 + 24 + 7) // 8) * 8
-    svg = Canvas(width, height, config, title=project['name'], description=project['description'], animate=False)
+    svg = Canvas(width, height, config, title=project['name'], description=project['description'])
     svg.group('project', 0, 0, width, height)
     svg.text(padding, 28, project['name'], 20 if mobile else 18, 'pink', underline=True)
     stack = ' / '.join(project['stack'])
@@ -689,9 +730,9 @@ def render_footer_assets(config: dict) -> dict[str, str]:
         suffix = '-mobile' if mobile else ''
         width, padding = (440, 20) if mobile else (880, 24)
         for key, title in (('projects-heading', '$ ls ~/featured-projects'), ('contact-heading', '$ contact')):
-            svg = Canvas(width, 48, config, title=title, description=title, animate=False)
+            svg = Canvas(width, 48, config, title=title, description=title)
             svg.group('heading', 0, 0, width, 48)
-            svg.text(padding, 32, title, 20 if mobile else 18, 'accent')
+            svg.decode_command(padding, 32, title, 20 if mobile else 18)
             svg.end_panel()
             outputs[f'footer/{key}{suffix}.svg'] = svg.finish()
         for project in config['projects']:

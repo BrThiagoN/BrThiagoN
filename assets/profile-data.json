@@ -229,7 +229,7 @@
       {
         "count": 4,
         "date": "2025-11-21",
-        "level": 4
+        "level": 1
       },
       {
         "count": 0,
@@ -1829,7 +1829,7 @@
     ],
     "fetched_on": "2026-10-06",
     "from": "2025-10-07",
-    "source": "GitHub public contribution calendar · local bootstrap",
+    "source": "GitHub GraphQL API · token-visible contributions",
     "to": "2026-10-06",
     "total": 230
   },

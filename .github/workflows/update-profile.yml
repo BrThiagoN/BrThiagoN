@@ -74,7 +74,7 @@ jobs:
           PROFILE_BRANCH: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          git add -- assets/dashboard.svg assets/dashboard-mobile.svg assets/profile-data.json assets/avatar.jpg
+          git add -- assets/dashboard.svg assets/dashboard-mobile.svg assets/profile-data.json assets/avatar.jpg assets/footer/*.svg
           if git diff --cached --quiet; then
             echo "Profile assets unchanged."
             exit 0

@@ -6,20 +6,21 @@ O README apresenta o perfil e os quatro projetos originais. A composição visua
 
 | Arquivo | Responsabilidade |
 | --- | --- |
-| `scripts/profile.json` | Textos e stack declarada, derivados do README anterior. |
-| `scripts/generate_dashboard.py` | Consulta dados, valida snapshots e desenha os dois layouts. Python 3.12+, biblioteca padrão. |
+| `scripts/profile.json` | Textos, stack, descrições e destinos dos quatro projetos, derivados do README anterior. |
+| `scripts/generate_dashboard.py` | Consulta dados, valida snapshots e desenha o dashboard e as linhas do rodapé. Python 3.12+, biblioteca padrão. |
 | `assets/profile-data.json` | Último resultado válido de cada fonte, com período e data da consulta. Sem credenciais. |
 | `assets/avatar.jpg` | Avatar real preservado como asset; a interface do GitHub já mostra a foto fora do README. |
 | `assets/development-mark.svg` | Selo “開発” (desenvolvimento), com glifos convertidos em contornos SVG. |
 | `assets/dashboard.svg` | Documento para a coluna do README, `viewBox="0 0 880 808"`. |
 | `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 440 1224"`, com o mesmo calendário em duas faixas. |
+| `assets/footer/*.svg` | Títulos, linhas de projetos e links de contato; versões desktop/mobile, transparentes e com tema automático. |
 | `assets/previews/*.png` | Oito prévias estáticas: dashboard e retângulo do README, desktop/mobile, claro/escuro. |
 | `scripts/render_previews.py` | Ferramenta opcional de revisão local para exportar as prévias PNG com tema explícito e calendário completo. |
 | `docs/design-notes.md` | Paleta, tipografia, proporções e decisões da direção visual. |
 | `.github/workflows/update-profile.yml` | Validação e atualização diária, manual ou por push relevante. |
 | `tests/test_generate_dashboard.py` | Falhas de API, integridade de dados, segurança e limites dos painéis. |
 
-Edite os textos em `scripts/profile.json` e os projetos ou contatos clicáveis no README. Depois regenere os SVGs. Não edite os SVGs manualmente.
+Edite os textos, a stack e as descrições dos projetos em `scripts/profile.json`. Os destinos clicáveis e textos alternativos ficam nos atributos `href` e `alt` do README; ao alterar um projeto ou contato, mantenha-os consistentes com a configuração. Depois regenere os SVGs. Não edite os SVGs manualmente.
 
 ## Geração local
 
@@ -81,13 +82,15 @@ O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o
 
 A animação CSS só é ativada por `@media (prefers-reduced-motion: no-preference)`. Com movimento reduzido, CSS desativado ou renderizador sem animações, o calendário completo aparece imediatamente. PNGs são exportados sem animação e com tema explícito; mostram o estado final, enquanto o README usa os SVGs animados. Para observar a onda localmente, abra o SVG em um navegador e recarregue a página.
 
-SVGs exibidos por `<img>` não oferecem links internos clicáveis. Por isso os contatos permanecem em Markdown, junto aos projetos, abaixo do dashboard.
+SVGs exibidos por `<img>` não oferecem links internos clicáveis. Por isso cada projeto é uma imagem separada, envolvida por um `<a>` HTML para o seu repositório. Os contatos usam a mesma técnica. Toda a linha do projeto é clicável, e os links preservam o foco de teclado do navegador/GitHub. Os textos alternativos descrevem nome, stack e conteúdo, mantendo os links identificáveis se as imagens não carregarem. A API de Markdown do GitHub preservou os dez `<picture>` e os sete links HTML.
+
+O rodapé usa a mesma tipografia e paleta do dashboard, sem links azuis ou chips de código impostos pelo Markdown nativo. As linhas são estáticas, sem fundos, logos ou bordas de cards. As descrições quebram em menos de 80 caracteres; no celular, a stack fica abaixo do nome. Alterar textos regenera os SVGs do rodapé, e o workflow inclui esses arquivos no commit de atualização.
 
 Os textos foram revisados nos dois layouts e os testes verificam limites conservadores de fonte monoespaçada. As cores de texto têm contraste mínimo de 4,5:1 nos fundos do GitHub light, dark e dark dimmed. O calendário também é verificado com 54 semanas em um ano bissexto, para evitar cortes e sobreposição com a legenda.
 
 ### Prévias para revisão
 
-Estas imagens registram o layout com dados de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow. As prévias em contexto simulam a moldura do GitHub e o Markdown nativo, sem representar uma versão publicada.
+Estas imagens registram o layout com dados de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow. As prévias em contexto leem a composição real de imagens do README e simulam a moldura do GitHub, sem representar uma versão publicada.
 
 | Tema | README desktop (896 px) | README mobile (390 px) |
 | --- | --- | --- |
@@ -109,7 +112,7 @@ As exportações isoladas do dashboard preservam a transparência:
 | Escuro | [Abrir PNG](../assets/previews/dashboard-desktop.png) | [Abrir PNG](../assets/previews/dashboard-mobile.png) |
 | Claro | [Abrir PNG](../assets/previews/dashboard-desktop-light.png) | [Abrir PNG](../assets/previews/dashboard-mobile-light.png) |
 
-Para refazer as prévias em uma máquina com PyGObject/GdkPixbuf e pycairo disponíveis no sistema:
+Para refazer as prévias em uma máquina com PyGObject/GdkPixbuf disponíveis no sistema:
 
 ```sh
 python3 scripts/render_previews.py

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="112" viewBox="0 0 880 112" role="img" aria-labelledby="title description">
+<title id="title">Serah</title>
+<desc id="description">Extensão do Chrome para verificar informações com IA e respostas em JSON. Vice-campeão da 2ª edição do hackathon da EJUV.</desc>
+<style>
+text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+.display{font-family:"Bahnschrift","DIN Condensed","Nimbus Sans Narrow","Arial Narrow","Liberation Sans Narrow",sans-serif;font-weight:700}
+.strong{font-weight:700}
+text{fill:#f3ece8}
+.muted{fill:#a5a1ad}
+.accent,.accent-fill{fill:#f05c73}
+.pink{fill:#ef8fb4}
+.rule{stroke:#3d3342}
+.mark-outline{stroke:#803044}
+.level-0{fill:#1e1b26}
+.level-1{fill:#482437}
+.level-2{fill:#7b304c}
+.level-3{fill:#bf4b76}
+.level-4{fill:#ef8fb4}
+@media (prefers-color-scheme: light){
+text{fill:#24292f}
+.muted{fill:#59636e}
+.accent,.accent-fill{fill:#b91f45}
+.pink{fill:#96335f}
+.rule{stroke:#d1d9e0}
+.mark-outline{stroke:#dba7b6}
+.level-0{fill:#ebe8ee}
+.level-1{fill:#efc9d8}
+.level-2{fill:#d990af}
+.level-3{fill:#b9507e}
+.level-4{fill:#832044}
+}
+</style>
+<g data-panel="project" data-bounds="0 0 880 112">
+<text x="24" y="28" font-size="18" fill="#ef8fb4" class="pink" text-anchor="start">Serah</text>
+<text x="856" y="28" font-size="14" fill="#a5a1ad" class="muted" text-anchor="end">Go / JavaScript / LLM</text>
+<text x="24" y="60" font-size="16" fill="#f3ece8" class="" text-anchor="start">Extensão do Chrome para verificar informações com IA e respostas em JSON.</text>
+<text x="24" y="84" font-size="16" fill="#f3ece8" class="" text-anchor="start">Vice-campeão da 2ª edição do hackathon da EJUV.</text>
+</g>
+<path d="M24 111L856 111" class="rule" stroke="#3d3342" fill="none"/>
+</svg>

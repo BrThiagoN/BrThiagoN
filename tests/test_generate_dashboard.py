@@ -3,6 +3,7 @@
 from contextlib import redirect_stderr, redirect_stdout
 from copy import deepcopy
 from datetime import date, timedelta
+from html.parser import HTMLParser
 import io
 import json
 from pathlib import Path
@@ -297,6 +298,62 @@ class DashboardTests(unittest.TestCase):
         self.assertIn("mailto:" + self.config["contact"]["email"], readme)
         for repo in ("serah-googleExtension", "Limite-de-desempenho-de-API", "music-store-cli", "vinharia-agnelo-arduino"):
             self.assertIn(f"https://github.com/{self.config['login']}/{repo}", readme)
+
+    def test_footer_keeps_every_project_readable_and_links_clickable(self):
+        outputs = dashboard.render_footer_assets(self.config)
+        for path, content in outputs.items():
+            self.assertEqual((dashboard.ROOT / 'assets' / path).read_text(), content)
+            root = ET.fromstring(content)
+            self.assertEqual(root.findall('svg:rect', NS), [])
+            self.assertNotIn('@keyframes', content)
+            for group in root.findall('svg:g', NS):
+                x, y, width, height = map(float, group.attrib['data-bounds'].split())
+                for node in group.findall('.//svg:text', NS):
+                    left, baseline, size = float(node.attrib['x']), float(node.attrib['y']), float(node.attrib['font-size'])
+                    advance = len(node.text or '') * size * .62
+                    if node.attrib.get('text-anchor') == 'end':
+                        left -= advance
+                    self.assertGreaterEqual(left, x + 8, (path, node.text))
+                    self.assertLessEqual(left + advance, x + width - 8, (path, node.text))
+                    self.assertGreaterEqual(baseline - size, y + 8, (path, node.text))
+                    self.assertLessEqual(baseline + size * .25, y + height - 8, (path, node.text))
+        for project in self.config['projects']:
+            for suffix in ('', '-mobile'):
+                root = ET.fromstring(outputs[f'footer/{project["slug"]}{suffix}.svg'])
+                texts = [node.text for node in root.findall('.//svg:text', NS)]
+                self.assertEqual(texts[0], project['name'])
+                self.assertEqual(texts[1], ' / '.join(project['stack']))
+                self.assertEqual(' '.join(texts[2:]), project['description'])
+
+        class Links(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.target, self.links = None, {}
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == 'a':
+                    self.target = attrs['href']
+                elif tag == 'img' and self.target:
+                    self.links[self.target] = attrs['src']
+                if tag in ('img', 'source'):
+                    path = attrs.get('src') or attrs['srcset']
+                    self.assert_path(path)
+
+            def assert_path(self, path):
+                if not (dashboard.ROOT / path).is_file():
+                    raise AssertionError(f'Asset ausente no README: {path}')
+
+            def handle_endtag(self, tag):
+                if tag == 'a':
+                    self.target = None
+
+        links = Links()
+        links.feed((dashboard.ROOT / 'README.md').read_text())
+        for project in self.config['projects']:
+            self.assertEqual(links.links[project['url']], f'./assets/footer/{project["slug"]}.svg')
+        self.assertIn(self.config['contact']['linkedin'], links.links)
+        self.assertIn('mailto:' + self.config['contact']['email'], links.links)
 
 
 if __name__ == "__main__":

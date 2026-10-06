@@ -197,7 +197,7 @@ class DashboardTests(unittest.TestCase):
         config["name"][0] = '<script>&"'
         root = ET.fromstring(dashboard.render_svg(config, self.snapshot, None))
         self.assertEqual(root.findall(".//svg:script", NS), [])
-        self.assertIn('<script>&"', [node.text for node in root.findall(".//svg:text", NS)])
+        self.assertTrue(any('<script>&"' in (node.text or '') for node in root.findall(".//svg:text", NS)))
 
     def test_panel_text_bounds_in_both_layouts(self):
         # Conservative monospace advance (0.62 em) also covers Courier fallback.
@@ -228,10 +228,11 @@ class DashboardTests(unittest.TestCase):
             group = next(g for g in root.findall("svg:g", NS) if g.attrib.get("data-panel") == "contributions")
             x, y, width, height = map(float, group.attrib["data-bounds"].split())
             cells = group.findall("svg:g/svg:rect", NS)
+            legend_top = min(float(node.attrib['y']) for node in group.findall('svg:rect', NS))
             self.assertEqual(len(cells), len(days))
             for node in cells:
                 self.assertLessEqual(float(node.attrib["x"]) + float(node.attrib["width"]), x + width - 16)
-                self.assertLessEqual(float(node.attrib["y"]) + float(node.attrib["height"]), y + height - 41)
+                self.assertLessEqual(float(node.attrib["y"]) + float(node.attrib["height"]), legend_top - 8)
 
     def test_readme_paths_contacts_and_all_featured_links(self):
         readme = (dashboard.ROOT / "README.md").read_text()

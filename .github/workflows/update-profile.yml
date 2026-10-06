@@ -10,6 +10,7 @@ on:
       - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/update-profile.yml'
+      - 'assets/development-mark.svg'
   pull_request:
     branches: [main]
     paths:

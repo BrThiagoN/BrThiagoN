@@ -1,6 +1,6 @@
 # Manutenção do dashboard
 
-O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG, com tema escuro fixo, fontes monoespaçadas do sistema, avatar incorporado e nenhuma dependência de widgets externos.
+O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG, com tema escuro fixo, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. Não há dependência de widgets externos.
 
 ## Arquivos
 
@@ -9,10 +9,13 @@ O README apresenta o perfil e os quatro projetos originais. A composição visua
 | `scripts/profile.json` | Textos e stack declarada, derivados do README anterior. |
 | `scripts/generate_dashboard.py` | Consulta dados, valida snapshots e desenha os dois layouts. Python 3.12+, biblioteca padrão. |
 | `assets/profile-data.json` | Último resultado válido de cada fonte, com período e data da consulta. Sem credenciais. |
-| `assets/avatar.jpg` | Avatar real obtido do CDN do GitHub. Incorporado nos SVGs como JPEG. |
-| `assets/dashboard.svg` | Dashboard horizontal, `viewBox="0 0 1120 776"`. |
-| `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 520 1536"`, com o mesmo calendário em duas faixas. |
-| `assets/previews/*.png` | Prévias estáticas dos layouts desktop e mobile para revisão visual. |
+| `assets/avatar.jpg` | Avatar real preservado como asset; a interface do GitHub já mostra a foto fora do README. |
+| `assets/development-mark.svg` | Selo “開発” (desenvolvimento), com glifos convertidos em contornos SVG. |
+| `assets/dashboard.svg` | Documento para a coluna do README, `viewBox="0 0 880 808"`. |
+| `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 440 1224"`, com o mesmo calendário em duas faixas. |
+| `assets/previews/*.png` | Prévias estáticas do dashboard e do retângulo completo do README, em desktop e mobile. |
+| `scripts/render_previews.py` | Ferramenta opcional de revisão local para exportar as quatro prévias PNG. |
+| `docs/design-notes.md` | Paleta, tipografia, proporções e decisões da direção visual. |
 | `.github/workflows/update-profile.yml` | Validação e atualização diária, manual ou por push relevante. |
 | `tests/test_generate_dashboard.py` | Falhas de API, integridade de dados, segurança e limites dos painéis. |
 
@@ -58,7 +61,7 @@ Não são calculados streaks ou contagens de commits: eles acrescentariam defini
 
 ## Automação e segurança
 
-O workflow roda diariamente às **06:23 em São Paulo** (`09:23 UTC`), via `workflow_dispatch`, e em pushes relevantes na `main` ou em branches `feat/profile-*`. O agendamento do GitHub só entra em vigor depois do merge na branch padrão. Alterações de README e assets também são verificadas em pull requests.
+O workflow roda diariamente às **06:23 em São Paulo** (`09:23 UTC`), via `workflow_dispatch`, e em pushes relevantes na `main` ou em branches `feat/profile-*`. Alterações do selo vetorial também disparam a geração. O agendamento do GitHub só entra em vigor depois do merge na branch padrão. Alterações de README e assets também são verificadas em pull requests.
 
 O job de validação usa `contents: read`, sem credenciais persistidas. O job de atualização recebe apenas `contents: write`, necessário para commitar os assets. Pull requests executam somente a validação; nenhum código de PR recebe permissão de escrita.
 
@@ -70,7 +73,7 @@ Se a política da branch padrão proibir commits diretos, a geração continua v
 
 ## Compatibilidade e revisão visual
 
-O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o layout compacto. O `<img>` horizontal é o fallback. Os SVGs têm `viewBox`, título, descrição, textos XML escapados e avatar incorporado. Não usam JavaScript, `foreignObject`, fontes externas, animação ou imagens remotas.
+O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o layout compacto. O `<img>` desktop é o fallback. Os SVGs têm `viewBox`, título, descrição e textos XML escapados. O selo japonês usa contornos, sem exigir uma fonte CJK no navegador. Não usam JavaScript, `foreignObject`, fontes externas, animação ou imagens remotas.
 
 SVGs exibidos por `<img>` não oferecem links internos clicáveis. Por isso os contatos permanecem em Markdown, junto aos projetos, abaixo do dashboard.
 
@@ -78,7 +81,15 @@ Os textos foram revisados nos dois layouts e os testes verificam limites conserv
 
 ### Prévias para revisão
 
-Estas imagens registram o dashboard de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow.
+Estas imagens registram o layout com dados de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow. As prévias em contexto simulam a moldura do GitHub e o Markdown nativo, sem representar uma versão publicada.
+
+**README no desktop — moldura de 896 px, conteúdo de 848 px**
+
+![Prévia do README dentro do seu retângulo no GitHub](../assets/previews/readme-desktop.png)
+
+**README no celular — moldura de 390 px**
+
+![Prévia do README dentro do seu retângulo no celular](../assets/previews/readme-mobile.png)
 
 **Desktop**
 
@@ -87,5 +98,15 @@ Estas imagens registram o dashboard de **6 de outubro de 2026**. São exportaç�
 **Mobile**
 
 ![Prévia mobile do dashboard de Thiago Nascimento](../assets/previews/dashboard-mobile.png)
+
+Para refazer as prévias em uma máquina com PyGObject/GdkPixbuf e pycairo disponíveis no sistema:
+
+```sh
+python3 scripts/render_previews.py
+```
+
+Essas bibliotecas são usadas apenas na exportação PNG local. O gerador de dados e o workflow continuam usando exclusivamente a biblioteca padrão do Python.
+
+Os contornos do selo foram derivados da fonte Noto Sans CJK JP (Google, SIL Open Font License 1.1), disponível no sistema durante a criação. O asset versionado contém somente os contornos dos dois glifos, sem um arquivo de fonte. Fonte: [Noto CJK](https://github.com/notofonts/noto-cjk).
 
 Fontes técnicas: [contribuições na API GraphQL](https://docs.github.com/en/graphql/reference/users#contributioncalendar), [permissões e comportamento do GITHUB_TOKEN](https://docs.github.com/en/actions/concepts/security/github_token), [classificação de linguagens pelo Linguist](https://github.com/github-linguist/linguist/blob/main/docs/how-linguist-works.md).

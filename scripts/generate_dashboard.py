@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import base64
 from datetime import date, datetime, timedelta
 from html import escape
 from html.parser import HTMLParser
@@ -25,7 +24,7 @@ API = "https://api.github.com"
 TIMEOUT = 15
 MAX_RESPONSE = 4 * 1024 * 1024
 MONTHS = ("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez")
-LEVELS = ("#1d2732", "#0e4429", "#006d32", "#26a641", "#39d353")
+LEVELS = ("#1e1b26", "#482437", "#7b304c", "#bf4b76", "#ef8fb4")
 CONTRIBUTION_LEVELS = {
     "NONE": 0,
     "FIRST_QUARTILE": 1,
@@ -311,209 +310,208 @@ def write_if_changed(path: Path, content: bytes) -> bool:
 
 
 class Canvas:
-    """Small SVG writer; data never becomes unescaped SVG markup."""
+    """SVG document sized for the README column, with escaped text and local paths."""
 
     def __init__(self, width: int, height: int, config: dict):
         self.width, self.height = width, height
-        name = " ".join(config["name"])
-        description = f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Métricas e calendário com datas de snapshot do GitHub. Stack declarada, sem níveis de habilidade.'
+        name = ' '.join(config['name'])
+        description = f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
         self.parts = [
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">',
-            f'<title id="title">{escape(name)} · engineering dashboard</title>',
+            f'<title id="title">{escape(name)} / engineering profile</title>',
             f'<desc id="description">{escape(description)}</desc>',
-            '<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;fill:#c9d1d9} .strong{fill:#f0f6fc;font-weight:700} .muted{fill:#9da7b3} .accent{fill:#3fb950} .label{fill:#9da7b3;letter-spacing:1.2px}</style>',
+            '<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;fill:#f3ece8}.display{font-family:"Bahnschrift","DIN Condensed","Nimbus Sans Narrow","Arial Narrow","Liberation Sans Narrow",sans-serif;font-weight:700}.strong{font-weight:700}.muted{fill:#a5a1ad}.accent{fill:#ed4259}.pink{fill:#ef8fb4}</style>',
         ]
-        self.rect(0.5, 0.5, width - 1, height - 1, fill="#0d1117", radius=16, stroke="#30363d")
+        self.rect(0, 0, width, height, fill='#08090d')
 
-    def rect(self, x, y, width, height, fill="#10161e", radius=8, stroke="none"):
+    def rect(self, x, y, width, height, fill='#171820', radius=0, stroke='none'):
         self.parts.append(f'<rect x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" rx="{radius:g}" fill="{fill}" stroke="{stroke}"/>')
 
-    def text(self, x, y, value, size=16, style="", anchor="start"):
+    def text(self, x, y, value, size=16, style='', anchor='start'):
         self.parts.append(f'<text x="{x:g}" y="{y:g}" font-size="{size:g}" class="{style}" text-anchor="{anchor}">{escape(str(value))}</text>')
 
-    def line(self, x1, y1, x2, y2):
-        self.parts.append(f'<path d="M{x1:g} {y1:g}H{x2:g}" stroke="#26303b"/>' if y1 == y2 else f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" stroke="#26303b"/>')
+    def line(self, x1, y1, x2, y2, color='#302b36'):
+        self.parts.append(f'<path d="M{x1:g} {y1:g}L{x2:g} {y2:g}" stroke="{color}" fill="none"/>')
 
-    def panel(self, name, x, y, width, height, title, number, mobile=False):
+    def group(self, name, x, y, width, height):
         self.parts.append(f'<g data-panel="{name}" data-bounds="{x} {y} {width} {height}">')
-        self.rect(x, y, width, height, stroke="#26303b")
-        self.text(x + 24, y + 32, title, 20 if mobile else 16, "accent")
-        self.text(x + width - 24, y + 32, number, 12, "muted", "end")
-        self.line(x, y + 48, x + width, y + 48)
+
+    def panel(self, name, x, y, width, height, title, mobile=False):
+        self.group(name, x, y, width, height)
+        self.text(x + (20 if mobile else 24), y + 28, title, 20 if mobile else 18, 'accent')
 
     def end_panel(self):
-        self.parts.append("</g>")
+        self.parts.append('</g>')
 
-    def avatar(self, x, y, size, content: bytes | None):
-        self.rect(x - 2, y - 2, size + 4, size + 4, fill="#26303b", radius=(size + 4) / 2)
-        if content:
-            encoded = base64.b64encode(content).decode("ascii")
-            self.parts.append(f'<defs><clipPath id="avatar-clip"><circle cx="{x + size / 2:g}" cy="{y + size / 2:g}" r="{size / 2:g}"/></clipPath></defs>')
-            self.parts.append(f'<image x="{x}" y="{y}" width="{size}" height="{size}" href="data:image/jpeg;base64,{encoded}" clip-path="url(#avatar-clip)"/>')
-        else:
-            self.text(x + size / 2, y + size / 2 + 10, "TN", 28, "strong", "middle")
+    def development_mark(self, x, y, width):
+        mark = ET.parse(ROOT / 'assets/development-mark.svg').getroot()
+        scale = width / 120
+        self.parts.append(f'<g aria-label="開発 / desenvolvimento" transform="translate({x} {y}) scale({scale:g})">')
+        self.parts.append('<path d="M0 0H96L120 24V144H0Z" fill="none" stroke="#7b283b" stroke-width="1.5"/>')
+        for node in mark.findall('{http://www.w3.org/2000/svg}path'):
+            outline = node.attrib['d']
+            if not re.fullmatch(r'[MLCZ0-9.,\s-]+', outline):
+                raise DataError('Selo vetorial contém comandos inesperados.')
+            self.parts.append(f'<path d="{outline}" fill="#ed4259"/>')
+        self.parts.append('</g>')
 
     def finish(self) -> str:
-        self.parts.append("</svg>")
-        return "\n".join(self.parts) + "\n"
+        self.parts.append('</svg>')
+        return '\n'.join(self.parts) + '\n'
 
 
 def number(value: int | None) -> str:
-    return "—" if value is None else f"{value:,}".replace(",", ".")
+    return '—' if value is None else f'{value:,}'.replace(',', '.')
 
 
 def snapshot_label(data: dict) -> str:
-    dates = sorted({data[key]["fetched_on"] for key in ("profile", "repositories") if data.get(key)})
-    return "snapshot / " + (" · ".join(dates) if dates else "indisponível")
+    dates = sorted({data[key]['fetched_on'] for key in ('profile', 'repositories') if data.get(key)})
+    return 'snapshot / ' + (' · '.join(dates) if dates else 'indisponível')
 
 
-def render_stats(svg: Canvas, data: dict, x: int, y: int, width: int, mobile=False):
-    svg.panel("stats", x, y, width, 232 if mobile else 204, "$ github --stats", "03", mobile)
-    svg.text(x + 24, y + 72, snapshot_label(data), 15 if mobile else 10, "muted")
-    profile, repos = data.get("profile") or {}, data.get("repositories") or {}
+def render_stats(svg: Canvas, data: dict, mobile=False):
+    x, y, width, height = (0, 680, 440, 204) if mobile else (0, 456, 880, 128)
+    svg.panel('stats', x, y, width, height, '$ github --stats', mobile)
+    if mobile:
+        svg.text(20, y + 54, snapshot_label(data), 12, 'muted')
+    else:
+        svg.text(width - 24, y + 28, snapshot_label(data), 12, 'muted', 'end')
+    profile, repos = data.get('profile') or {}, data.get('repositories') or {}
     metrics = (
-        ("repos públicos", profile.get("public_repos")), ("followers", profile.get("followers")),
-        ("following", profile.get("following")), ("stars recebidas", repos.get("received_stars")),
+        ('Repos públicos', profile.get('public_repos')), ('Followers', profile.get('followers')),
+        ('Following', profile.get('following')), ('Stars recebidas', repos.get('received_stars')),
     )
-    cell_width = (width - 64) / 2
     for i, (label, value) in enumerate(metrics):
-        left, top = x + 24 + (i % 2) * (cell_width + 16), y + 88 + (i // 2) * (72 if mobile else 56)
-        svg.rect(left, top - 8, cell_width, 56 if mobile else 48, fill="#161b22", radius=4)
-        svg.text(left + 12, top + (18 if mobile else 15), number(value), 30 if mobile else 26, "strong" if i != 3 else "accent")
-        svg.text(left + 12, top + (40 if mobile else 33), label, 18 if mobile else 11, "muted")
+        if mobile:
+            left = 20 + (i % 2) * 208
+            top = y + 96 + (i // 2) * 66
+        else:
+            left, top = 24 + i * 208, y + 80
+        svg.text(left, top, number(value), 32, 'strong')
+        svg.text(left, top + 26, label, 17 if mobile else 14, 'muted')
+        if not mobile and i:
+            svg.line(left - 16, y + 54, left - 16, y + height - 16)
+    if mobile:
+        svg.line(20, y + 134, width - 20, y + 134)
     svg.end_panel()
 
 
 def calendar_weeks(calendar: dict) -> list[list[dict]]:
     weeks: dict[date, list[dict]] = {}
-    for day in calendar["days"]:
-        current = date.fromisoformat(day["date"])
+    for day in calendar['days']:
+        current = date.fromisoformat(day['date'])
         sunday = current - timedelta(days=(current.weekday() + 1) % 7)
         weeks.setdefault(sunday, []).append(day)
     return [weeks[key] for key in sorted(weeks)]
 
 
 def draw_weeks(svg: Canvas, weeks: list[list[dict]], x: int, y: int, pitch: float, cell: float, label_size: int):
-    for row, label in ((1, "Seg"), (3, "Qua"), (5, "Sex")):
-        svg.text(x - 12, y + row * pitch + cell, label, label_size, "muted", "end")
+    for row, label in ((1, 'Seg'), (3, 'Qua'), (5, 'Sex')):
+        svg.text(x - 12, y + row * pitch + cell, label, label_size, 'muted', 'end')
     previous_month, last_label = None, -100
     for column, week in enumerate(weeks):
         for day in week:
-            current = date.fromisoformat(day["date"])
+            current = date.fromisoformat(day['date'])
             if current.month != previous_month:
                 if column - last_label >= 3 and column < len(weeks) - 2:
-                    svg.text(x + column * pitch, y - 12, MONTHS[current.month - 1], label_size, "muted")
+                    svg.text(x + column * pitch, y - 12, MONTHS[current.month - 1], label_size, 'muted')
                     last_label = column
                 previous_month = current.month
             row = (current.weekday() + 1) % 7
             svg.parts.append(f'<g><title>{day["date"]}: {day["count"]} contribuições</title>')
-            svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day["level"]], radius=2)
-            svg.parts.append("</g>")
+            svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day['level']], radius=1)
+            svg.parts.append('</g>')
 
 
 def render_contributions(svg: Canvas, data: dict, mobile=False):
-    x, y, width, height = (16, 312, 488, 432) if mobile else (288, 76, 808, 244)
-    svg.panel("contributions", x, y, width, height, "$ ./contributions.sh", "01", mobile)
-    calendar = data.get("contributions")
+    x, y, width, height = (0, 296, 440, 368) if mobile else (0, 216, 880, 224)
+    svg.panel('contributions', x, y, width, height, 'Contribuições', mobile)
+    calendar = data.get('contributions')
     if not calendar:
-        svg.text(x + 24, y + 100, "Calendário indisponível.", 18 if mobile else 16, "muted")
-        svg.text(x + 24, y + 128, "Atualização automática via GitHub API.", 14, "muted")
+        svg.text(20 if mobile else 24, y + 80, 'Calendário indisponível.', 18, 'muted')
+        svg.text(20 if mobile else 24, y + 108, 'Atualização via GitHub API.', 15, 'muted')
         svg.end_panel()
         return
-    svg.text(x + 24, y + 72, f'{calendar["from"]} → {calendar["to"]}', 17 if mobile else 12, "muted")
+    period = f'{calendar["from"]} / {calendar["to"]}'
+    if mobile:
+        svg.text(20, y + 54, period, 14, 'muted')
+    else:
+        svg.text(width - 24, y + 28, period, 13, 'muted', 'end')
     weeks = calendar_weeks(calendar)
     if mobile:
         split = (len(weeks) + 1) // 2
-        draw_weeks(svg, weeks[:split], 72, 430, 15.5, 12, 16)
-        draw_weeks(svg, weeks[split:], 72, 590, 15.5, 12, 16)
+        draw_weeks(svg, weeks[:split], 60, 386, 13.3, 10, 14)
+        draw_weeks(svg, weeks[split:], 60, 524, 13.3, 10, 14)
     else:
-        pitch = min(14, (width - 76) / len(weeks))
-        draw_weeks(svg, weeks, 340, 180, pitch, min(11, pitch - 3), 11)
-    svg.text(x + 24, y + height - 22, f'{number(calendar["total"])} contribuições', 20 if mobile else 15, "strong")
-    legend_x = x + width - (144 if mobile else 168)
-    svg.text(legend_x - 10, y + height - 22, "menos", 11, "muted", "end")
+        pitch = min(15, (width - 84) / len(weeks))
+        draw_weeks(svg, weeks, 60, 308, pitch, min(12, pitch - 3), 12)
+    baseline = y + height - (18 if mobile else 12)
+    svg.text(20 if mobile else 24, baseline, f'{number(calendar["total"])} contribuições', 18 if mobile else 16, 'strong')
+    legend_x = width - (126 if mobile else 146)
+    svg.text(legend_x - 10, baseline, 'menos', 11, 'muted', 'end')
     for level, color in enumerate(LEVELS):
-        svg.rect(legend_x + level * 14, y + height - 33, 10, 10, fill=color, radius=2)
-    svg.text(legend_x + 78, y + height - 22, "mais", 11, "muted")
+        svg.rect(legend_x + level * 13, baseline - 10, 10, 10, fill=color, radius=1)
+    svg.text(legend_x + 72, baseline, 'mais', 11, 'muted')
     svg.end_panel()
 
 
 def render_stack(svg: Canvas, config: dict, mobile=False):
-    x, y, width, height = (16, 1228, 488, 264) if mobile else (288, 556, 808, 176)
-    svg.panel("stack", x, y, width, height, "$ cat stack.json", "04", mobile)
-    left, right = x + 24, x + (24 if mobile else 408)
-    label_y = y + 72
-    svg.text(left, label_y, "LANGUAGES", 16 if mobile else 11, "label")
-    svg.text(left, label_y + 26, " · ".join(config["languages"][:3]), 20 if mobile else 16)
-    svg.text(left, label_y + 52, " · ".join(config["languages"][3:]), 20 if mobile else 16)
-    backend_y = label_y + 82 if mobile else label_y
-    svg.text(right, backend_y, "BACKEND / DATA", 16 if mobile else 11, "label")
-    svg.text(right, backend_y + 26, " · ".join(config["backend"]), 20 if mobile else 16)
-    svg.text(right, backend_y + 52, " · ".join(config["data"]), 20 if mobile else 16)
-    tools_y = y + height - 22
-    svg.text(left, tools_y, "TOOLS", 16 if mobile else 11, "label")
-    svg.text(left + (80 if mobile else 64), tools_y, " · ".join(config["tools"]), 18 if mobile else 14)
+    x, y, width, height = (0, 900, 440, 284) if mobile else (0, 600, 880, 164)
+    svg.panel('stack', x, y, width, height, '$ cat stack.json', mobile)
+    if mobile:
+        svg.text(20, y + 58, 'Languages', 15, 'muted')
+        svg.text(20, y + 86, ' / '.join(config['languages'][:3]), 20)
+        svg.text(20, y + 112, ' / '.join(config['languages'][3:]), 20)
+        svg.text(20, y + 146, 'Backend + data', 15, 'muted')
+        svg.text(20, y + 174, ' / '.join(config['backend']), 20)
+        svg.text(20, y + 200, ' / '.join(config['data']), 20)
+        svg.text(20, y + 234, 'Tools', 15, 'muted')
+        svg.text(20, y + 264, ' / '.join(config['tools']), 18)
+    else:
+        rows = (
+            ('languages', config['languages']),
+            ('backend', config['backend'] + [config['data'][0]]),
+            ('data', config['data'][1:]),
+            ('tools', config['tools']),
+        )
+        for i, (label, values) in enumerate(rows):
+            baseline = y + 66 + i * 26
+            svg.text(24, baseline, label, 14, 'muted')
+            svg.text(176, baseline, ' / '.join(values), 17)
     svg.end_panel()
 
 
 def render_svg(config: dict, data: dict, avatar: bytes | None, mobile=False) -> str:
-    svg = Canvas(520 if mobile else 1120, 1536 if mobile else 776, config)
-    svg.text(24 if mobile else 32, 34, "thiago@github:~$ ./profile", 18 if mobile else 17, "accent")
-    if not mobile:
-        svg.text(1088, 34, "ENGINEERING / PROFILE", 12, "muted", "end")
-    svg.line(0, 56, svg.width, 56)
-
+    # The GitHub page already provides the profile sidebar and the real avatar.
+    svg = Canvas(440 if mobile else 880, 1224 if mobile else 808, config)
+    svg.group('profile', 0, 0, svg.width, 280 if mobile else 204)
+    svg.rect(0, 16, 3, 248 if mobile else 172, fill='#ed4259')
     if mobile:
-        svg.parts.append('<g data-panel="profile" data-bounds="16 72 488 224">')
-        svg.rect(16, 72, 488, 224, stroke="#26303b")
-        svg.avatar(40, 100, 88, avatar)
-        svg.text(152, 116, config["name"][0], 28, "strong")
-        svg.text(152, 150, config["name"][1], 28, "strong")
-        svg.text(152, 178, "@" + config["login"], 17, "muted")
-        svg.text(40, 222, "Engenharia de Software @ FIAP", 20)
-        svg.text(40, 250, "Backend · Cloud · IA aplicada", 20, "accent")
-        svg.text(40, 278, config["location"], 16, "muted")
+        svg.text(20, 60, config['name'][0], 46, 'display')
+        svg.text(20, 106, config['name'][1], 46, 'display')
+        svg.development_mark(344, 18, 76)
+        svg.text(20, 148, 'Engenharia de Software @ FIAP', 18, 'muted')
+        svg.text(20, 180, config['role'][0], 18)
+        svg.text(20, 206, config['role'][1], 18)
+        svg.text(20, 238, config['building'], 17)
+        svg.text(20, 264, ' / '.join(config['focus']), 18, 'pink')
     else:
-        svg.parts.append('<g data-panel="profile" data-bounds="24 76 248 656">')
-        svg.rect(24, 76, 248, 656, stroke="#26303b")
-        svg.text(48, 106, "00 / PROFILE", 11, "label")
-        svg.avatar(48, 128, 112, avatar)
-        svg.text(48, 284, config["name"][0], 28, "strong")
-        svg.text(48, 316, config["name"][1], 28, "strong")
-        svg.text(48, 346, "@" + config["login"], 15, "muted")
-        svg.text(48, 390, config["education"][0], 14)
-        svg.text(48, 414, config["education"][1], 14, "muted")
-        svg.line(48, 438, 248, 438)
-        svg.text(48, 470, config["focus"][0], 18, "accent")
-        svg.text(48, 498, config["focus"][1], 18, "accent")
-        svg.text(48, 534, config["location"], 14, "muted")
-        svg.line(48, 558, 248, 558)
-        svg.text(48, 586, "CONTACT / LINKS", 11, "label")
-        svg.text(48, 616, "github / " + config["login"], 13)
-        svg.text(48, 644, "linkedin / thiagonascimento08", 11)
-        svg.text(48, 672, config["contact"]["email"], 13)
-        svg.text(48, 700, "links no README ↓", 11, "muted")
+        svg.text(24, 68, ' '.join(config['name']), 54, 'display')
+        svg.development_mark(744, 20, 104)
+        svg.text(24, 102, 'Engenharia de Software @ FIAP', 17, 'muted')
+        svg.text(24, 130, ' '.join(config['role']), 17)
+        svg.text(24, 162, config['building'], 17)
+        svg.text(24, 190, ' / '.join(config['focus']), 17, 'pink')
     svg.end_panel()
+    svg.line(20 if mobile else 24, 280 if mobile else 204, svg.width - (20 if mobile else 24), 280 if mobile else 204)
 
     render_contributions(svg, data, mobile)
-    x, y, width = (16, 760, 488) if mobile else (288, 336, 416)
-    svg.panel("whoami", x, y, width, 204, "$ whoami", "02", mobile)
-    svg.text(x + 24, y + 80, config["role"][0], 22 if mobile else 18, "strong")
-    svg.text(x + 24, y + 106, config["role"][1], 22 if mobile else 18, "strong")
-    svg.text(x + 24, y + 146, config["building"], 19 if mobile else 15)
-    if mobile:
-        svg.text(x + 24, y + 178, "Testes · Arquitetura · " + config["practice"], 17, "muted")
-    else:
-        svg.text(x + 24, y + 177, "testes · arquitetura / " + config["practice"].lower(), 13, "muted")
-    svg.end_panel()
-
-    render_stats(svg, data, 16 if mobile else 720, 980 if mobile else 336, 488 if mobile else 376, mobile)
+    render_stats(svg, data, mobile)
+    svg.line(20 if mobile else 24, 884 if mobile else 584, svg.width - (20 if mobile else 24), 884 if mobile else 584)
     render_stack(svg, config, mobile)
-    calendar = data.get("contributions")
-    footer = "GitHub / " + (f'snapshot do calendário {calendar["fetched_on"]}' if calendar else "calendário indisponível")
-    svg.text(24 if mobile else 32, 1520 if mobile else 759, footer, 12 if mobile else 11, "muted")
-    if not mobile:
-        svg.text(1088, 759, "backend · linux · applied ai", 11, "muted", "end")
+    calendar = data.get('contributions')
+    footer = 'GitHub / ' + (f'calendário consultado em {calendar["fetched_on"]}' if calendar else 'calendário indisponível')
+    svg.text(20 if mobile else 24, 1208 if mobile else 792, footer, 12, 'muted')
     return svg.finish()
 
 

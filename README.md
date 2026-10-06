@@ -7,12 +7,17 @@
 
 ### `$ ls ~/featured-projects`
 
-| Projeto | O que construí | Stack |
-| :--- | :--- | :--- |
-| [Serah](https://github.com/BrThiagoN/serah-googleExtension) | Extensão do Chrome para verificar informações com IA e respostas em JSON. Vice-campeão da 2ª edição do hackathon da EJUV. | `Go` · `JavaScript` · `LLM` |
-| [Desempenho de APIs](https://github.com/BrThiagoN/Limite-de-desempenho-de-API) | Modelagem de saturação de APIs com limites, derivadas e teoria de filas. Notebook e aplicação interativa. | `Python` · `Streamlit` |
-| [Music Store CLI](https://github.com/BrThiagoN/music-store-cli) | Gestão de uma loja pelo terminal: CRUD, estruturas de dados e validação de entrada. | `Python` |
-| [Vinharia Agnello](https://github.com/BrThiagoN/vinharia-agnelo-arduino) | Monitoramento de luminosidade e temperatura com sensores e alertas visuais e sonoros. | `C++` · `Arduino` |
+- **[Serah](https://github.com/BrThiagoN/serah-googleExtension)** · `Go` / `JavaScript` / `LLM`\
+  Extensão do Chrome para verificar informações com IA e respostas em JSON. Vice-campeão da 2ª edição do hackathon da EJUV.
+
+- **[Desempenho de APIs](https://github.com/BrThiagoN/Limite-de-desempenho-de-API)** · `Python` / `Streamlit`\
+  Modelagem de saturação de APIs com limites, derivadas e teoria de filas. Notebook e aplicação interativa.
+
+- **[Music Store CLI](https://github.com/BrThiagoN/music-store-cli)** · `Python`\
+  Gestão de uma loja pelo terminal: CRUD, estruturas de dados e validação de entrada.
+
+- **[Vinharia Agnello](https://github.com/BrThiagoN/vinharia-agnelo-arduino)** · `C++` / `Arduino`\
+  Monitoramento de luminosidade e temperatura com sensores e alertas visuais e sonoros.
 
 ### `$ contact`
 

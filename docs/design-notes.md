@@ -38,7 +38,7 @@ Alinhamento à esquerda, viewBox desktop de 880 px, pensado para aproximadamente
 │ data        PostgreSQL                         │
 │ tools       Linux / Git / ...                  │
 ├────────────────────────────────────────────────┤
-│ Projetos e contatos em Markdown nativo          │
+│ Projetos e contatos em linhas SVG clicáveis      │
 └────────────────────────────────────────────────┘
 ```
 
@@ -52,10 +52,16 @@ As prévias devem mostrar o retângulo completo do README, incluindo projetos e 
 
 A superfície preta da versão anterior ainda criava um segundo retângulo dentro do README. Removê-la faz o documento pertencer ao GitHub nos dois temas; a versão clara ganha cores mais profundas para manter contraste. O selo continua sendo a principal marca visual.
 
-O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente dois segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. Textos, métricas e selo permanecem estáticos. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
+O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. Textos, métricas e selo permanecem estáticos. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
 
 ## Continuidade do rodapé
 
 Na renderização real do GitHub, os títulos em código, links azuis e chips de stack do Markdown interrompiam a identidade do dashboard. O rodapé passa a usar a mesma paleta adaptativa e tipografia monoespaçada, em linhas SVG compactas e transparentes. Cada projeto mantém nome, stack e descrição; a linha inteira é um link HTML para o repositório. Os contatos usam links de texto desenhados em SVG, sem fundo de badge ou logos.
 
 O painel principal permanece igual. Os assets do rodapé são separados porque imagens SVG no GitHub não permitem clicar em links internos. As linhas têm versões desktop/mobile e alturas calculadas pelo conteúdo. Os textos dos projetos ficam em `scripts/profile.json`; o README mantém apenas a composição e os destinos clicáveis. Todos os elementos do rodapé são estáticos, para concentrar o movimento no calendário.
+
+## Refinamento de links e ritmo
+
+Os nomes dos quatro projetos e os três contatos recebem sublinhado permanente na mesma cor rosa do texto. A linha inteira continua clicável, mas stack e descrição conservam a leitura de texto normal. Isso torna os destinos reconhecíveis sem acrescentar badges, ícones ou outra cor.
+
+A onda atravessa o calendário em seis segundos, com uma entrada de 900 ms por célula e 120 ms de espera inicial: aproximadamente sete segundos ao todo, quase quatro vezes a duração anterior. A defasagem de 4 ms entre dias mantém as colunas em ordem. A revisão preserva a paleta, as proporções e o comportamento de movimento reduzido; só o ritmo e a identificação dos links mudam.

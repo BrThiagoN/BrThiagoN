@@ -31,6 +31,6 @@ text{fill:#24292f}
 }
 </style>
 <g data-panel="contact" data-bounds="0 0 248 40">
-<text x="16" y="26" font-size="17" fill="#ef8fb4" class="pink" text-anchor="start">thiagotgn6@gmail.com</text>
+<text x="16" y="26" font-size="17" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">thiagotgn6@gmail.com</text>
 </g>
 </svg>

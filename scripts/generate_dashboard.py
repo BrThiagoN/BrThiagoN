@@ -43,12 +43,12 @@ WAVE_SPAN_MS = 6000
 WAVE_START_MS = 120
 # Keep the full seven-day stagger below one weekly step, including 54-week grids.
 WAVE_ROW_STAGGER_MS = 4
-# Start the water motion only after the entire entrance has settled.
+# Start the traveling pulse only after the entire entrance has settled.
 RIPPLE_START_MS = WAVE_START_MS + WAVE_SPAN_MS + 6 * WAVE_ROW_STAGGER_MS + WAVE_DURATION_MS + 300
 RIPPLE_DURATION_MS = 4800
-RIPPLE_COLUMN_STEP_MS = 180
-RIPPLE_ROW_STEP_MS = 80
-RIPPLE_AMPLITUDE_PX = 2
+RIPPLE_ROW_STEP_MS = 8
+BREATH_MIN_OPACITY = .68
+BREATH_EMPTY_OPACITY = .88
 WRITE_START_MS = 180
 WRITE_TITLE_DURATION_MS = 480
 WRITE_TITLE_STEP_MS = 100
@@ -413,7 +413,8 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '.handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}',
             '@media (prefers-reduced-motion: no-preference){\n'
             f'.contribution-cell{{animation:contribution-wave {WAVE_DURATION_MS}ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}}\n'
-            f'.contribution-ripple{{animation:contribution-ripple {RIPPLE_DURATION_MS}ms ease-in-out infinite}}\n'
+            f'.contribution-ripple{{--wave-floor:{BREATH_EMPTY_OPACITY:g};animation:contribution-ripple {RIPPLE_DURATION_MS}ms ease-in-out infinite}}\n'
+            f'.contribution-ripple[data-active]{{--wave-floor:{BREATH_MIN_OPACITY:g}}}\n'
             '.handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}\n'
             f'.decode-final{{animation:decode-resolved {DECODE_DURATION_MS}ms step-end {DECODE_START_MS}ms both}}\n'
             f'.decode-frame{{animation-duration:{DECODE_DURATION_MS}ms;animation-delay:{DECODE_START_MS}ms;animation-timing-function:step-end;animation-fill-mode:both}}\n'
@@ -428,8 +429,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
-            '@keyframes contribution-ripple{0%,50%,100%{transform:translateY(0)}'
-            f'25%{{transform:translateY(-{RIPPLE_AMPLITUDE_PX:g}px)}}75%{{transform:translateY({RIPPLE_AMPLITUDE_PX:g}px)}}}}',
+            '@keyframes contribution-ripple{0%,100%{opacity:1}50%{opacity:var(--wave-floor)}}',
             '@keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}',
             '@keyframes decode-resolved{from{opacity:0}to{opacity:1}}',
             '@keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}',
@@ -618,8 +618,10 @@ def draw_weeks(svg: Canvas, weeks: list[list[dict]], x: int, y: int, pitch: floa
                 previous_month = current.month
             row = (current.weekday() + 1) % 7
             delay = round(WAVE_START_MS + column * WAVE_SPAN_MS / max(1, len(weeks) - 1)) + row * WAVE_ROW_STAGGER_MS
-            ripple_delay = RIPPLE_START_MS + column * RIPPLE_COLUMN_STEP_MS + row * RIPPLE_ROW_STEP_MS
-            svg.parts.append(f'<g class="contribution-ripple" style="animation-delay:{ripple_delay}ms"><title>{day["date"]}: {day["count"]} contribuições</title>')
+            # Distribute one full phase across the width: a wave, not a rocking grid.
+            ripple_delay = RIPPLE_START_MS + round(column * RIPPLE_DURATION_MS / len(weeks)) + row * RIPPLE_ROW_STEP_MS
+            activity = ' data-active="true"' if day['count'] > 0 else ''
+            svg.parts.append(f'<g class="contribution-ripple"{activity} style="animation-delay:{ripple_delay}ms"><title>{day["date"]}: {day["count"]} contribuições</title>')
             svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day['level']], radius=1,
                      style=f'contribution-cell level-{day["level"]}', delay=delay)
             svg.parts.append('</g>')

@@ -47,8 +47,8 @@ text{fill:#24292f}
 .decode-frame-1{animation-name:decode-stage-1}
 .decode-frame-2{animation-name:decode-stage-2}
 .divider{stroke-dasharray:1;animation:divider-draw 900ms cubic-bezier(.4,0,.2,1) 120ms both}
-.stack-aperture{transform-box:view-box;animation:stack-reveal 900ms steps(18,end) both}
-.stack-scan{animation:stack-register 900ms steps(18,end) forwards}
+.stack-aperture{transform-box:view-box;animation:stack-reveal 1800ms steps(18,end) both}
+.stack-scan{animation:stack-register 1800ms steps(18,end) forwards}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}

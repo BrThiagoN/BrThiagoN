@@ -47,8 +47,8 @@ text{fill:#24292f}
 .decode-frame-1{animation-name:decode-stage-1}
 .decode-frame-2{animation-name:decode-stage-2}
 .divider{stroke-dasharray:1;animation:divider-draw 900ms cubic-bezier(.4,0,.2,1) 120ms both}
-.stack-aperture{transform-box:view-box;animation:stack-reveal 900ms steps(18,end) both}
-.stack-scan{animation:stack-register 900ms steps(18,end) forwards}
+.stack-aperture{transform-box:view-box;animation:stack-reveal 1800ms steps(18,end) both}
+.stack-scan{animation:stack-register 1800ms steps(18,end) forwards}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
@@ -1270,28 +1270,28 @@ text{fill:#24292f}
 <text x="20" y="986" font-size="20" fill="#f3ece8" class="" text-anchor="start">Java / Python / TypeScript</text>
 </g>
 <path d="M20 966V992" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:324.4px;animation-delay:1000ms"/>
-<defs><clipPath id="stack-row-1" clipPathUnits="userSpaceOnUse"><rect x="20" y="992" width="188" height="26" class="stack-aperture" style="transform-origin:20px 992px;animation-delay:2050ms"/></clipPath></defs>
+<defs><clipPath id="stack-row-1" clipPathUnits="userSpaceOnUse"><rect x="20" y="992" width="188" height="26" class="stack-aperture" style="transform-origin:20px 992px;animation-delay:2950ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-1)">
 <text x="20" y="1012" font-size="20" fill="#f3ece8" class="" text-anchor="start">JavaScript / Go</text>
 </g>
-<path d="M20 992V1018" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:188px;animation-delay:2050ms"/>
+<path d="M20 992V1018" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:188px;animation-delay:2950ms"/>
 <text x="20" y="1046" font-size="15" fill="#a5a1ad" class="muted" text-anchor="start">Backend + data</text>
-<defs><clipPath id="stack-row-2" clipPathUnits="userSpaceOnUse"><rect x="20" y="1054" width="324.4" height="26" class="stack-aperture" style="transform-origin:20px 1054px;animation-delay:3100ms"/></clipPath></defs>
+<defs><clipPath id="stack-row-2" clipPathUnits="userSpaceOnUse"><rect x="20" y="1054" width="324.4" height="26" class="stack-aperture" style="transform-origin:20px 1054px;animation-delay:4900ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-2)">
 <text x="20" y="1074" font-size="20" fill="#f3ece8" class="" text-anchor="start">Node.js / Spring / Express</text>
 </g>
-<path d="M20 1054V1080" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:324.4px;animation-delay:3100ms"/>
-<defs><clipPath id="stack-row-3" clipPathUnits="userSpaceOnUse"><rect x="20" y="1080" width="274.8" height="26" class="stack-aperture" style="transform-origin:20px 1080px;animation-delay:4150ms"/></clipPath></defs>
+<path d="M20 1054V1080" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:324.4px;animation-delay:4900ms"/>
+<defs><clipPath id="stack-row-3" clipPathUnits="userSpaceOnUse"><rect x="20" y="1080" width="274.8" height="26" class="stack-aperture" style="transform-origin:20px 1080px;animation-delay:6850ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-3)">
 <text x="20" y="1100" font-size="20" fill="#f3ece8" class="" text-anchor="start">APIs REST / PostgreSQL</text>
 </g>
-<path d="M20 1080V1106" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:274.8px;animation-delay:4150ms"/>
+<path d="M20 1080V1106" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:274.8px;animation-delay:6850ms"/>
 <text x="20" y="1134" font-size="15" fill="#a5a1ad" class="muted" text-anchor="start">Tools</text>
-<defs><clipPath id="stack-row-4" clipPathUnits="userSpaceOnUse"><rect x="20" y="1146" width="370.28" height="23.4" class="stack-aperture" style="transform-origin:20px 1146px;animation-delay:5200ms"/></clipPath></defs>
+<defs><clipPath id="stack-row-4" clipPathUnits="userSpaceOnUse"><rect x="20" y="1146" width="370.28" height="23.4" class="stack-aperture" style="transform-origin:20px 1146px;animation-delay:8800ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-4)">
 <text x="20" y="1164" font-size="18" fill="#f3ece8" class="" text-anchor="start">Linux / Git / GitHub / Jira / n8n</text>
 </g>
-<path d="M20 1146V1169.4" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:370.28px;animation-delay:5200ms"/>
+<path d="M20 1146V1169.4" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:370.28px;animation-delay:8800ms"/>
 </g>
 <text x="20" y="1208" font-size="12" fill="#a5a1ad" class="muted" text-anchor="start">GitHub / calendário consultado em 2026-10-06</text>
 </svg>

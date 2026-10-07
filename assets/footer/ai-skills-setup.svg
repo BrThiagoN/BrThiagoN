@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="184" viewBox="0 0 440 184" role="img" aria-labelledby="title description">
-<title id="title">Desempenho de APIs</title>
-<desc id="description">Modelagem de saturação de APIs com limites, derivadas e teoria de filas. Notebook e aplicação interativa.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="112" viewBox="0 0 880 112" role="img" aria-labelledby="title description">
+<title id="title">AI Skills Setup</title>
+<desc id="description">Coleção de skills portáteis para agentes de IA, com fluxos de backend, revisão de código e design de interfaces.</desc>
 <style>
 text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
 .display{font-family:"Bahnschrift","DIN Condensed","Nimbus Sans Narrow","Arial Narrow","Liberation Sans Narrow",sans-serif;font-weight:700}
@@ -40,6 +40,8 @@ text{fill:#24292f}
 .handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion: no-preference){
 .contribution-cell{animation:contribution-wave 900ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}
+.contribution-ripple{--wave-floor:0.88;animation:contribution-ripple 4800ms ease-in-out infinite}
+.contribution-ripple[data-active]{--wave-floor:0.68}
 .handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}
 .decode-final{animation:decode-resolved 900ms step-end 100ms both}
 .decode-frame{animation-duration:900ms;animation-delay:100ms;animation-timing-function:step-end;animation-fill-mode:both}
@@ -47,13 +49,14 @@ text{fill:#24292f}
 .decode-frame-1{animation-name:decode-stage-1}
 .decode-frame-2{animation-name:decode-stage-2}
 .divider{stroke-dasharray:1;animation:divider-draw 900ms cubic-bezier(.4,0,.2,1) 120ms both}
-.stack-aperture{transform-box:view-box;animation:stack-reveal 900ms steps(18,end) both}
-.stack-scan{animation:stack-register 900ms steps(18,end) forwards}
+.stack-aperture{transform-box:view-box;animation:stack-reveal 1800ms steps(18,end) both}
+.stack-scan{animation:stack-register 1800ms steps(18,end) forwards}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
 }
 @keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes contribution-ripple{0%,100%{opacity:1}50%{opacity:var(--wave-floor)}}
 @keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}
 @keyframes decode-resolved{from{opacity:0}to{opacity:1}}
 @keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}
@@ -65,13 +68,11 @@ text{fill:#24292f}
 @keyframes seal-pieces{from{opacity:1}to{opacity:0}}
 @keyframes seal-fragment{from{opacity:0}to{opacity:1}}
 </style>
-<g data-panel="project" data-bounds="0 0 440 184">
-<text x="20" y="28" font-size="20" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">Desempenho de APIs</text>
-<text x="20" y="56" font-size="16" fill="#a5a1ad" class="muted" text-anchor="start">Python / Streamlit</text>
-<text x="20" y="88" font-size="18" fill="#f3ece8" class="" text-anchor="start">Modelagem de saturação de APIs com</text>
-<text x="20" y="112" font-size="18" fill="#f3ece8" class="" text-anchor="start">limites, derivadas e teoria de</text>
-<text x="20" y="136" font-size="18" fill="#f3ece8" class="" text-anchor="start">filas. Notebook e aplicação</text>
-<text x="20" y="160" font-size="18" fill="#f3ece8" class="" text-anchor="start">interativa.</text>
+<g data-panel="project" data-bounds="0 0 880 112">
+<text x="24" y="28" font-size="18" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">AI Skills Setup</text>
+<text x="856" y="28" font-size="14" fill="#a5a1ad" class="muted" text-anchor="end">Markdown / Git / AI Agents</text>
+<text x="24" y="60" font-size="16" fill="#f3ece8" class="" text-anchor="start">Coleção de skills portáteis para agentes de IA, com fluxos de backend, revisão</text>
+<text x="24" y="84" font-size="16" fill="#f3ece8" class="" text-anchor="start">de código e design de interfaces.</text>
 </g>
-<path d="M20 183L420 183" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
+<path d="M24 111L856 111" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
 </svg>

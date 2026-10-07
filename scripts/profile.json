@@ -11,7 +11,7 @@
   "languages": ["Java", "Python", "TypeScript", "JavaScript", "Go"],
   "backend": ["Node.js", "Spring", "Express"],
   "data": ["APIs REST", "PostgreSQL"],
-  "tools": ["Linux", "Git", "GitHub", "Jira", "n8n"],
+  "tools": ["Linux", "Git", "GitHub", "Jira", "Tailscale", "Docker"],
   "contact": {
     "linkedin": "https://www.linkedin.com/in/thiagonascimento08/",
     "email": "thiagotgn6@gmail.com"
@@ -25,11 +25,11 @@
       "description": "Extensão do Chrome para verificar informações com IA e respostas em JSON. Vice-campeão da 2ª edição do hackathon da EJUV."
     },
     {
-      "slug": "api-performance",
-      "name": "Desempenho de APIs",
-      "url": "https://github.com/BrThiagoN/Limite-de-desempenho-de-API",
-      "stack": ["Python", "Streamlit"],
-      "description": "Modelagem de saturação de APIs com limites, derivadas e teoria de filas. Notebook e aplicação interativa."
+      "slug": "ai-skills-setup",
+      "name": "AI Skills Setup",
+      "url": "https://github.com/BrThiagoN/AI-skills-setup",
+      "stack": ["Markdown", "Git", "AI Agents"],
+      "description": "Coleção de skills portáteis para agentes de IA, com fluxos de backend, revisão de código e design de interfaces."
     },
     {
       "slug": "music-store-cli",

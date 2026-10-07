@@ -31,7 +31,7 @@ Alinhamento à esquerda, viewBox desktop de 880 px, pensado para aproximadamente
 │ Contribuições                  período real    │
 │ [ calendário dos últimos 12 meses ]             │
 │                                                │
-│ Repos       Followers     Following     Stars   │
+│ Repos     Commits (12m)  Contribuições  Followers│
 │                                                │
 │ languages   Java / Python / ...                 │
 │ backend     Node.js / Spring / ...              │
@@ -52,7 +52,7 @@ As prévias devem mostrar o retângulo completo do README, incluindo projetos e 
 
 A superfície preta da versão anterior ainda criava um segundo retângulo dentro do README. Removê-la faz o documento pertencer ao GitHub nos dois temas; a versão clara ganha cores mais profundas para manter contraste. O selo continua sendo a principal marca visual.
 
-O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. As métricas permanecem estáticas. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
+O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. A introdução dura aproximadamente sete segundos e termina com todos os dias visíveis. Depois, o gráfico mantém ondas suaves como água: as células oscilam verticalmente até 2 px, em ciclos de 4,8 segundos e com defasagens entre colunas e dias. Só a posição muda; nenhuma célula desaparece e as cores continuam representando as contribuições reais. No celular, as duas faixas seguem o mesmo ritmo. As métricas permanecem estáticas. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente e sem ondulações.
 
 ## Continuidade do rodapé
 
@@ -82,4 +82,10 @@ A paleta e a composição continuam as mesmas. A escolha concentra a textura de 
 
 A extensão mantém os tokens, as fontes e todas as posições aprovadas. Cada comando iniciado por `$`, inclusive os dois títulos do rodapé, recebe três estados de decodificação: a resolução avança da esquerda para a direita, preservando espaços e pontuação. Os números continuam estáticos. As divisórias horizontais são traçadas da esquerda para a direita; os separadores verticais de métricas permanecem fixos.
 
-A stack recebe uma varredura de registro: um traço rosa fino atravessa o texto em pequenos passos e revela as tecnologias, linha por linha. A leitura começa depois da resolução do comando e termina em menos de três segundos. Os nomes conservam o fluxo normal da fonte e o conteúdo real; não há barras de domínio, ruído sobre as tecnologias ou repetição. Essa escolha dá à stack um movimento próprio sem repetir a escrita do cabeçalho. O estado final deve ser visualmente idêntico ao anterior. Movimento reduzido, ausência de CSS e PNGs exibem imediatamente todo o conteúdo e todas as divisórias.
+A stack recebe uma varredura de registro: um traço rosa fino atravessa o texto em pequenos passos e revela as tecnologias, linha por linha. A leitura começa depois da resolução do comando; cada linha leva 1.800 ms e termina antes da próxima começar, com uma pausa de 150 ms entre elas. A sequência termina em aproximadamente nove segundos no desktop e treze no celular, onde tools ocupa duas linhas com a configuração atual. Os nomes conservam o fluxo normal da fonte e o conteúdo real; não há barras de domínio, ruído sobre as tecnologias ou repetição. Essa escolha dá à stack um movimento próprio sem repetir a escrita do cabeçalho. Movimento reduzido, ausência de CSS e PNGs exibem imediatamente todo o conteúdo e todas as divisórias.
+
+## Respiração do calendário
+
+A revisão remove o deslocamento vertical, que fazia a grade parecer um bloco balançando. Os quadrados permanecem fixos; uma pulsação de opacidade percorre as colunas da esquerda para a direita. Um ciclo de 4.800 ms distribui uma fase completa pela largura de cada faixa, com 8 ms de defasagem entre dias. Dias com atividade pulsam entre 68% e 100%; dias vazios variam discretamente entre 88% e 100%, tornando a passagem da onda legível mesmo entre períodos sem atividade. A onda começa depois da entrada inicial e continua em ciclos, sem brilho extra, novas cores ou sobreposição de gráficos. As contagens, intensidades fornecidas pelo GitHub e geometria do estado estático continuam intactas. Movimento reduzido mostra os dias imediatamente, com opacidade total.
+
+A métrica `Commits (12m)` usa o snapshot autenticado do GitHub no mesmo período do calendário. A geração preserva esse dado real e sua data de consulta, sem voltar a Following ou tratar todas as contribuições como commits.

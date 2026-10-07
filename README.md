@@ -16,10 +16,10 @@
       <img src="./assets/footer/serah.svg" width="100%" alt="Serah — Go, JavaScript e LLM. Extensão do Chrome para verificar informações com IA e respostas em JSON. Vice-campeão da 2ª edição do hackathon da EJUV." />
     </picture>
   </a>
-  <a href="https://github.com/BrThiagoN/Limite-de-desempenho-de-API">
+  <a href="https://github.com/BrThiagoN/AI-skills-setup">
     <picture>
-      <source media="(max-width: 640px)" srcset="./assets/footer/api-performance-mobile.svg" />
-      <img src="./assets/footer/api-performance.svg" width="100%" alt="Desempenho de APIs — Python e Streamlit. Modelagem de saturação de APIs com limites, derivadas e teoria de filas. Notebook e aplicação interativa." />
+      <source media="(max-width: 640px)" srcset="./assets/footer/ai-skills-setup-mobile.svg" />
+      <img src="./assets/footer/ai-skills-setup.svg" width="100%" alt="AI Skills Setup — Markdown, Git e AI Agents. Coleção de skills portáteis para agentes de IA, com fluxos de backend, revisão de código e design de interfaces." />
     </picture>
   </a>
   <a href="https://github.com/BrThiagoN/music-store-cli">

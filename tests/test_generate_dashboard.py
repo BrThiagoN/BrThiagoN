@@ -98,12 +98,65 @@ class DashboardTests(unittest.TestCase):
         days = [{"date": (start + timedelta(days=i)).isoformat(), "contributionCount": 0, "contributionLevel": "NONE"} for i in range((end - start).days + 1)]
         days[10].update(contributionCount=3, contributionLevel="SECOND_QUARTILE")
         client = Mock()
-        client.request.return_value = {"data": {"user": {"contributionsCollection": {"contributionCalendar": {"totalContributions": 3, "weeks": [{"contributionDays": days}]}}}}}
+        client.request.return_value = {"data": {"user": {"contributionsCollection": {"totalCommitContributions": 2, "contributionCalendar": {"totalContributions": 3, "weeks": [{"contributionDays": days}]}}}}}
         result = dashboard.fetch_contributions(client, self.config["login"], end)
         self.assertEqual(result["total"], 3)
+        self.assertEqual(result["commits"], 2)
         self.assertEqual(result["days"][10]["level"], 2)
         self.assertIn("token-visible", result["source"])
         self.assertEqual(client.request.call_args.args[1]["variables"]["login"], self.config["login"])
+        self.assertIn('totalCommitContributions', client.request.call_args.args[1]['query'])
+
+    def test_invalid_commit_counts_reject_partial_graphql_responses(self):
+        client = Mock()
+        calendar = self.snapshot['contributions']
+        level_names = tuple(dashboard.CONTRIBUTION_LEVELS)
+        days = [
+            {'date': day['date'], 'contributionCount': day['count'], 'contributionLevel': level_names[day['level']]}
+            for day in calendar['days']
+        ]
+        for count in (None, -1, True, '2'):
+            collection = {
+                'totalCommitContributions': count,
+                'contributionCalendar': {'totalContributions': calendar['total'], 'weeks': [{'contributionDays': days}]},
+            }
+            client.request.return_value = {'data': {'user': {'contributionsCollection': collection}}}
+            with self.assertRaises(dashboard.DataError):
+                dashboard.fetch_contributions(client, self.config['login'], date.fromisoformat(calendar['to']))
+        collection['totalCommitContributions'] = 0
+        self.assertEqual(dashboard.fetch_contributions(client, self.config['login'], date.fromisoformat(calendar['to']))['commits'], 0)
+        collection.pop('totalCommitContributions')
+        with self.assertRaises(dashboard.DataError):
+            dashboard.fetch_contributions(client, self.config['login'], date.fromisoformat(calendar['to']))
+
+    def test_stats_prioritize_projects_and_commits_without_inventing_counts(self):
+        for mobile in (False, True):
+            for commits, expected in ((None, '—'), (0, '0'), (123, '123')):
+                data = deepcopy(self.snapshot)
+                data['contributions'].pop('commits', None)
+                if commits is not None:
+                    data['contributions']['commits'] = commits
+                root = ET.fromstring(dashboard.render_svg(self.config, data, None, mobile))
+                panel = root.find('svg:g[@data-panel="stats"]', NS)
+                labels = [node.text for node in panel.findall('svg:text', NS) if node.attrib['font-size'] == ('17' if mobile else '14')]
+                values = [node.text for node in panel.findall('svg:text', NS) if node.attrib['font-size'] == '32']
+                self.assertEqual(labels, ['Repos públicos', 'Commits (12m)', 'Stars recebidas', 'Followers'])
+                self.assertEqual(values, [dashboard.number(data['profile']['public_repos']), expected, dashboard.number(data['repositories']['received_stars']), dashboard.number(data['profile']['followers'])])
+
+    def test_commit_snapshot_is_validated_and_its_date_is_visible(self):
+        for count in (None, -1, True, '2', 0, 123):
+            data = deepcopy(self.snapshot)
+            data['contributions']['commits'] = count
+            data['contributions']['fetched_on'] = '2026-10-05'
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'snapshot.json'
+                path.write_text(json.dumps(data))
+                if type(count) is int and count >= 0:
+                    loaded = dashboard.load_snapshot(path, self.config['login'])
+                    self.assertIn('2026-10-05', dashboard.snapshot_label(loaded))
+                else:
+                    with self.assertRaises(dashboard.DataError):
+                        dashboard.load_snapshot(path, self.config['login'])
 
     def test_graphql_errors_and_null_user_do_not_echo_api_payload(self):
         client = Mock()
@@ -260,8 +313,41 @@ class DashboardTests(unittest.TestCase):
                 styles = root.find('svg:style', NS).text
                 self.assertIn('@media (prefers-reduced-motion: no-preference)', styles)
                 self.assertIn('to{opacity:1;transform:translateY(0)}', styles)
-                self.assertNotIn('infinite', styles)
+                entrance = re.search(r'\.contribution-cell\{([^}]+)\}', styles)[1]
+                self.assertNotIn('infinite', entrance)
                 self.assertNotIn('animation', dashboard.svg_styles(animate=False))
+
+    def test_water_ripples_follow_entrance_and_keep_all_days_visible(self):
+        for mobile in (False, True):
+            root = ET.fromstring(dashboard.render_svg(self.config, self.snapshot, None, mobile))
+            panel = root.find('svg:g[@data-panel="contributions"]', NS)
+            ripples = panel.findall('svg:g[@class="contribution-ripple"]', NS)
+            self.assertEqual(len(ripples), len(self.snapshot['contributions']['days']))
+            entrance_end = max(
+                int(re.fullmatch(r'animation-delay:(\d+)ms', group.find('svg:rect', NS).attrib['style'])[1])
+                for group in ripples
+            ) + dashboard.WAVE_DURATION_MS
+            phases = {}
+            for group, day in zip(ripples, self.snapshot['contributions']['days']):
+                cell = group.find('svg:rect', NS)
+                delay = int(re.fullmatch(r'animation-delay:(\d+)ms', group.attrib['style'])[1])
+                self.assertGreater(delay, entrance_end)
+                self.assertEqual(group.find('svg:title', NS).text, f'{day["date"]}: {day["count"]} contribuições')
+                self.assertEqual(cell.attrib['fill'], dashboard.LEVELS[day['level']])
+                self.assertNotIn('opacity', group.attrib)
+                self.assertNotIn('transform', group.attrib)
+                band = 1 if mobile and float(cell.attrib['y']) >= 524 else 0
+                phases.setdefault((band, cell.attrib['y']), []).append(delay)
+            for delays in phases.values():
+                self.assertEqual(delays, sorted(set(delays)))
+            styles = root.find('svg:style', NS).text
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+            ripple_rule = re.search(r'\.contribution-ripple\{([^}]+)\}', motion)[1]
+            self.assertIn('infinite', ripple_rule)
+            keyframes = styles.split('@keyframes contribution-ripple{', 1)[1].split('@keyframes', 1)[0]
+            self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'transform'})
+            self.assertIn('0%,50%,100%{transform:translateY(0)}', keyframes)
+            self.assertNotIn('contribution-ripple', dashboard.svg_styles(animate=False))
 
     def test_panel_text_bounds_in_both_layouts(self):
         # Conservative monospace advance (0.62 em) also covers Courier fallback.
@@ -308,10 +394,11 @@ class DashboardTests(unittest.TestCase):
             self.assertLess(previous_end, 7500)
             styles = root.find('svg:style', NS).text
             self.assertIn('@keyframes handwriting-ink', styles)
-            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('}', 2)[1]
-            self.assertIn('animation-name:handwriting-ink', motion)
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+            writing = re.search(r'\.handwriting-letter\{([^}]+)\}', motion)[1]
+            self.assertIn('animation-name:handwriting-ink', writing)
             self.assertIn('.handwriting-letter{stroke-opacity:0;', styles)
-            self.assertNotIn('infinite', styles)
+            self.assertNotIn('infinite', writing)
             self.assertNotIn('handwriting', dashboard.svg_styles(animate=False))
 
     def test_all_commands_decode_with_correct_fallback_and_decorative_frames(self):

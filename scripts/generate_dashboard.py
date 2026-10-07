@@ -43,6 +43,12 @@ WAVE_SPAN_MS = 6000
 WAVE_START_MS = 120
 # Keep the full seven-day stagger below one weekly step, including 54-week grids.
 WAVE_ROW_STAGGER_MS = 4
+# Start the water motion only after the entire entrance has settled.
+RIPPLE_START_MS = WAVE_START_MS + WAVE_SPAN_MS + 6 * WAVE_ROW_STAGGER_MS + WAVE_DURATION_MS + 300
+RIPPLE_DURATION_MS = 4800
+RIPPLE_COLUMN_STEP_MS = 180
+RIPPLE_ROW_STEP_MS = 80
+RIPPLE_AMPLITUDE_PX = 2
 WRITE_START_MS = 180
 WRITE_TITLE_DURATION_MS = 480
 WRITE_TITLE_STEP_MS = 100
@@ -73,6 +79,7 @@ CONTRIBUTIONS_QUERY = """
 query ProfileCalendar($login: String!, $from: DateTime!, $to: DateTime!) {
   user(login: $login) {
     contributionsCollection(from: $from, to: $to) {
+      totalCommitContributions
       contributionCalendar {
         totalContributions
         weeks {
@@ -221,7 +228,9 @@ def fetch_contributions(client: GitHubClient, login: str, end: date) -> dict:
     if not isinstance(result, dict) or result.get("errors"):
         raise DataError("Consulta GraphQL de contribuições indisponível para este token.")
     try:
-        calendar = result["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+        collection = result["data"]["user"]["contributionsCollection"]
+        commits = integer(collection["totalCommitContributions"])
+        calendar = collection["contributionCalendar"]
         days = [
             {"date": day["date"], "count": day["contributionCount"], "level": CONTRIBUTION_LEVELS[day["contributionLevel"]]}
             for week in calendar["weeks"] for day in week["contributionDays"]
@@ -229,7 +238,9 @@ def fetch_contributions(client: GitHubClient, login: str, end: date) -> dict:
         days = validate_calendar(days, start, end, calendar["totalContributions"])
     except (KeyError, TypeError):
         raise DataError("Resposta GraphQL de contribuições incompleta.") from None
-    return calendar_snapshot(days, start, end, "GitHub GraphQL API · token-visible contributions")
+    snapshot = calendar_snapshot(days, start, end, "GitHub GraphQL API · token-visible contributions")
+    snapshot["commits"] = commits
+    return snapshot
 
 
 class PublicCalendarParser(HTMLParser):
@@ -316,6 +327,8 @@ def load_snapshot(path: Path, login: str) -> dict:
                 raise DataError("Snapshot de stars inconsistente.")
         else:
             validate_calendar(component["days"], date.fromisoformat(component["from"]), date.fromisoformat(component["to"]), component["total"])
+            if "commits" in component:
+                integer(component["commits"])
     return data
 
 
@@ -400,6 +413,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '.handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}',
             '@media (prefers-reduced-motion: no-preference){\n'
             f'.contribution-cell{{animation:contribution-wave {WAVE_DURATION_MS}ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}}\n'
+            f'.contribution-ripple{{animation:contribution-ripple {RIPPLE_DURATION_MS}ms ease-in-out infinite}}\n'
             '.handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}\n'
             f'.decode-final{{animation:decode-resolved {DECODE_DURATION_MS}ms step-end {DECODE_START_MS}ms both}}\n'
             f'.decode-frame{{animation-duration:{DECODE_DURATION_MS}ms;animation-delay:{DECODE_START_MS}ms;animation-timing-function:step-end;animation-fill-mode:both}}\n'
@@ -414,6 +428,8 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
+            '@keyframes contribution-ripple{0%,50%,100%{transform:translateY(0)}'
+            f'25%{{transform:translateY(-{RIPPLE_AMPLITUDE_PX:g}px)}}75%{{transform:translateY({RIPPLE_AMPLITUDE_PX:g}px)}}}}',
             '@keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}',
             '@keyframes decode-resolved{from{opacity:0}to{opacity:1}}',
             '@keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}',
@@ -544,7 +560,10 @@ def number(value: int | None) -> str:
 
 
 def snapshot_label(data: dict) -> str:
-    dates = sorted({data[key]['fetched_on'] for key in ('profile', 'repositories') if data.get(key)})
+    keys = ('profile', 'repositories')
+    if (data.get('contributions') or {}).get('commits') is not None:
+        keys += ('contributions',)
+    dates = sorted({data[key]['fetched_on'] for key in keys if data.get(key)})
     return 'snapshot / ' + (' · '.join(dates) if dates else 'indisponível')
 
 
@@ -556,9 +575,10 @@ def render_stats(svg: Canvas, data: dict, mobile=False):
     else:
         svg.text(width - 24, y + 28, snapshot_label(data), 12, 'muted', 'end')
     profile, repos = data.get('profile') or {}, data.get('repositories') or {}
+    contributions = data.get('contributions') or {}
     metrics = (
-        ('Repos públicos', profile.get('public_repos')), ('Followers', profile.get('followers')),
-        ('Following', profile.get('following')), ('Stars recebidas', repos.get('received_stars')),
+        ('Repos públicos', profile.get('public_repos')), ('Commits (12m)', contributions.get('commits')),
+        ('Stars recebidas', repos.get('received_stars')), ('Followers', profile.get('followers')),
     )
     for i, (label, value) in enumerate(metrics):
         if mobile:
@@ -597,8 +617,9 @@ def draw_weeks(svg: Canvas, weeks: list[list[dict]], x: int, y: int, pitch: floa
                     last_label = column
                 previous_month = current.month
             row = (current.weekday() + 1) % 7
-            svg.parts.append(f'<g><title>{day["date"]}: {day["count"]} contribuições</title>')
             delay = round(WAVE_START_MS + column * WAVE_SPAN_MS / max(1, len(weeks) - 1)) + row * WAVE_ROW_STAGGER_MS
+            ripple_delay = RIPPLE_START_MS + column * RIPPLE_COLUMN_STEP_MS + row * RIPPLE_ROW_STEP_MS
+            svg.parts.append(f'<g class="contribution-ripple" style="animation-delay:{ripple_delay}ms"><title>{day["date"]}: {day["count"]} contribuições</title>')
             svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day['level']], radius=1,
                      style=f'contribution-cell level-{day["level"]}', delay=delay)
             svg.parts.append('</g>')

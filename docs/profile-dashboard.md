@@ -1,6 +1,6 @@
 # Manutenção do dashboard
 
-O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG transparente, com temas claro e escuro automáticos, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. O calendário tem uma única onda de entrada. Não há dependência de widgets externos.
+O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG transparente, com temas claro e escuro automáticos, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. O calendário tem uma onda de entrada seguida de ondulações contínuas como água. Não há dependência de widgets externos.
 
 ## Arquivos
 
@@ -52,13 +52,14 @@ Esse modo usa REST público e o calendário publicado pelo próprio GitHub. O pa
 
 ## Significado dos dados
 
-- **Repos públicos, followers e following:** campos da API REST de usuários. Repos públicos inclui forks, conforme a definição do GitHub.
+- **Repos públicos e followers:** campos da API REST de usuários. Repos públicos inclui forks, conforme a definição do GitHub.
+- **Commits (12m):** `totalCommitContributions` da API GraphQL, no mesmo período de um ano móvel do calendário. Conta contribuições de commits reconhecidas pelo GitHub e visíveis ao token; não soma issues, pull requests ou criação de repositórios, nem representa todos os commits da conta desde sua criação. Snapshots antigos e o bootstrap público sem esse campo exibem `—` até a próxima atualização autenticada. Zero só aparece quando a API retorna zero.
 - **Stars recebidas:** soma de `stargazers_count` de todos os repositórios públicos próprios, incluindo arquivados e excluindo forks. A paginação é completa; uma página com erro invalida a atualização inteira dessa métrica.
 - **Contribuições:** calendário de um ano móvel, inclusivo, com dias, contagens e intensidades fornecidos pelo GitHub. O total é validado contra a soma diária. No workflow, o resultado reflete o que o `GITHUB_TOKEN` pode consultar; não implica acesso às contribuições de repositórios privados. Pode diferir do perfil visto por uma sessão com outras permissões.
 - **Snapshots:** cada componente guarda sua própria data. Se uma consulta falhar, o componente anterior mantém dados e data originais. A data do calendário aparece no rodapé; as datas das métricas aparecem no painel de stats. Sem snapshot, o SVG mostra indisponibilidade, sem números fabricados.
 - **Core Stack:** tecnologias declaradas no README original, sem porcentagens ou níveis de domínio. A inspeção da API de linguagens encontrou 224.726 bytes de Jupyter Notebook no projeto de desempenho de APIs, além de um volume considerável de HTML, CSS e SCSS. Agregar esses bytes não representaria bem o foco profissional em backend. Não há barras de habilidade.
 
-Não são calculados streaks ou contagens de commits: eles acrescentariam definições e limitações de visibilidade que não ajudam a apresentação.
+O painel segue a ordem **Repos públicos → Commits (12m) → Stars recebidas → Followers**. No celular, projetos e atividade ficam na primeira linha, e reconhecimento social na segunda. Following deixa de ser exibido. Não são calculados streaks.
 
 ## Automação e segurança
 
@@ -78,7 +79,7 @@ O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o
 
 **Tema:** cada SVG contém a base escura e uma paleta clara em `@media (prefers-color-scheme: light)`. Em SVGs carregados por `<img>`, essa consulta herda o `color-scheme` do elemento que incorpora a imagem. O CSS atual do GitHub define essa propriedade conforme o tema do site, inclusive quando difere do sistema. A troca foi revisada no Firefox com o CSS real do GitHub e tema do sistema claro: alternar o site entre claro e escuro também alternou a imagem, sem recarregá-la. Sem suporte à consulta, a base permanece escura. O próprio SVG não desenha fundo; ele se integra ao fundo nativo, inclusive em dark dimmed. Não são necessários quatro arquivos separados por tema.
 
-**Movimento:** o calendário surge em colunas da esquerda para a direita, com leve defasagem entre os dias. A onda atravessa as colunas em seis segundos; cada célula faz uma entrada de 900 ms, após uma espera inicial de 120 ms. A sequência completa dura aproximadamente sete segundos, executa uma vez ao carregar a imagem e termina com todos os dias visíveis. As duas faixas do calendário mobile fazem a entrada simultaneamente. Os dados, as cores de intensidade, os números e as datas não mudam com a animação. Não há loop ou flashes; métricas e links permanecem estáticos.
+**Movimento:** o calendário surge em colunas da esquerda para a direita, com leve defasagem entre os dias. A onda atravessa as colunas em seis segundos; cada célula faz uma entrada de 900 ms, após uma espera inicial de 120 ms. A sequência completa dura aproximadamente sete segundos e executa uma vez ao carregar a imagem. Depois de todos os dias estarem visíveis e de uma pausa de 300 ms, começam ondulações contínuas: cada célula oscila verticalmente até 2 px, num ciclo suave de 4.800 ms, com defasagens de 180 ms entre colunas e 80 ms entre dias. Esse movimento fica no grupo que envolve cada célula, independente da entrada; não anima opacidade, preenchimento ou escala. Os dias permanecem visíveis, com suas cores originais. As duas faixas do calendário mobile seguem o mesmo ritmo. As constantes `WAVE_*` controlam a introdução e `RIPPLE_*` controlam a água. Dados, números, datas, métricas e links permanecem estáticos.
 
 **Escrita:** o nome e as quatro linhas de apresentação ganham uma entrada que simula letras sendo desenhadas. Cada caractere conserva a fonte original: seu contorno é traçado e depois o preenchimento aparece. O nome usa 480 ms por letra e uma defasagem de 100 ms; o texto menor usa 320 ms e 16 ms. Há uma pausa de 90 ms entre linhas. A sequência completa dura cerca de seis segundos no desktop e sete no celular, respeitando suas quebras de linha. Ela acontece uma vez, junto da onda do calendário, sem cursor piscando. Os tempos ficam nas constantes `WRITE_*` do gerador.
 
@@ -90,7 +91,7 @@ O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o
 
 **Selo:** os glifos 開発 surgem em oito regiões, numa grade de duas colunas por quatro linhas, em ordem irregular. Cada região leva 220 ms e começa 90 ms depois da anterior. A montagem termina aos 950 ms e dá lugar ao vetor completo original, preservando suas bordas. A moldura permanece fixa. O desenho é definido uma vez em `<defs>` e as regiões usam referências locais com `<use>` e `<clipPath>`, sem arquivos ou fontes externos. As constantes `SEAL_*` controlam a entrada.
 
-A animação CSS só é ativada por `@media (prefers-reduced-motion: no-preference)`. Com movimento reduzido, CSS desativado ou renderizador sem animações, o cabeçalho, calendário, comandos, divisórias, stack e selo completos aparecem imediatamente. PNGs são exportados sem animação e com tema explícito; mostram o estado final, enquanto o README usa os SVGs animados. Cada imagem executa sua entrada uma vez ao carregar. Para observar as entradas localmente, abra o SVG em um navegador e recarregue a página.
+A animação CSS só é ativada por `@media (prefers-reduced-motion: no-preference)`. Com movimento reduzido, CSS desativado ou renderizador sem animações, o cabeçalho, calendário, comandos, divisórias, stack e selo completos aparecem imediatamente, sem ondulações. PNGs são exportados sem animação e com tema explícito; mostram o estado final, enquanto o README usa os SVGs animados. Cada imagem executa sua entrada uma vez ao carregar; o calendário continua ondulando depois. Para observar o movimento localmente, abra o SVG em um navegador e recarregue a página.
 
 A escrita usa `<tspan>` com o fluxo normal do texto SVG, sem converter letras em paths ou depender de uma fonte específica. Espaços e caracteres especiais são preservados e escapados. O efeito combina [stroke-dasharray](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/stroke-dasharray), [stroke-dashoffset](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/stroke-dashoffset) e preenchimento animado. A revisão no Firefox verificou etapas intermediárias, o estado final e movimento reduzido nos dois layouts.
 
@@ -136,6 +137,6 @@ Essas bibliotecas são usadas apenas na exportação PNG local. O gerador de dad
 
 Os contornos do selo foram derivados da fonte Noto Sans CJK JP (Google, SIL Open Font License 1.1), disponível no sistema durante a criação. O asset versionado contém somente os contornos dos dois glifos, sem um arquivo de fonte. Fonte: [Noto CJK](https://github.com/notofonts/noto-cjk).
 
-Fontes técnicas: [contribuições na API GraphQL](https://docs.github.com/en/graphql/reference/users#contributioncalendar), [permissões e comportamento do GITHUB_TOKEN](https://docs.github.com/en/actions/concepts/security/github_token), [classificação de linguagens pelo Linguist](https://github.com/github-linguist/linguist/blob/main/docs/how-linguist-works.md).
+Fontes técnicas: [contribuições e commits na API GraphQL](https://docs.github.com/en/graphql/reference/users#contributionscollection), [critérios de contagem de commits](https://docs.github.com/en/account-and-profile/how-tos/contribution-settings/troubleshooting-missing-contributions), [permissões e comportamento do GITHUB_TOKEN](https://docs.github.com/en/actions/concepts/security/github_token), [classificação de linguagens pelo Linguist](https://github.com/github-linguist/linguist/blob/main/docs/how-linguist-works.md).
 
 Tema e movimento: [herança de color-scheme em SVGs incorporados](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme#inherited_color_scheme_in_embedded_elements), [preferência de movimento reduzido](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion).

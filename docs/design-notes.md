@@ -31,7 +31,7 @@ Alinhamento à esquerda, viewBox desktop de 880 px, pensado para aproximadamente
 │ Contribuições                  período real    │
 │ [ calendário dos últimos 12 meses ]             │
 │                                                │
-│ Repos       Followers     Following     Stars   │
+│ Repos       Commits (12m)  Stars     Followers   │
 │                                                │
 │ languages   Java / Python / ...                 │
 │ backend     Node.js / Spring / ...              │
@@ -52,7 +52,7 @@ As prévias devem mostrar o retângulo completo do README, incluindo projetos e 
 
 A superfície preta da versão anterior ainda criava um segundo retângulo dentro do README. Removê-la faz o documento pertencer ao GitHub nos dois temas; a versão clara ganha cores mais profundas para manter contraste. O selo continua sendo a principal marca visual.
 
-O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. O movimento dura aproximadamente sete segundos e termina com todos os dias visíveis. No celular, as duas faixas fazem a mesma entrada simultaneamente. As métricas permanecem estáticas. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente.
+O calendário recebe uma única onda de entrada da esquerda para a direita: cada coluna começa depois da anterior, com leve defasagem entre dias. A introdução dura aproximadamente sete segundos e termina com todos os dias visíveis. Depois, o gráfico mantém ondas suaves como água: as células oscilam verticalmente até 2 px, em ciclos de 4,8 segundos e com defasagens entre colunas e dias. Só a posição muda; nenhuma célula desaparece e as cores continuam representando as contribuições reais. No celular, as duas faixas seguem o mesmo ritmo. As métricas permanecem estáticas. A animação só é ativada quando `prefers-reduced-motion: no-preference` corresponde; movimento reduzido ou CSS sem suporte mostra o calendário completo imediatamente e sem ondulações.
 
 ## Continuidade do rodapé
 

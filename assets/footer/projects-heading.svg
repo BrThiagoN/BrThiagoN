@@ -40,6 +40,7 @@ text{fill:#24292f}
 .handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion: no-preference){
 .contribution-cell{animation:contribution-wave 900ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}
+.contribution-ripple{animation:contribution-ripple 4800ms ease-in-out infinite}
 .handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}
 .decode-final{animation:decode-resolved 900ms step-end 100ms both}
 .decode-frame{animation-duration:900ms;animation-delay:100ms;animation-timing-function:step-end;animation-fill-mode:both}
@@ -54,6 +55,7 @@ text{fill:#24292f}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
 }
 @keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes contribution-ripple{0%,50%,100%{transform:translateY(0)}25%{transform:translateY(-2px)}75%{transform:translateY(2px)}}
 @keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}
 @keyframes decode-resolved{from{opacity:0}to{opacity:1}}
 @keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}

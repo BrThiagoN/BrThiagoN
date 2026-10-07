@@ -390,6 +390,9 @@ class DashboardTests(unittest.TestCase):
             for key in ('languages', 'backend', 'data', 'tools'):
                 for technology in self.config[key]:
                     self.assertIn(technology, all_text)
+            styles = root.find('svg:style', NS).text
+            duration = int(re.search(r'animation:stack-reveal (\d+)ms', styles)[1])
+            previous_end = dashboard.DECODE_START_MS + dashboard.DECODE_DURATION_MS
             for index, (value, clip, scan) in enumerate(zip(values, clips, scans)):
                 rect = clip.find('svg:rect', NS)
                 text = value.find('svg:text', NS)
@@ -399,13 +402,17 @@ class DashboardTests(unittest.TestCase):
                 self.assertNotIn('transform', rect.attrib)
                 self.assertEqual(rect.attrib['x'], text.attrib['x'])
                 self.assertGreater(float(rect.attrib['width']), len(text.text) * float(text.attrib['font-size']) * .62)
-                delay = dashboard.STACK_START_MS + index * dashboard.STACK_ROW_STEP_MS
+                delay = int(re.search(r'animation-delay:(\d+)ms', rect.attrib['style'])[1])
                 self.assertEqual(rect.attrib['style'], f'transform-origin:{rect.attrib["x"]}px {rect.attrib["y"]}px;animation-delay:{delay}ms')
                 self.assertIn(f'animation-delay:{delay}ms', scan.attrib['style'])
                 self.assertEqual(scan.attrib['opacity'], '0')
                 self.assertEqual(scan.attrib['aria-hidden'], 'true')
-                self.assertLess(delay + dashboard.STACK_SCAN_DURATION_MS, 3000)
-            motion = root.find('svg:style', NS).text.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
+                if index == 0:
+                    self.assertEqual(delay, previous_end)
+                else:
+                    self.assertGreaterEqual(delay, previous_end)
+                previous_end = delay + duration
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
             self.assertIn('.stack-aperture{transform-box:view-box;', motion)
             self.assertRegex(motion, r'\.stack-scan\{animation:stack-register \d+ms steps\(18,end\) forwards\}')
             self.assertIn('steps(18,end)', motion)

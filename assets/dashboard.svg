@@ -1269,23 +1269,23 @@ text{fill:#24292f}
 </g>
 <path d="M176 649V671.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:465.76px;animation-delay:1000ms"/>
 <text x="24" y="692" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">backend</text>
-<defs><clipPath id="stack-row-1" clipPathUnits="userSpaceOnUse"><rect x="176" y="675" width="402.52" height="22.1" class="stack-aperture" style="transform-origin:176px 675px;animation-delay:1150ms"/></clipPath></defs>
+<defs><clipPath id="stack-row-1" clipPathUnits="userSpaceOnUse"><rect x="176" y="675" width="402.52" height="22.1" class="stack-aperture" style="transform-origin:176px 675px;animation-delay:2050ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-1)">
 <text x="176" y="692" font-size="17" fill="#f3ece8" class="" text-anchor="start">Node.js / Spring / Express / APIs REST</text>
 </g>
-<path d="M176 675V697.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:402.52px;animation-delay:1150ms"/>
+<path d="M176 675V697.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:402.52px;animation-delay:2050ms"/>
 <text x="24" y="718" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">data</text>
-<defs><clipPath id="stack-row-2" clipPathUnits="userSpaceOnUse"><rect x="176" y="701" width="107.4" height="22.1" class="stack-aperture" style="transform-origin:176px 701px;animation-delay:1300ms"/></clipPath></defs>
+<defs><clipPath id="stack-row-2" clipPathUnits="userSpaceOnUse"><rect x="176" y="701" width="107.4" height="22.1" class="stack-aperture" style="transform-origin:176px 701px;animation-delay:3100ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-2)">
 <text x="176" y="718" font-size="17" fill="#f3ece8" class="" text-anchor="start">PostgreSQL</text>
 </g>
-<path d="M176 701V723.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:107.4px;animation-delay:1300ms"/>
+<path d="M176 701V723.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:107.4px;animation-delay:3100ms"/>
 <text x="24" y="744" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">tools</text>
-<defs><clipPath id="stack-row-3" clipPathUnits="userSpaceOnUse"><rect x="176" y="727" width="349.82" height="22.1" class="stack-aperture" style="transform-origin:176px 727px;animation-delay:1450ms"/></clipPath></defs>
+<defs><clipPath id="stack-row-3" clipPathUnits="userSpaceOnUse"><rect x="176" y="727" width="349.82" height="22.1" class="stack-aperture" style="transform-origin:176px 727px;animation-delay:4150ms"/></clipPath></defs>
 <g class="stack-values" clip-path="url(#stack-row-3)">
 <text x="176" y="744" font-size="17" fill="#f3ece8" class="" text-anchor="start">Linux / Git / GitHub / Jira / n8n</text>
 </g>
-<path d="M176 727V749.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:349.82px;animation-delay:1450ms"/>
+<path d="M176 727V749.1" class="stack-scan" stroke="#ef8fb4" stroke-width="1" fill="none" opacity="0" aria-hidden="true" style="--scan-width:349.82px;animation-delay:4150ms"/>
 </g>
 <text x="24" y="792" font-size="12" fill="#a5a1ad" class="muted" text-anchor="start">GitHub / calendário consultado em 2026-10-06</text>
 </svg>

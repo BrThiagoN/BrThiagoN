@@ -56,7 +56,7 @@ DIVIDER_START_MS = 120
 DIVIDER_DURATION_MS = 900
 STACK_START_MS = DECODE_START_MS + DECODE_DURATION_MS
 STACK_SCAN_DURATION_MS = 900
-STACK_ROW_STEP_MS = 150
+STACK_ROW_GAP_MS = 150
 SEAL_START_MS = 100
 SEAL_FRAGMENT_DURATION_MS = 220
 SEAL_FRAGMENT_STEP_MS = 90
@@ -500,7 +500,7 @@ class Canvas:
         """A local clipping aperture and registration line reveal each real row."""
         index = self.stack_rows
         self.stack_rows += 1
-        delay = STACK_START_MS + index * STACK_ROW_STEP_MS
+        delay = STACK_START_MS + index * (STACK_SCAN_DURATION_MS + STACK_ROW_GAP_MS)
         width, top, height = len(value) * size * .62 + 2, y - size, size * 1.3
         # Explicit user-space origin keeps the aperture edge aligned with the scan.
         self.parts.append(f'<defs><clipPath id="stack-row-{index}" clipPathUnits="userSpaceOnUse"><rect x="{x:g}" y="{top:g}" width="{width:g}" height="{height:g}" class="stack-aperture" style="transform-origin:{x:g}px {top:g}px;animation-delay:{delay}ms"/></clipPath></defs>')

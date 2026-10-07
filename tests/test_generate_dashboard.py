@@ -470,7 +470,7 @@ class DashboardTests(unittest.TestCase):
             values = stack.findall('svg:g[@class="stack-values"]', NS)
             clips = stack.findall('svg:defs/svg:clipPath', NS)
             scans = stack.findall('svg:path[@class="stack-scan"]', NS)
-            self.assertEqual(len(values), 5 if mobile else 4)
+            self.assertEqual(len(values), 6 if mobile else 4)
             self.assertEqual(len(values), len(clips))
             self.assertEqual(len(values), len(scans))
             all_text = ' / '.join(value.find('svg:text', NS).text for value in values)
@@ -558,7 +558,7 @@ class DashboardTests(unittest.TestCase):
             self.assertTrue((dashboard.ROOT / "assets" / name).is_file())
         self.assertIn(self.config["contact"]["linkedin"], readme)
         self.assertIn("mailto:" + self.config["contact"]["email"], readme)
-        for repo in ("serah-googleExtension", "Limite-de-desempenho-de-API", "music-store-cli", "vinharia-agnelo-arduino"):
+        for repo in ("serah-googleExtension", "AI-skills-setup", "music-store-cli", "vinharia-agnelo-arduino"):
             self.assertIn(f"https://github.com/{self.config['login']}/{repo}", readme)
 
     def test_footer_keeps_every_project_readable_and_links_clickable(self):

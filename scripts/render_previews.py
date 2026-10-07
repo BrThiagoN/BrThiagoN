@@ -2,6 +2,7 @@
 """Render review PNGs, including a bounded GitHub README simulation.
 
 Optional local tool: needs system PyGObject/GdkPixbuf.
+Generated PNGs go to assets/previews/, which is ignored by Git.
 Never imported by the generator or used in the GitHub Actions workflow.
 """
 

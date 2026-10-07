@@ -657,8 +657,25 @@ def render_contributions(svg: Canvas, data: dict, mobile=False):
     svg.end_panel()
 
 
+def wrap_stack_values(values: list[str], width: int, size: int) -> list[str]:
+    """Wrap between technologies, keeping separators inside each line."""
+    lines, current = [], ''
+    for value in values:
+        candidate = f'{current} / {value}' if current else value
+        if current and len(candidate) * size * .62 > width:
+            lines.append(current)
+            current = value
+        else:
+            current = candidate
+    if current:
+        lines.append(current)
+    return lines
+
+
 def render_stack(svg: Canvas, config: dict, mobile=False):
-    x, y, width, height = (0, 900, 440, 284) if mobile else (0, 600, 880, 164)
+    tools = wrap_stack_values(config['tools'], 400, 18) if mobile else []
+    extra_height = max(0, len(tools) - 1) * 26
+    x, y, width, height = (0, 900, 440, 284 + extra_height) if mobile else (0, 600, 880, 164)
     svg.panel('stack', x, y, width, height, STACK_COMMAND, mobile)
     if mobile:
         svg.text(20, y + 58, 'Languages', 15, 'muted')
@@ -668,7 +685,8 @@ def render_stack(svg: Canvas, config: dict, mobile=False):
         svg.stack_text(20, y + 174, ' / '.join(config['backend']), 20)
         svg.stack_text(20, y + 200, ' / '.join(config['data']), 20)
         svg.text(20, y + 234, 'Tools', 15, 'muted')
-        svg.stack_text(20, y + 264, ' / '.join(config['tools']), 18)
+        for index, line in enumerate(tools):
+            svg.stack_text(20, y + 264 + index * 26, line, 18)
     else:
         rows = (
             ('languages', config['languages']),
@@ -685,7 +703,8 @@ def render_stack(svg: Canvas, config: dict, mobile=False):
 
 def render_svg(config: dict, data: dict, avatar: bytes | None, mobile=False) -> str:
     # The GitHub page already provides the profile sidebar and the real avatar.
-    svg = Canvas(440 if mobile else 880, 1224 if mobile else 808, config)
+    extra_height = max(0, len(wrap_stack_values(config['tools'], 400, 18)) - 1) * 26 if mobile else 0
+    svg = Canvas(440 if mobile else 880, 1224 + extra_height if mobile else 808, config)
     svg.group('profile', 0, 0, svg.width, 280 if mobile else 204)
     svg.rect(0, 16, 3, 248 if mobile else 172, fill=THEMES['dark']['accent'], style='accent-fill')
     if mobile:
@@ -713,7 +732,7 @@ def render_svg(config: dict, data: dict, avatar: bytes | None, mobile=False) -> 
     render_stack(svg, config, mobile)
     calendar = data.get('contributions')
     footer = 'GitHub / ' + (f'calendário consultado em {calendar["fetched_on"]}' if calendar else 'calendário indisponível')
-    svg.text(20 if mobile else 24, 1208 if mobile else 792, footer, 12, 'muted')
+    svg.text(20 if mobile else 24, 1208 + extra_height if mobile else 792, footer, 12, 'muted')
     return svg.finish()
 
 

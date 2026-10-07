@@ -1,21 +1,20 @@
 # Manutenção do dashboard
 
-O README apresenta o perfil e os quatro projetos originais. A composição visual é gerada em SVG transparente, com temas claro e escuro automáticos, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. O calendário tem uma onda de entrada seguida de ondulações contínuas como água. Não há dependência de widgets externos.
+O README apresenta o perfil e quatro projetos em destaque. A composição visual é gerada em SVG transparente, com temas claro e escuro automáticos, tipografia condensada e monoespaçada, vermelho/rosa e um selo japonês vetorial. O layout é dimensionado para a coluna de README do GitHub; a sidebar e o avatar ficam na interface nativa do perfil. O calendário tem uma onda de entrada seguida de ondulações contínuas como água. Não há dependência de widgets externos.
 
 ## Arquivos
 
 | Arquivo | Responsabilidade |
 | --- | --- |
-| `scripts/profile.json` | Textos, stack, descrições e destinos dos quatro projetos, derivados do README anterior. |
+| `scripts/profile.json` | Textos, stack, descrições e destinos dos quatro projetos em destaque. |
 | `scripts/generate_dashboard.py` | Consulta dados, valida snapshots e desenha o dashboard e as linhas do rodapé. Python 3.12+, biblioteca padrão. |
 | `assets/profile-data.json` | Último resultado válido de cada fonte, com período e data da consulta. Sem credenciais. |
 | `assets/avatar.jpg` | Avatar real preservado como asset; a interface do GitHub já mostra a foto fora do README. |
 | `assets/development-mark.svg` | Selo “開発” (desenvolvimento), com glifos convertidos em contornos SVG. |
 | `assets/dashboard.svg` | Documento para a coluna do README, `viewBox="0 0 880 808"`. |
-| `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 440 1224"`, com o mesmo calendário em duas faixas. |
+| `assets/dashboard-mobile.svg` | Layout vertical, `viewBox="0 0 440 1250"`, com o mesmo calendário em duas faixas e tools em duas linhas. A altura acompanha a quantidade de linhas de tools. |
 | `assets/footer/*.svg` | Títulos, linhas de projetos e links de contato; versões desktop/mobile, transparentes e com tema automático. |
-| `assets/previews/*.png` | Oito prévias estáticas: dashboard e retângulo do README, desktop/mobile, claro/escuro. |
-| `scripts/render_previews.py` | Ferramenta opcional de revisão local para exportar as prévias PNG com tema explícito e calendário completo. |
+| `scripts/render_previews.py` | Ferramenta opcional de revisão local para exportar as prévias PNG em `assets/previews/`, ignorado pelo Git. |
 | `docs/design-notes.md` | Paleta, tipografia, proporções e decisões da direção visual. |
 | `.github/workflows/update-profile.yml` | Validação e atualização diária, manual ou por push relevante. |
 | `tests/test_generate_dashboard.py` | Falhas de API, integridade de dados, segurança e limites dos painéis. |
@@ -57,7 +56,7 @@ Esse modo usa REST público e o calendário publicado pelo próprio GitHub. O pa
 - **Stars recebidas:** soma de `stargazers_count` de todos os repositórios públicos próprios, incluindo arquivados e excluindo forks. A paginação é completa; uma página com erro invalida a atualização inteira dessa métrica.
 - **Contribuições:** calendário de um ano móvel, inclusivo, com dias, contagens e intensidades fornecidos pelo GitHub. O total é validado contra a soma diária. No workflow, o resultado reflete o que o `GITHUB_TOKEN` pode consultar; não implica acesso às contribuições de repositórios privados. Pode diferir do perfil visto por uma sessão com outras permissões.
 - **Snapshots:** cada componente guarda sua própria data. Se uma consulta falhar, o componente anterior mantém dados e data originais. A data do calendário aparece no rodapé; as datas das métricas aparecem no painel de stats. Sem snapshot, o SVG mostra indisponibilidade, sem números fabricados.
-- **Core Stack:** tecnologias declaradas no README original, sem porcentagens ou níveis de domínio. A inspeção da API de linguagens encontrou 224.726 bytes de Jupyter Notebook no projeto de desempenho de APIs, além de um volume considerável de HTML, CSS e SCSS. Agregar esses bytes não representaria bem o foco profissional em backend. Não há barras de habilidade.
+- **Core Stack:** tecnologias declaradas em `scripts/profile.json`, sem porcentagens ou níveis de domínio. A seleção apresenta o foco profissional em backend; agregar bytes de linguagens dos repositórios não representaria esse foco. Não há barras de habilidade.
 
 O painel segue a ordem **Repos públicos → Commits (12m) → Stars recebidas → Followers**. No celular, projetos e atividade ficam na primeira linha, e reconhecimento social na segunda. Following deixa de ser exibido. Não são calculados streaks.
 
@@ -87,7 +86,7 @@ O README usa `<picture>` com `source media="(max-width: 640px)"` para escolher o
 
 **Divisórias:** as linhas horizontais do dashboard e dos quatro projetos são desenhadas da esquerda para a direita, durante 900 ms após uma espera de 120 ms. `pathLength="1"` normaliza o ritmo independentemente da largura. O tracejado e seu deslocamento são aplicados apenas na media query de movimento; a linha completa é o fallback. Os separadores verticais das métricas permanecem estáticos. As constantes `DIVIDER_*` controlam o efeito.
 
-**Stack:** cada linha de tecnologias é revelada por uma abertura vetorial que avança em 18 passos, acompanhada por um traço rosa fino de registro. O texto original continua em seu fluxo normal, dentro de um `clipPath` local. A entrada começa quando o comando termina, aos 1.000 ms; cada linha leva 1.800 ms e a próxima começa após uma pausa de 150 ms, sem sobreposição. A última termina aos 8.650 ms no desktop e 10.600 ms no celular. O traço decorativo desaparece ao final e tem opacidade zero e `aria-hidden="true"` por padrão. A abertura fica completa sem animação. As constantes `STACK_*` controlam o ritmo, sem barras de habilidade ou porcentagens.
+**Stack:** cada linha de tecnologias é revelada por uma abertura vetorial que avança em 18 passos, acompanhada por um traço rosa fino de registro. O texto original continua em seu fluxo normal, dentro de um `clipPath` local. A entrada começa quando o comando termina, aos 1.000 ms; cada linha leva 1.800 ms e a próxima começa após uma pausa de 150 ms, sem sobreposição. Tools quebra automaticamente entre nomes no celular, preservando os separadores dentro de cada linha; o painel e o SVG crescem para acomodar o conteúdo. Com a configuração atual, a última linha termina aos 8.650 ms no desktop e 12.550 ms no celular. O traço decorativo desaparece ao final e tem opacidade zero e `aria-hidden="true"` por padrão. A abertura fica completa sem animação. As constantes `STACK_*` controlam o ritmo, sem barras de habilidade ou porcentagens.
 
 **Selo:** os glifos 開発 surgem em oito regiões, numa grade de duas colunas por quatro linhas, em ordem irregular. Cada região leva 220 ms e começa 90 ms depois da anterior. A montagem termina aos 950 ms e dá lugar ao vetor completo original, preservando suas bordas. A moldura permanece fixa. O desenho é definido uma vez em `<defs>` e as regiões usam referências locais com `<use>` e `<clipPath>`, sem arquivos ou fontes externos. As constantes `SEAL_*` controlam a entrada.
 
@@ -105,29 +104,9 @@ Os textos foram revisados nos dois layouts e os testes verificam limites conserv
 
 ### Prévias para revisão
 
-Estas imagens registram o layout com dados de **6 de outubro de 2026**. São exportações estáticas para revisão; o README usa os SVGs atualizados pelo workflow. As prévias em contexto leem a composição real de imagens do README e simulam a moldura do GitHub, sem representar uma versão publicada.
+As prévias são geradas somente para revisão local em `assets/previews/`, diretório ignorado pelo Git. O script exporta o dashboard e a composição real de imagens do README nos layouts desktop/mobile e temas claro/escuro. As imagens em contexto simulam a moldura do GitHub; o README publicado usa os SVGs atualizados pelo workflow.
 
-| Tema | README desktop (896 px) | README mobile (390 px) |
-| --- | --- | --- |
-| Escuro | [Abrir prévia](../assets/previews/readme-desktop.png) | [Abrir prévia](../assets/previews/readme-mobile.png) |
-| Claro | [Abrir prévia](../assets/previews/readme-desktop-light.png) | [Abrir prévia](../assets/previews/readme-mobile-light.png) |
-
-**README escuro — moldura de 896 px, conteúdo de 848 px**
-
-![Prévia do README dentro do seu retângulo no GitHub](../assets/previews/readme-desktop.png)
-
-**README claro — o mesmo SVG, com fundo nativo do GitHub**
-
-![Prévia do README no tema claro](../assets/previews/readme-desktop-light.png)
-
-As exportações isoladas do dashboard preservam a transparência:
-
-| Tema | Dashboard desktop | Dashboard mobile |
-| --- | --- | --- |
-| Escuro | [Abrir PNG](../assets/previews/dashboard-desktop.png) | [Abrir PNG](../assets/previews/dashboard-mobile.png) |
-| Claro | [Abrir PNG](../assets/previews/dashboard-desktop-light.png) | [Abrir PNG](../assets/previews/dashboard-mobile-light.png) |
-
-Para refazer as prévias em uma máquina com PyGObject/GdkPixbuf disponíveis no sistema:
+Para gerar as prévias em uma máquina com PyGObject/GdkPixbuf disponíveis no sistema:
 
 ```sh
 python3 scripts/render_previews.py

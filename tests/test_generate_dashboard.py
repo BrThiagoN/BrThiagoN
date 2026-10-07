@@ -140,8 +140,8 @@ class DashboardTests(unittest.TestCase):
                 panel = root.find('svg:g[@data-panel="stats"]', NS)
                 labels = [node.text for node in panel.findall('svg:text', NS) if node.attrib['font-size'] == ('17' if mobile else '14')]
                 values = [node.text for node in panel.findall('svg:text', NS) if node.attrib['font-size'] == '32']
-                self.assertEqual(labels, ['Repos públicos', 'Commits (12m)', 'Stars recebidas', 'Followers'])
-                self.assertEqual(values, [dashboard.number(data['profile']['public_repos']), expected, dashboard.number(data['repositories']['received_stars']), dashboard.number(data['profile']['followers'])])
+                self.assertEqual(labels, ['Repos públicos', 'Commits (12m)', 'Contribuições (12m)', 'Followers'])
+                self.assertEqual(values, [dashboard.number(data['profile']['public_repos']), expected, dashboard.number(data['contributions']['total']), dashboard.number(data['profile']['followers'])])
 
     def test_commit_snapshot_is_validated_and_its_date_is_visible(self):
         for count in (None, -1, True, '2', 0, 123):

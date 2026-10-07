@@ -1243,8 +1243,8 @@ text{fill:#24292f}
 <text x="232" y="536" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">150</text>
 <text x="232" y="562" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">Commits (12m)</text>
 <path d="M216 510L216 568" class="rule" stroke="#3d3342" fill="none"/>
-<text x="440" y="536" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">1</text>
-<text x="440" y="562" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">Stars recebidas</text>
+<text x="440" y="536" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">260</text>
+<text x="440" y="562" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">Contribuições (12m)</text>
 <path d="M424 510L424 568" class="rule" stroke="#3d3342" fill="none"/>
 <text x="648" y="536" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">6</text>
 <text x="648" y="562" font-size="14" fill="#a5a1ad" class="muted" text-anchor="start">Followers</text>

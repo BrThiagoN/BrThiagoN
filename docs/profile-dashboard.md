@@ -53,12 +53,12 @@ Esse modo usa REST público e o calendário publicado pelo próprio GitHub. O pa
 
 - **Repos públicos e followers:** campos da API REST de usuários. Repos públicos inclui forks, conforme a definição do GitHub.
 - **Commits (12m):** `totalCommitContributions` da API GraphQL, no mesmo período de um ano móvel do calendário. Conta contribuições de commits reconhecidas pelo GitHub e visíveis ao token; não soma issues, pull requests ou criação de repositórios, nem representa todos os commits da conta desde sua criação. Snapshots antigos e o bootstrap público sem esse campo exibem `—` até a próxima atualização autenticada. Zero só aparece quando a API retorna zero.
-- **Stars recebidas:** soma de `stargazers_count` de todos os repositórios públicos próprios, incluindo arquivados e excluindo forks. A paginação é completa; uma página com erro invalida a atualização inteira dessa métrica.
-- **Contribuições:** calendário de um ano móvel, inclusivo, com dias, contagens e intensidades fornecidos pelo GitHub. O total é validado contra a soma diária. No workflow, o resultado reflete o que o `GITHUB_TOKEN` pode consultar; não implica acesso às contribuições de repositórios privados. Pode diferir do perfil visto por uma sessão com outras permissões.
+- **Contribuições (12m):** total do calendário de um ano móvel, inclusivo, com dias, contagens e intensidades fornecidos pelo GitHub. O total é validado contra a soma diária e aparece tanto no calendário quanto no painel de stats. No workflow, o resultado reflete o que o `GITHUB_TOKEN` pode consultar; não implica acesso às contribuições de repositórios privados. Pode diferir do perfil visto por uma sessão com outras permissões.
+- **Snapshot de repositórios:** preserva a lista de repositórios públicos e sua soma de stars, excluindo forks. Esses dados históricos não são exibidos no painel de stats.
 - **Snapshots:** cada componente guarda sua própria data. Se uma consulta falhar, o componente anterior mantém dados e data originais. A data do calendário aparece no rodapé; as datas das métricas aparecem no painel de stats. Sem snapshot, o SVG mostra indisponibilidade, sem números fabricados.
 - **Core Stack:** tecnologias declaradas em `scripts/profile.json`, sem porcentagens ou níveis de domínio. A seleção apresenta o foco profissional em backend; agregar bytes de linguagens dos repositórios não representaria esse foco. Não há barras de habilidade.
 
-O painel segue a ordem **Repos públicos → Commits (12m) → Stars recebidas → Followers**. No celular, projetos e atividade ficam na primeira linha, e reconhecimento social na segunda. Following deixa de ser exibido. Não são calculados streaks.
+O painel segue a ordem **Repos públicos → Commits (12m) → Contribuições (12m) → Followers**. No celular, repositórios e commits ficam na primeira linha; contribuições e followers, na segunda. As datas de snapshot correspondem aos dados de perfil e contribuições usados no painel. Following e stars não são exibidos. Não são calculados streaks.
 
 ## Automação e segurança
 

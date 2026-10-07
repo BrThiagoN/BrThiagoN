@@ -1246,8 +1246,8 @@ text{fill:#24292f}
 <text x="20" y="802" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Repos públicos</text>
 <text x="228" y="776" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">150</text>
 <text x="228" y="802" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Commits (12m)</text>
-<text x="20" y="842" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">1</text>
-<text x="20" y="868" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Stars recebidas</text>
+<text x="20" y="842" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">260</text>
+<text x="20" y="868" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Contribuições (12m)</text>
 <text x="228" y="842" font-size="32" fill="#f3ece8" class="strong" text-anchor="start">6</text>
 <text x="228" y="868" font-size="17" fill="#a5a1ad" class="muted" text-anchor="start">Followers</text>
 <path d="M20 814L420 814" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>

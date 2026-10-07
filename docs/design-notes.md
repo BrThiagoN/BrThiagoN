@@ -31,7 +31,7 @@ Alinhamento à esquerda, viewBox desktop de 880 px, pensado para aproximadamente
 │ Contribuições                  período real    │
 │ [ calendário dos últimos 12 meses ]             │
 │                                                │
-│ Repos       Commits (12m)  Stars     Followers   │
+│ Repos     Commits (12m)  Contribuições  Followers│
 │                                                │
 │ languages   Java / Python / ...                 │
 │ backend     Node.js / Spring / ...              │

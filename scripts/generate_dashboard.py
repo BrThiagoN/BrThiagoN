@@ -560,9 +560,7 @@ def number(value: int | None) -> str:
 
 
 def snapshot_label(data: dict) -> str:
-    keys = ('profile', 'repositories')
-    if (data.get('contributions') or {}).get('commits') is not None:
-        keys += ('contributions',)
+    keys = ('profile', 'contributions')
     dates = sorted({data[key]['fetched_on'] for key in keys if data.get(key)})
     return 'snapshot / ' + (' · '.join(dates) if dates else 'indisponível')
 
@@ -574,11 +572,11 @@ def render_stats(svg: Canvas, data: dict, mobile=False):
         svg.text(20, y + 54, snapshot_label(data), 12, 'muted')
     else:
         svg.text(width - 24, y + 28, snapshot_label(data), 12, 'muted', 'end')
-    profile, repos = data.get('profile') or {}, data.get('repositories') or {}
+    profile = data.get('profile') or {}
     contributions = data.get('contributions') or {}
     metrics = (
         ('Repos públicos', profile.get('public_repos')), ('Commits (12m)', contributions.get('commits')),
-        ('Stars recebidas', repos.get('received_stars')), ('Followers', profile.get('followers')),
+        ('Contribuições (12m)', contributions.get('total')), ('Followers', profile.get('followers')),
     )
     for i, (label, value) in enumerate(metrics):
         if mobile:

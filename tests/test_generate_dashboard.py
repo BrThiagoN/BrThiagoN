@@ -334,6 +334,7 @@ class DashboardTests(unittest.TestCase):
                 self.assertGreater(delay, entrance_end)
                 self.assertEqual(group.find('svg:title', NS).text, f'{day["date"]}: {day["count"]} contribuições')
                 self.assertEqual(cell.attrib['fill'], dashboard.LEVELS[day['level']])
+                self.assertEqual(group.attrib['data-level'], str(day['level']))
                 self.assertNotIn('opacity', group.attrib)
                 self.assertNotIn('transform', group.attrib)
                 self.assertEqual(group.attrib.get('data-active'), 'true' if day['count'] > 0 else None)
@@ -350,8 +351,8 @@ class DashboardTests(unittest.TestCase):
             ripple_rule = re.search(r'\.contribution-ripple\{([^}]+)\}', motion)[1]
             self.assertIn('infinite', ripple_rule)
             keyframes = styles.split('@keyframes contribution-ripple{', 1)[1].split('@keyframes', 1)[0]
-            self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'opacity'})
-            self.assertIn('0%,100%{opacity:1}', keyframes)
+            self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'opacity', 'color'})
+            self.assertIn('0%,100%{opacity:1;color:var(--cell-color)}', keyframes)
             self.assertNotIn('transform', ripple_rule + keyframes)
             self.assertNotIn('contribution-ripple', dashboard.svg_styles(animate=False))
 
@@ -364,10 +365,30 @@ class DashboardTests(unittest.TestCase):
         self.assertGreater(dashboard.BREATH_MIN_OPACITY, .5)
         self.assertGreater(dashboard.BREATH_EMPTY_OPACITY, dashboard.BREATH_MIN_OPACITY)
         keyframes = styles.split('@keyframes contribution-ripple{', 1)[1].split('@keyframes', 1)[0]
-        self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'opacity'})
-        self.assertIn('0%,100%{opacity:1}', keyframes)
-        self.assertIn('50%{opacity:var(--wave-floor)}', keyframes)
+        self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'opacity', 'color'})
+        self.assertIn('0%,100%{opacity:1;color:var(--cell-color)}', keyframes)
+        self.assertIn('50%{opacity:var(--wave-floor);color:var(--pulse-color)}', keyframes)
         self.assertNotIn('contribution-ripple', dashboard.svg_styles(animate=False))
+
+    def test_calendar_pulse_uses_theme_and_level_specific_colors(self):
+        for theme, palette in dashboard.THEMES.items():
+            styles = dashboard.svg_styles(theme=theme)
+            self.assertEqual(palette['pulse_levels'][0], palette['levels'][0])
+            self.assertEqual(len(set(palette['pulse_levels'])), 5)
+            for level, (base, pulse) in enumerate(zip(palette['levels'], palette['pulse_levels'])):
+                self.assertIn(
+                    f'.contribution-ripple[data-level="{level}"]{{--cell-color:{base};--pulse-color:{pulse}}}',
+                    styles,
+                )
+                if level:
+                    self.assertNotEqual(base, pulse)
+            motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1]
+            self.assertIn('.contribution-ripple>.contribution-cell{fill:currentColor}', motion)
+            static = dashboard.svg_styles(theme=theme, animate=False)
+            self.assertNotIn('currentColor', static)
+            self.assertNotIn('--pulse-color', static)
+            for level, base in enumerate(palette['levels']):
+                self.assertIn(f'.level-{level}{{fill:{base}}}', static)
 
     def test_panel_text_bounds_in_both_layouts(self):
         # Conservative monospace advance (0.62 em) also covers Courier fallback.

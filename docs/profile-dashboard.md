@@ -70,6 +70,8 @@ As únicas actions são `actions/checkout` e `actions/setup-python`, fixadas por
 
 Somente assets são adicionados ao commit `chore(profile): update dashboard`, e apenas quando há mudanças. Os paths de push não incluem os assets gerados. Commits feitos com `GITHUB_TOKEN` também não disparam novos workflows de push. Não há force push; um avanço concorrente da branch rejeita o push e preserva o trabalho remoto.
 
+Os commits automáticos usam a identidade Git de Thiago Nascimento, a mesma dos commits de desenvolvimento do repositório. A execução e o push continuam pelo GitHub Actions com `GITHUB_TOKEN`; não é necessário um token pessoal adicional.
+
 Se a política da branch padrão proibir commits diretos, a geração continua válida, mas o push automático será rejeitado pela proteção. Nesse caso, o passo de publicação deve ser adaptado ao fluxo de pull requests do repositório, respeitando a política existente.
 
 ## Compatibilidade e revisão visual

@@ -21,6 +21,7 @@ text{fill:#f3ece8}
 .contribution-ripple[data-level="2"]{--cell-color:#7b304c;--pulse-color:#e16e9c}
 .contribution-ripple[data-level="3"]{--cell-color:#bf4b76;--pulse-color:#ff9bc5}
 .contribution-ripple[data-level="4"]{--cell-color:#ef8fb4;--pulse-color:#ffd5e8}
+.seal-light{--seal-glow:#f05c73}
 .stack-scan{stroke:#ef8fb4}
 .handwriting-line{stroke:#f3ece8}
 .handwriting-line.muted{stroke:#a5a1ad}
@@ -42,6 +43,7 @@ text{fill:#24292f}
 .contribution-ripple[data-level="2"]{--cell-color:#d990af;--pulse-color:#ce4b83}
 .contribution-ripple[data-level="3"]{--cell-color:#b9507e;--pulse-color:#a82561}
 .contribution-ripple[data-level="4"]{--cell-color:#832044;--pulse-color:#70173f}
+.seal-light{--seal-glow:#b91f45}
 .stack-scan{stroke:#96335f}
 .handwriting-line{stroke:#24292f}
 .handwriting-line.muted{stroke:#59636e}
@@ -65,6 +67,7 @@ text{fill:#24292f}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
+.seal-light{animation:seal-flicker 14000ms linear 950ms infinite}
 }
 @keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes contribution-ripple{0%,100%{opacity:1;color:var(--cell-color)}50%{opacity:var(--wave-floor);color:var(--pulse-color)}}
@@ -78,6 +81,7 @@ text{fill:#24292f}
 @keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}
 @keyframes seal-pieces{from{opacity:1}to{opacity:0}}
 @keyframes seal-fragment{from{opacity:0}to{opacity:1}}
+@keyframes seal-flicker{0%,12%,26%,40%,52%,68%,84%,100%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}6%,20%,34%,60%,76%,94%{opacity:.86;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}43%,80%{opacity:.94;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 4px var(--seal-glow))}44.2%,81.2%{opacity:.18;filter:none}45.6%,82.8%{opacity:.92;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}46.8%{opacity:.42;filter:none}48.4%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}}
 </style>
 <g data-panel="project" data-bounds="0 0 880 112">
 <text x="24" y="28" font-size="18" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">Music Store CLI</text>

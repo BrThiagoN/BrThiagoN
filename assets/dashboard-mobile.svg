@@ -21,6 +21,7 @@ text{fill:#f3ece8}
 .contribution-ripple[data-level="2"]{--cell-color:#7b304c;--pulse-color:#e16e9c}
 .contribution-ripple[data-level="3"]{--cell-color:#bf4b76;--pulse-color:#ff9bc5}
 .contribution-ripple[data-level="4"]{--cell-color:#ef8fb4;--pulse-color:#ffd5e8}
+.seal-light{--seal-glow:#f05c73}
 .stack-scan{stroke:#ef8fb4}
 .handwriting-line{stroke:#f3ece8}
 .handwriting-line.muted{stroke:#a5a1ad}
@@ -42,6 +43,7 @@ text{fill:#24292f}
 .contribution-ripple[data-level="2"]{--cell-color:#d990af;--pulse-color:#ce4b83}
 .contribution-ripple[data-level="3"]{--cell-color:#b9507e;--pulse-color:#a82561}
 .contribution-ripple[data-level="4"]{--cell-color:#832044;--pulse-color:#70173f}
+.seal-light{--seal-glow:#b91f45}
 .stack-scan{stroke:#96335f}
 .handwriting-line{stroke:#24292f}
 .handwriting-line.muted{stroke:#59636e}
@@ -65,6 +67,7 @@ text{fill:#24292f}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
+.seal-light{animation:seal-flicker 14000ms linear 950ms infinite}
 }
 @keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes contribution-ripple{0%,100%{opacity:1;color:var(--cell-color)}50%{opacity:var(--wave-floor);color:var(--pulse-color)}}
@@ -78,6 +81,7 @@ text{fill:#24292f}
 @keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}
 @keyframes seal-pieces{from{opacity:1}to{opacity:0}}
 @keyframes seal-fragment{from{opacity:0}to{opacity:1}}
+@keyframes seal-flicker{0%,12%,26%,40%,52%,68%,84%,100%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}6%,20%,34%,60%,76%,94%{opacity:.86;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}43%,80%{opacity:.94;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 4px var(--seal-glow))}44.2%,81.2%{opacity:.18;filter:none}45.6%,82.8%{opacity:.92;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}46.8%{opacity:.42;filter:none}48.4%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}}
 </style>
 <g data-panel="profile" data-bounds="0 0 440 280">
 <rect x="0" y="16" width="3" height="248" rx="0" fill="#f05c73" stroke="none" class="accent-fill"/>
@@ -96,7 +100,7 @@ text{fill:#24292f}
 <clipPath id="seal-tile-5" clipPathUnits="userSpaceOnUse"><rect x="60" y="72" width="60" height="36"/></clipPath>
 <clipPath id="seal-tile-6" clipPathUnits="userSpaceOnUse"><rect x="0" y="108" width="60" height="36"/></clipPath>
 <clipPath id="seal-tile-7" clipPathUnits="userSpaceOnUse"><rect x="60" y="108" width="60" height="36"/></clipPath>
-</defs><g class="seal-pieces" opacity="0" aria-hidden="true">
+</defs><g class="seal-light"><g class="seal-pieces" opacity="0" aria-hidden="true">
 <g clip-path="url(#seal-tile-3)"><use href="#development-ink" class="seal-fragment" style="animation-delay:100ms"/></g>
 <g clip-path="url(#seal-tile-4)"><use href="#development-ink" class="seal-fragment" style="animation-delay:190ms"/></g>
 <g clip-path="url(#seal-tile-0)"><use href="#development-ink" class="seal-fragment" style="animation-delay:280ms"/></g>
@@ -105,7 +109,7 @@ text{fill:#24292f}
 <g clip-path="url(#seal-tile-5)"><use href="#development-ink" class="seal-fragment" style="animation-delay:550ms"/></g>
 <g clip-path="url(#seal-tile-1)"><use href="#development-ink" class="seal-fragment" style="animation-delay:640ms"/></g>
 <g clip-path="url(#seal-tile-6)"><use href="#development-ink" class="seal-fragment" style="animation-delay:730ms"/></g>
-</g><use href="#development-ink" class="seal-final"/>
+</g><use href="#development-ink" class="seal-final"/></g>
 </g>
 <text x="20" y="148" font-size="18" fill="#a5a1ad" class="muted handwriting-line" text-anchor="start" xml:space="preserve"><tspan class="handwriting-letter" style="animation-delay:2720ms;animation-duration:320ms">E</tspan><tspan class="handwriting-letter" style="animation-delay:2736ms;animation-duration:320ms">n</tspan><tspan class="handwriting-letter" style="animation-delay:2752ms;animation-duration:320ms">g</tspan><tspan class="handwriting-letter" style="animation-delay:2768ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:2784ms;animation-duration:320ms">n</tspan><tspan class="handwriting-letter" style="animation-delay:2800ms;animation-duration:320ms">h</tspan><tspan class="handwriting-letter" style="animation-delay:2816ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:2832ms;animation-duration:320ms">r</tspan><tspan class="handwriting-letter" style="animation-delay:2848ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:2864ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:2880ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:2896ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:2912ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:2928ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:2944ms;animation-duration:320ms">S</tspan><tspan class="handwriting-letter" style="animation-delay:2960ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:2976ms;animation-duration:320ms">f</tspan><tspan class="handwriting-letter" style="animation-delay:2992ms;animation-duration:320ms">t</tspan><tspan class="handwriting-letter" style="animation-delay:3008ms;animation-duration:320ms">w</tspan><tspan class="handwriting-letter" style="animation-delay:3024ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:3040ms;animation-duration:320ms">r</tspan><tspan class="handwriting-letter" style="animation-delay:3056ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:3072ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:3088ms;animation-duration:320ms">@</tspan><tspan class="handwriting-letter" style="animation-delay:3104ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:3120ms;animation-duration:320ms">F</tspan><tspan class="handwriting-letter" style="animation-delay:3136ms;animation-duration:320ms">I</tspan><tspan class="handwriting-letter" style="animation-delay:3152ms;animation-duration:320ms">A</tspan><tspan class="handwriting-letter" style="animation-delay:3168ms;animation-duration:320ms">P</tspan></text>
 <text x="20" y="180" font-size="18" fill="#f3ece8" class="handwriting-line" text-anchor="start" xml:space="preserve"><tspan class="handwriting-letter" style="animation-delay:3578ms;animation-duration:320ms">E</tspan><tspan class="handwriting-letter" style="animation-delay:3594ms;animation-duration:320ms">s</tspan><tspan class="handwriting-letter" style="animation-delay:3610ms;animation-duration:320ms">t</tspan><tspan class="handwriting-letter" style="animation-delay:3626ms;animation-duration:320ms">a</tspan><tspan class="handwriting-letter" style="animation-delay:3642ms;animation-duration:320ms">g</tspan><tspan class="handwriting-letter" style="animation-delay:3658ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:3674ms;animation-duration:320ms">á</tspan><tspan class="handwriting-letter" style="animation-delay:3690ms;animation-duration:320ms">r</tspan><tspan class="handwriting-letter" style="animation-delay:3706ms;animation-duration:320ms">i</tspan><tspan class="handwriting-letter" style="animation-delay:3722ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:3738ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:3754ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:3770ms;animation-duration:320ms">e</tspan><tspan class="handwriting-letter" style="animation-delay:3786ms;animation-duration:320ms"> </tspan><tspan class="handwriting-letter" style="animation-delay:3802ms;animation-duration:320ms">P</tspan><tspan class="handwriting-letter" style="animation-delay:3818ms;animation-duration:320ms">r</tspan><tspan class="handwriting-letter" style="animation-delay:3834ms;animation-duration:320ms">o</tspan><tspan class="handwriting-letter" style="animation-delay:3850ms;animation-duration:320ms">d</tspan><tspan class="handwriting-letter" style="animation-delay:3866ms;animation-duration:320ms">u</tspan><tspan class="handwriting-letter" style="animation-delay:3882ms;animation-duration:320ms">t</tspan><tspan class="handwriting-letter" style="animation-delay:3898ms;animation-duration:320ms">o</tspan></text>

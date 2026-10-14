@@ -568,12 +568,26 @@ class DashboardTests(unittest.TestCase):
             final = root.find('.//svg:use[@class="seal-final"]', NS)
             self.assertEqual(final.attrib['href'], '#development-ink')
             self.assertNotIn('opacity', final.attrib)
+            light = root.find('.//svg:g[@class="seal-light"]', NS)
+            self.assertIs(light.find('svg:use[@class="seal-final"]', NS), final)
+            self.assertIs(light.find('svg:g[@class="seal-pieces"]', NS), pieces)
+            self.assertNotIn('opacity', light.attrib)
+            self.assertNotIn('filter', light.attrib)
+            self.assertIsNone(light.find('svg:path[@class="mark-outline"]', NS))
             self.assertLessEqual(dashboard.SEAL_TOTAL_MS, 1200)
             styles = root.find('svg:style', NS).text
             motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
             self.assertIn('.seal-pieces{animation:seal-pieces', motion)
             self.assertIn('.seal-fragment{animation:seal-fragment', motion)
+            self.assertIn(
+                f'.seal-light{{animation:seal-flicker {dashboard.SEAL_LIGHT_DURATION_MS}ms linear {dashboard.SEAL_TOTAL_MS}ms infinite}}',
+                motion,
+            )
+            self.assertGreaterEqual(dashboard.SEAL_LIGHT_DURATION_MS, 10000)
+            self.assertNotIn('seal-flicker', styles.split('@media (prefers-reduced-motion: no-preference){', 1)[0])
             self.assertNotIn('seal-fragment', dashboard.svg_styles(animate=False))
+            self.assertNotIn('seal-flicker', dashboard.svg_styles(animate=False))
+            self.assertNotIn('drop-shadow', dashboard.svg_styles(animate=False))
 
     def test_leap_calendar_cells_and_legend_do_not_overlap(self):
         data = deepcopy(self.snapshot)

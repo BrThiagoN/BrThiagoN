@@ -70,6 +70,7 @@ SEAL_FRAGMENT_DURATION_MS = 220
 SEAL_FRAGMENT_STEP_MS = 90
 SEAL_FRAGMENT_ORDER = (3, 4, 0, 7, 2, 5, 1, 6)
 SEAL_TOTAL_MS = SEAL_START_MS + (len(SEAL_FRAGMENT_ORDER) - 1) * SEAL_FRAGMENT_STEP_MS + SEAL_FRAGMENT_DURATION_MS
+SEAL_LIGHT_DURATION_MS = 14000
 CONTRIBUTION_LEVELS = {
     "NONE": 0,
     "FIRST_QUARTILE": 1,
@@ -400,6 +401,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
                 for i, color in enumerate(palette['levels'])
             )
             rules.extend((
+                f'.seal-light{{--seal-glow:{palette["accent"]}}}',
                 f'.stack-scan{{stroke:{palette["pink"]}}}',
                 f'.handwriting-line{{stroke:{palette["foreground"]}}}',
                 f'.handwriting-line.muted{{stroke:{palette["muted"]}}}',
@@ -435,6 +437,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             f'.seal-final{{animation:decode-resolved {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-pieces{{animation:seal-pieces {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
+            f'.seal-light{{animation:seal-flicker {SEAL_LIGHT_DURATION_MS}ms linear {SEAL_TOTAL_MS}ms infinite}}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
             '@keyframes contribution-ripple{0%,100%{opacity:1;color:var(--cell-color)}50%{opacity:var(--wave-floor);color:var(--pulse-color)}}',
@@ -448,6 +451,16 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '@keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}',
             '@keyframes seal-pieces{from{opacity:1}to{opacity:0}}',
             '@keyframes seal-fragment{from{opacity:0}to{opacity:1}}',
+            # Long lit stretches, gentle drift, then two brief irregular brownouts.
+            '@keyframes seal-flicker{'
+            '0%,12%,26%,40%,52%,68%,84%,100%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}'
+            '6%,20%,34%,60%,76%,94%{opacity:.86;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}'
+            '43%,80%{opacity:.94;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 4px var(--seal-glow))}'
+            '44.2%,81.2%{opacity:.18;filter:none}'
+            '45.6%,82.8%{opacity:.92;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}'
+            '46.8%{opacity:.42;filter:none}'
+            '48.4%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}'
+            '}',
         ])
     return '\n'.join(rules)
 
@@ -551,11 +564,11 @@ class Canvas:
         for tile in range(len(SEAL_FRAGMENT_ORDER)):
             left, top = (tile % 2) * 60, (tile // 2) * 36
             self.parts.append(f'<clipPath id="seal-tile-{tile}" clipPathUnits="userSpaceOnUse"><rect x="{left}" y="{top}" width="60" height="36"/></clipPath>')
-        self.parts.append('</defs><g class="seal-pieces" opacity="0" aria-hidden="true">')
+        self.parts.append('</defs><g class="seal-light"><g class="seal-pieces" opacity="0" aria-hidden="true">')
         for order, tile in enumerate(SEAL_FRAGMENT_ORDER):
             delay = SEAL_START_MS + order * SEAL_FRAGMENT_STEP_MS
             self.parts.append(f'<g clip-path="url(#seal-tile-{tile})"><use href="#development-ink" class="seal-fragment" style="animation-delay:{delay}ms"/></g>')
-        self.parts.append('</g><use href="#development-ink" class="seal-final"/>')
+        self.parts.append('</g><use href="#development-ink" class="seal-final"/></g>')
         self.parts.append('</g>')
 
     def finish(self) -> str:

@@ -338,6 +338,15 @@ class DashboardTests(unittest.TestCase):
                 self.assertNotIn('opacity', group.attrib)
                 self.assertNotIn('transform', group.attrib)
                 self.assertEqual(group.attrib.get('data-active'), 'true' if day['count'] > 0 else None)
+                crest = group.find('svg:rect[@class="contribution-crest"]', NS)
+                if day['count'] > 0:
+                    self.assertIsNotNone(crest)
+                    self.assertEqual(crest.attrib['opacity'], '0')
+                    self.assertEqual(crest.attrib['aria-hidden'], 'true')
+                    for key in ('x', 'y', 'width', 'height', 'rx'):
+                        self.assertEqual(crest.attrib[key], cell.attrib[key])
+                else:
+                    self.assertIsNone(crest)
                 self.assertLess(delay, dashboard.RIPPLE_START_MS + dashboard.RIPPLE_DURATION_MS)
                 band = 1 if mobile and float(cell.attrib['y']) >= 524 else 0
                 phases.setdefault((band, cell.attrib['y']), []).append(delay)
@@ -348,7 +357,7 @@ class DashboardTests(unittest.TestCase):
                 self.assertLess(delays[-1] - delays[0], dashboard.RIPPLE_DURATION_MS)
             styles = root.find('svg:style', NS).text
             motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
-            ripple_rule = re.search(r'\.contribution-ripple\{([^}]+)\}', motion)[1]
+            ripple_rule = re.search(r'\.contribution-ripple\[data-active\]\{([^}]+)\}', motion)[1]
             self.assertIn('infinite', ripple_rule)
             keyframes = styles.split('@keyframes contribution-ripple{', 1)[1].split('@keyframes', 1)[0]
             self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'opacity', 'color'})
@@ -356,14 +365,14 @@ class DashboardTests(unittest.TestCase):
             self.assertNotIn('transform', ripple_rule + keyframes)
             self.assertNotIn('contribution-ripple', dashboard.svg_styles(animate=False))
 
-    def test_breathing_is_slow_continuous_and_quieter_on_empty_days(self):
+    def test_breathing_is_slow_continuous_and_only_animates_active_days(self):
         styles = dashboard.svg_styles()
         motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1].split('@keyframes', 1)[0]
-        self.assertIn(f'.contribution-ripple[data-active]{{--wave-floor:{dashboard.BREATH_MIN_OPACITY:g}}}', motion)
-        self.assertIn(f'.contribution-ripple{{--wave-floor:{dashboard.BREATH_EMPTY_OPACITY:g};', motion)
+        self.assertIn(f'.contribution-ripple[data-active]{{--wave-floor:{dashboard.BREATH_MIN_OPACITY:g};animation:', motion)
+        neutral_rule = re.search(r'\.contribution-ripple\{([^}]+)\}', motion)[1]
+        self.assertNotIn('animation', neutral_rule)
         self.assertGreaterEqual(dashboard.RIPPLE_DURATION_MS, 4000)
         self.assertGreater(dashboard.BREATH_MIN_OPACITY, .5)
-        self.assertGreater(dashboard.BREATH_EMPTY_OPACITY, dashboard.BREATH_MIN_OPACITY)
         keyframes = styles.split('@keyframes contribution-ripple{', 1)[1].split('@keyframes', 1)[0]
         self.assertEqual(set(re.findall(r'([\w-]+):', keyframes)), {'opacity', 'color'})
         self.assertIn('0%,100%{opacity:1;color:var(--cell-color)}', keyframes)
@@ -384,9 +393,14 @@ class DashboardTests(unittest.TestCase):
                     self.assertNotEqual(base, pulse)
             motion = styles.split('@media (prefers-reduced-motion: no-preference){', 1)[1]
             self.assertIn('.contribution-ripple>.contribution-cell{fill:currentColor}', motion)
+            crest_rule = re.search(r'\.contribution-crest\{([^}]*animation[^}]+)\}', motion)[1]
+            self.assertIn('animation-delay:inherit', crest_rule)
+            crest_frames = styles.split('@keyframes contribution-crest{', 1)[1].split('@keyframes', 1)[0]
+            self.assertEqual(set(re.findall(r'([\w-]+):', crest_frames)), {'opacity'})
             static = dashboard.svg_styles(theme=theme, animate=False)
             self.assertNotIn('currentColor', static)
             self.assertNotIn('--pulse-color', static)
+            self.assertNotIn('contribution-crest', static)
             for level, base in enumerate(palette['levels']):
                 self.assertIn(f'.level-{level}{{fill:{base}}}', static)
 
@@ -580,9 +594,16 @@ class DashboardTests(unittest.TestCase):
             self.assertIn('.seal-pieces{animation:seal-pieces', motion)
             self.assertIn('.seal-fragment{animation:seal-fragment', motion)
             self.assertIn(
-                f'.seal-light{{animation:seal-flicker {dashboard.SEAL_LIGHT_DURATION_MS}ms linear {dashboard.SEAL_TOTAL_MS}ms infinite;filter:',
+                f'.seal-light{{animation:seal-flicker {dashboard.SEAL_LIGHT_DURATION_MS}ms linear {dashboard.SEAL_LIGHT_START_MS}ms infinite;filter:',
                 motion,
             )
+            entrance_end = max(
+                int(re.fullmatch(r'animation-delay:(\d+)ms', cell.attrib['style'])[1])
+                for cell in root.findall('.//svg:rect', NS)
+                if 'contribution-cell' in cell.attrib.get('class', '')
+            ) + dashboard.WAVE_DURATION_MS
+            self.assertGreater(dashboard.SEAL_LIGHT_START_MS, entrance_end)
+            self.assertGreaterEqual(dashboard.SEAL_LIGHT_START_MS, dashboard.SEAL_TOTAL_MS)
             flicker = styles.split('@keyframes seal-flicker{', 1)[1]
             self.assertEqual(set(re.findall(r'([\w-]+):', flicker)), {'opacity'})
             self.assertGreaterEqual(dashboard.SEAL_LIGHT_DURATION_MS, 10000)

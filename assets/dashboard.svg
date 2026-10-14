@@ -21,6 +21,7 @@ text{fill:#f3ece8}
 .contribution-ripple[data-level="2"]{--cell-color:#7b304c;--pulse-color:#e16e9c}
 .contribution-ripple[data-level="3"]{--cell-color:#bf4b76;--pulse-color:#ff9bc5}
 .contribution-ripple[data-level="4"]{--cell-color:#ef8fb4;--pulse-color:#ffd5e8}
+.contribution-crest{--crest-color:#ffe5f0}
 .seal-light{--seal-glow:#f05c73}
 .stack-scan{stroke:#ef8fb4}
 .handwriting-line{stroke:#f3ece8}
@@ -43,6 +44,7 @@ text{fill:#24292f}
 .contribution-ripple[data-level="2"]{--cell-color:#d990af;--pulse-color:#ce4b83}
 .contribution-ripple[data-level="3"]{--cell-color:#b9507e;--pulse-color:#a82561}
 .contribution-ripple[data-level="4"]{--cell-color:#832044;--pulse-color:#70173f}
+.contribution-crest{--crest-color:#fff7fa}
 .seal-light{--seal-glow:#b91f45}
 .stack-scan{stroke:#96335f}
 .handwriting-line{stroke:#24292f}
@@ -52,9 +54,10 @@ text{fill:#24292f}
 .handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion: no-preference){
 .contribution-cell{animation:contribution-wave 900ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}
-.contribution-ripple{--wave-floor:0.96;color:var(--cell-color);animation:contribution-ripple 4800ms ease-in-out infinite}
-.contribution-ripple[data-active]{--wave-floor:0.9}
+.contribution-ripple{color:var(--cell-color)}
+.contribution-ripple[data-active]{--wave-floor:0.9;animation:contribution-ripple 4800ms ease-in-out infinite}
 .contribution-ripple>.contribution-cell{fill:currentColor}
+.contribution-crest{fill:var(--crest-color);filter:drop-shadow(0 0 1px var(--crest-color));pointer-events:none;animation:contribution-crest 4800ms ease-in-out infinite;animation-delay:inherit}
 .handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}
 .decode-final{animation:decode-resolved 900ms step-end 100ms both}
 .decode-frame{animation-duration:900ms;animation-delay:100ms;animation-timing-function:step-end;animation-fill-mode:both}
@@ -67,10 +70,11 @@ text{fill:#24292f}
 .seal-final{animation:decode-resolved 950ms step-end both}
 .seal-pieces{animation:seal-pieces 950ms step-end both}
 .seal-fragment{animation:seal-fragment 220ms ease-out both}
-.seal-light{animation:seal-flicker 14000ms linear 950ms infinite;filter:drop-shadow(0 0 1.5px var(--seal-glow))}
+.seal-light{animation:seal-flicker 14000ms linear 7344ms infinite;filter:drop-shadow(0 0 1.5px var(--seal-glow))}
 }
 @keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes contribution-ripple{0%,100%{opacity:1;color:var(--cell-color)}50%{opacity:var(--wave-floor);color:var(--pulse-color)}}
+@keyframes contribution-crest{0%,38%,62%,100%{opacity:0}50%{opacity:.65}}
 @keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}
 @keyframes decode-resolved{from{opacity:0}to{opacity:1}}
 @keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}
@@ -236,6 +240,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:7837ms"><title>2025-11-21: 4 contribuições</title>
 <rect x="135" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:717ms"/>
+<rect x="135" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:7845ms"><title>2025-11-22: 0 contribuições</title>
 <rect x="135" y="398" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:721ms"/>
@@ -436,9 +441,11 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:8710ms"><title>2026-01-26: 3 contribuições</title>
 <rect x="285" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:1855ms"/>
+<rect x="285" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:8718ms"><title>2026-01-27: 2 contribuições</title>
 <rect x="285" y="338" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:1859ms"/>
+<rect x="285" y="338" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:8726ms"><title>2026-01-28: 0 contribuições</title>
 <rect x="285" y="353" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:1863ms"/>
@@ -594,9 +601,11 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9368ms"><title>2026-03-19: 2 contribuições</title>
 <rect x="390" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2674ms"/>
+<rect x="390" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9376ms"><title>2026-03-20: 1 contribuições</title>
 <rect x="390" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2678ms"/>
+<rect x="390" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:9384ms"><title>2026-03-21: 0 contribuições</title>
 <rect x="390" y="398" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:2682ms"/>
@@ -609,15 +618,19 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9443ms"><title>2026-03-24: 2 contribuições</title>
 <rect x="405" y="338" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2782ms"/>
+<rect x="405" y="338" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9451ms"><title>2026-03-25: 1 contribuições</title>
 <rect x="405" y="353" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2786ms"/>
+<rect x="405" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9459ms"><title>2026-03-26: 1 contribuições</title>
 <rect x="405" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2790ms"/>
+<rect x="405" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9467ms"><title>2026-03-27: 5 contribuições</title>
 <rect x="405" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2794ms"/>
+<rect x="405" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:9475ms"><title>2026-03-28: 0 contribuições</title>
 <rect x="405" y="398" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:2798ms"/>
@@ -637,9 +650,11 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9550ms"><title>2026-04-02: 5 contribuições</title>
 <rect x="420" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2905ms"/>
+<rect x="420" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9558ms"><title>2026-04-03: 2 contribuições</title>
 <rect x="420" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:2909ms"/>
+<rect x="420" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:9566ms"><title>2026-04-04: 0 contribuições</title>
 <rect x="420" y="398" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:2913ms"/>
@@ -655,6 +670,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9632ms"><title>2026-04-08: 1 contribuições</title>
 <rect x="435" y="353" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:3017ms"/>
+<rect x="435" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:9640ms"><title>2026-04-09: 0 contribuições</title>
 <rect x="435" y="368" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:3021ms"/>
@@ -670,6 +686,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9707ms"><title>2026-04-13: 1 contribuições</title>
 <rect x="450" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:3124ms"/>
+<rect x="450" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:9715ms"><title>2026-04-14: 0 contribuições</title>
 <rect x="450" y="338" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:3128ms"/>
@@ -718,6 +735,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:9904ms"><title>2026-04-29: 1 contribuições</title>
 <rect x="480" y="353" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:3363ms"/>
+<rect x="480" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:9912ms"><title>2026-04-30: 0 contribuições</title>
 <rect x="480" y="368" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:3367ms"/>
@@ -764,6 +782,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10093ms"><title>2026-05-14: 4 contribuições</title>
 <rect x="510" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:3598ms"/>
+<rect x="510" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10101ms"><title>2026-05-15: 0 contribuições</title>
 <rect x="510" y="383" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:3602ms"/>
@@ -788,9 +807,11 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10192ms"><title>2026-05-22: 6 contribuições</title>
 <rect x="525" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:3717ms"/>
+<rect x="525" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:10200ms"><title>2026-05-23: 12 contribuições</title>
 <rect x="525" y="398" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:3721ms"/>
+<rect x="525" y="398" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10242ms"><title>2026-05-24: 0 contribuições</title>
 <rect x="540" y="308" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:3812ms"/>
@@ -806,6 +827,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10274ms"><title>2026-05-28: 3 contribuições</title>
 <rect x="540" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:3828ms"/>
+<rect x="540" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10282ms"><title>2026-05-29: 0 contribuições</title>
 <rect x="540" y="383" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:3832ms"/>
@@ -837,9 +859,11 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10423ms"><title>2026-06-07: 6 contribuições</title>
 <rect x="570" y="308" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4043ms"/>
+<rect x="570" y="308" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10431ms"><title>2026-06-08: 1 contribuições</title>
 <rect x="570" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4047ms"/>
+<rect x="570" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10439ms"><title>2026-06-09: 0 contribuições</title>
 <rect x="570" y="338" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4051ms"/>
@@ -864,9 +888,11 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10530ms"><title>2026-06-16: 2 contribuições</title>
 <rect x="585" y="338" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4166ms"/>
+<rect x="585" y="338" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="3" data-active="true" style="animation-delay:10538ms"><title>2026-06-17: 18 contribuições</title>
 <rect x="585" y="353" width="12" height="12" rx="1" fill="#bf4b76" stroke="none" class="contribution-cell level-3" style="animation-delay:4170ms"/>
+<rect x="585" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10546ms"><title>2026-06-18: 0 contribuições</title>
 <rect x="585" y="368" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4174ms"/>
@@ -876,12 +902,15 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="3" data-active="true" style="animation-delay:10562ms"><title>2026-06-20: 14 contribuições</title>
 <rect x="585" y="398" width="12" height="12" rx="1" fill="#bf4b76" stroke="none" class="contribution-cell level-3" style="animation-delay:4182ms"/>
+<rect x="585" y="398" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:10604ms"><title>2026-06-21: 10 contribuições</title>
 <rect x="600" y="308" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:4274ms"/>
+<rect x="600" y="308" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10612ms"><title>2026-06-22: 4 contribuições</title>
 <rect x="600" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4278ms"/>
+<rect x="600" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10620ms"><title>2026-06-23: 0 contribuições</title>
 <rect x="600" y="338" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4282ms"/>
@@ -910,6 +939,7 @@ text{fill:#24292f}
 <text x="615" y="296" font-size="12" fill="#a5a1ad" class="muted" text-anchor="start">Jul</text>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:10719ms"><title>2026-07-01: 2 contribuições</title>
 <rect x="615" y="353" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4401ms"/>
+<rect x="615" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:10727ms"><title>2026-07-02: 0 contribuições</title>
 <rect x="615" y="368" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4405ms"/>
@@ -982,15 +1012,18 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="3" data-active="true" style="animation-delay:11015ms"><title>2026-07-25: 14 contribuições</title>
 <rect x="660" y="398" width="12" height="12" rx="1" fill="#bf4b76" stroke="none" class="contribution-cell level-3" style="animation-delay:4759ms"/>
+<rect x="660" y="398" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11057ms"><title>2026-07-26: 0 contribuições</title>
 <rect x="675" y="308" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4851ms"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11065ms"><title>2026-07-27: 3 contribuições</title>
 <rect x="675" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4855ms"/>
+<rect x="675" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="4" data-active="true" style="animation-delay:11073ms"><title>2026-07-28: 24 contribuições</title>
 <rect x="675" y="338" width="12" height="12" rx="1" fill="#ef8fb4" stroke="none" class="contribution-cell level-4" style="animation-delay:4859ms"/>
+<rect x="675" y="338" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11081ms"><title>2026-07-29: 0 contribuições</title>
 <rect x="675" y="353" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4863ms"/>
@@ -1022,6 +1055,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11188ms"><title>2026-08-07: 2 contribuições</title>
 <rect x="690" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:4986ms"/>
+<rect x="690" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11196ms"><title>2026-08-08: 0 contribuições</title>
 <rect x="690" y="398" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:4990ms"/>
@@ -1031,6 +1065,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11246ms"><title>2026-08-10: 2 contribuições</title>
 <rect x="705" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5086ms"/>
+<rect x="705" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11254ms"><title>2026-08-11: 0 contribuições</title>
 <rect x="705" y="338" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5090ms"/>
@@ -1040,27 +1075,34 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11270ms"><title>2026-08-13: 2 contribuições</title>
 <rect x="705" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5098ms"/>
+<rect x="705" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11278ms"><title>2026-08-14: 3 contribuições</title>
 <rect x="705" y="383" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5102ms"/>
+<rect x="705" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:11286ms"><title>2026-08-15: 8 contribuições</title>
 <rect x="705" y="398" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:5106ms"/>
+<rect x="705" y="398" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11329ms"><title>2026-08-16: 6 contribuições</title>
 <rect x="720" y="308" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5197ms"/>
+<rect x="720" y="308" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11337ms"><title>2026-08-17: 4 contribuições</title>
 <rect x="720" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5201ms"/>
+<rect x="720" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11345ms"><title>2026-08-18: 0 contribuições</title>
 <rect x="720" y="338" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5205ms"/>
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11353ms"><title>2026-08-19: 2 contribuições</title>
 <rect x="720" y="353" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5209ms"/>
+<rect x="720" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:11361ms"><title>2026-08-20: 9 contribuições</title>
 <rect x="720" y="368" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:5213ms"/>
+<rect x="720" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11369ms"><title>2026-08-21: 0 contribuições</title>
 <rect x="720" y="383" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5217ms"/>
@@ -1082,6 +1124,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11451ms"><title>2026-08-27: 3 contribuições</title>
 <rect x="735" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5328ms"/>
+<rect x="735" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11459ms"><title>2026-08-28: 0 contribuições</title>
 <rect x="735" y="383" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5332ms"/>
@@ -1094,6 +1137,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11518ms"><title>2026-08-31: 1 contribuições</title>
 <rect x="750" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5432ms"/>
+<rect x="750" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <text x="750" y="296" font-size="12" fill="#a5a1ad" class="muted" text-anchor="start">Set</text>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11526ms"><title>2026-09-01: 0 contribuições</title>
@@ -1107,6 +1151,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:11550ms"><title>2026-09-04: 12 contribuições</title>
 <rect x="750" y="383" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:5448ms"/>
+<rect x="750" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11558ms"><title>2026-09-05: 0 contribuições</title>
 <rect x="750" y="398" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5452ms"/>
@@ -1125,6 +1170,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:11633ms"><title>2026-09-10: 11 contribuições</title>
 <rect x="765" y="368" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:5559ms"/>
+<rect x="765" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11641ms"><title>2026-09-11: 0 contribuições</title>
 <rect x="765" y="383" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5563ms"/>
@@ -1146,6 +1192,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11723ms"><title>2026-09-17: 1 contribuições</title>
 <rect x="780" y="368" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5674ms"/>
+<rect x="780" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11731ms"><title>2026-09-18: 0 contribuições</title>
 <rect x="780" y="383" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5678ms"/>
@@ -1155,6 +1202,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11782ms"><title>2026-09-20: 5 contribuições</title>
 <rect x="795" y="308" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:5774ms"/>
+<rect x="795" y="308" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:11790ms"><title>2026-09-21: 0 contribuições</title>
 <rect x="795" y="323" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:5778ms"/>
@@ -1201,21 +1249,27 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="1" data-active="true" style="animation-delay:11971ms"><title>2026-10-05: 4 contribuições</title>
 <rect x="825" y="323" width="12" height="12" rx="1" fill="#482437" stroke="none" class="contribution-cell level-1" style="animation-delay:6009ms"/>
+<rect x="825" y="323" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="4" data-active="true" style="animation-delay:11979ms"><title>2026-10-06: 21 contribuições</title>
 <rect x="825" y="338" width="12" height="12" rx="1" fill="#ef8fb4" stroke="none" class="contribution-cell level-4" style="animation-delay:6013ms"/>
+<rect x="825" y="338" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="4" data-active="true" style="animation-delay:11987ms"><title>2026-10-07: 24 contribuições</title>
 <rect x="825" y="353" width="12" height="12" rx="1" fill="#ef8fb4" stroke="none" class="contribution-cell level-4" style="animation-delay:6017ms"/>
+<rect x="825" y="353" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="4" data-active="true" style="animation-delay:11995ms"><title>2026-10-08: 25 contribuições</title>
 <rect x="825" y="368" width="12" height="12" rx="1" fill="#ef8fb4" stroke="none" class="contribution-cell level-4" style="animation-delay:6021ms"/>
+<rect x="825" y="368" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="4" data-active="true" style="animation-delay:12003ms"><title>2026-10-09: 25 contribuições</title>
 <rect x="825" y="383" width="12" height="12" rx="1" fill="#ef8fb4" stroke="none" class="contribution-cell level-4" style="animation-delay:6025ms"/>
+<rect x="825" y="383" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:12011ms"><title>2026-10-10: 8 contribuições</title>
 <rect x="825" y="398" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:6029ms"/>
+<rect x="825" y="398" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:12053ms"><title>2026-10-11: 0 contribuições</title>
 <rect x="840" y="308" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:6120ms"/>
@@ -1225,6 +1279,7 @@ text{fill:#24292f}
 </g>
 <g class="contribution-ripple" data-level="2" data-active="true" style="animation-delay:12069ms"><title>2026-10-13: 7 contribuições</title>
 <rect x="840" y="338" width="12" height="12" rx="1" fill="#7b304c" stroke="none" class="contribution-cell level-2" style="animation-delay:6128ms"/>
+<rect x="840" y="338" width="12" height="12" rx="1" fill="#ffe5f0" class="contribution-crest" opacity="0" aria-hidden="true"/>
 </g>
 <g class="contribution-ripple" data-level="0" style="animation-delay:12077ms"><title>2026-10-14: 0 contribuições</title>
 <rect x="840" y="353" width="12" height="12" rx="1" fill="#1e1b26" stroke="none" class="contribution-cell level-0" style="animation-delay:6132ms"/>

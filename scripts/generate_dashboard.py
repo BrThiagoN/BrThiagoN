@@ -32,12 +32,14 @@ THEMES = {
         "pink": "#ef8fb4", "rule": "#3d3342", "seal": "#803044",
         "levels": LEVELS,
         "pulse_levels": ("#1e1b26", "#b54a73", "#e16e9c", "#ff9bc5", "#ffd5e8"),
+        "crest": "#ffe5f0",
     },
     "light": {
         "foreground": "#24292f", "muted": "#59636e", "accent": "#b91f45",
         "pink": "#96335f", "rule": "#d1d9e0", "seal": "#dba7b6",
         "levels": ("#ebe8ee", "#efc9d8", "#d990af", "#b9507e", "#832044"),
         "pulse_levels": ("#ebe8ee", "#e482aa", "#ce4b83", "#a82561", "#70173f"),
+        "crest": "#fff7fa",
     },
 }
 WAVE_DURATION_MS = 900
@@ -50,7 +52,6 @@ RIPPLE_START_MS = WAVE_START_MS + WAVE_SPAN_MS + 6 * WAVE_ROW_STAGGER_MS + WAVE_
 RIPPLE_DURATION_MS = 4800
 RIPPLE_ROW_STEP_MS = 8
 BREATH_MIN_OPACITY = .9
-BREATH_EMPTY_OPACITY = .96
 WRITE_START_MS = 180
 WRITE_TITLE_DURATION_MS = 480
 WRITE_TITLE_STEP_MS = 100
@@ -70,6 +71,8 @@ SEAL_FRAGMENT_DURATION_MS = 220
 SEAL_FRAGMENT_STEP_MS = 90
 SEAL_FRAGMENT_ORDER = (3, 4, 0, 7, 2, 5, 1, 6)
 SEAL_TOTAL_MS = SEAL_START_MS + (len(SEAL_FRAGMENT_ORDER) - 1) * SEAL_FRAGMENT_STEP_MS + SEAL_FRAGMENT_DURATION_MS
+# Keep the assembled seal still until the calendar entrance has settled.
+SEAL_LIGHT_START_MS = max(SEAL_TOTAL_MS, RIPPLE_START_MS)
 SEAL_LIGHT_DURATION_MS = 14000
 CONTRIBUTION_LEVELS = {
     "NONE": 0,
@@ -401,6 +404,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
                 for i, color in enumerate(palette['levels'])
             )
             rules.extend((
+                f'.contribution-crest{{--crest-color:{palette["crest"]}}}',
                 f'.seal-light{{--seal-glow:{palette["accent"]}}}',
                 f'.stack-scan{{stroke:{palette["pink"]}}}',
                 f'.handwriting-line{{stroke:{palette["foreground"]}}}',
@@ -422,9 +426,10 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '.handwriting-letter{stroke-opacity:0;stroke-linecap:round;stroke-linejoin:round}',
             '@media (prefers-reduced-motion: no-preference){\n'
             f'.contribution-cell{{animation:contribution-wave {WAVE_DURATION_MS}ms cubic-bezier(.2,.65,.3,1) both;transform-box:fill-box;transform-origin:center}}\n'
-            f'.contribution-ripple{{--wave-floor:{BREATH_EMPTY_OPACITY:g};color:var(--cell-color);animation:contribution-ripple {RIPPLE_DURATION_MS}ms ease-in-out infinite}}\n'
-            f'.contribution-ripple[data-active]{{--wave-floor:{BREATH_MIN_OPACITY:g}}}\n'
+            '.contribution-ripple{color:var(--cell-color)}\n'
+            f'.contribution-ripple[data-active]{{--wave-floor:{BREATH_MIN_OPACITY:g};animation:contribution-ripple {RIPPLE_DURATION_MS}ms ease-in-out infinite}}\n'
             '.contribution-ripple>.contribution-cell{fill:currentColor}\n'
+            f'.contribution-crest{{fill:var(--crest-color);filter:drop-shadow(0 0 1px var(--crest-color));pointer-events:none;animation:contribution-crest {RIPPLE_DURATION_MS}ms ease-in-out infinite;animation-delay:inherit}}\n'
             '.handwriting-letter{animation-name:handwriting-ink;animation-timing-function:linear;animation-fill-mode:both;stroke-width:.025em;stroke-dasharray:8em}\n'
             f'.decode-final{{animation:decode-resolved {DECODE_DURATION_MS}ms step-end {DECODE_START_MS}ms both}}\n'
             f'.decode-frame{{animation-duration:{DECODE_DURATION_MS}ms;animation-delay:{DECODE_START_MS}ms;animation-timing-function:step-end;animation-fill-mode:both}}\n'
@@ -437,10 +442,12 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             f'.seal-final{{animation:decode-resolved {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-pieces{{animation:seal-pieces {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
-            f'.seal-light{{animation:seal-flicker {SEAL_LIGHT_DURATION_MS}ms linear {SEAL_TOTAL_MS}ms infinite;filter:drop-shadow(0 0 1.5px var(--seal-glow))}}\n'
+            f'.seal-light{{animation:seal-flicker {SEAL_LIGHT_DURATION_MS}ms linear {SEAL_LIGHT_START_MS}ms infinite;filter:drop-shadow(0 0 1.5px var(--seal-glow))}}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
             '@keyframes contribution-ripple{0%,100%{opacity:1;color:var(--cell-color)}50%{opacity:var(--wave-floor);color:var(--pulse-color)}}',
+            # A narrow foam-like crest, with a fixed small halo and opacity only.
+            '@keyframes contribution-crest{0%,38%,62%,100%{opacity:0}50%{opacity:.65}}',
             '@keyframes handwriting-ink{0%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:8em}70%{fill-opacity:0;stroke-opacity:1;stroke-dashoffset:0}100%{fill-opacity:1;stroke-opacity:0;stroke-dashoffset:0}}',
             '@keyframes decode-resolved{from{opacity:0}to{opacity:1}}',
             '@keyframes decode-stage-0{0%{opacity:1}33.333%{opacity:0}100%{opacity:0}}',
@@ -644,6 +651,11 @@ def draw_weeks(svg: Canvas, weeks: list[list[dict]], x: int, y: int, pitch: floa
             svg.parts.append(f'<g class="contribution-ripple" data-level="{day["level"]}"{activity} style="animation-delay:{ripple_delay}ms"><title>{day["date"]}: {day["count"]} contribuições</title>')
             svg.rect(x + column * pitch, y + row * pitch, cell, cell, fill=LEVELS[day['level']], radius=1,
                      style=f'contribution-cell level-{day["level"]}', delay=delay)
+            if day['count'] > 0:
+                svg.parts.append(
+                    f'<rect x="{x + column * pitch:g}" y="{y + row * pitch:g}" width="{cell:g}" height="{cell:g}" rx="1" '
+                    f'fill="{THEMES["dark"]["crest"]}" class="contribution-crest" opacity="0" aria-hidden="true"/>'
+                )
             svg.parts.append('</g>')
 
 

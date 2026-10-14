@@ -437,7 +437,7 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             f'.seal-final{{animation:decode-resolved {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-pieces{{animation:seal-pieces {SEAL_TOTAL_MS}ms step-end both}}\n'
             f'.seal-fragment{{animation:seal-fragment {SEAL_FRAGMENT_DURATION_MS}ms ease-out both}}\n'
-            f'.seal-light{{animation:seal-flicker {SEAL_LIGHT_DURATION_MS}ms linear {SEAL_TOTAL_MS}ms infinite}}\n'
+            f'.seal-light{{animation:seal-flicker {SEAL_LIGHT_DURATION_MS}ms linear {SEAL_TOTAL_MS}ms infinite;filter:drop-shadow(0 0 1.5px var(--seal-glow))}}\n'
             '}',
             '@keyframes contribution-wave{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}',
             '@keyframes contribution-ripple{0%,100%{opacity:1;color:var(--cell-color)}50%{opacity:var(--wave-floor);color:var(--pulse-color)}}',
@@ -451,15 +451,16 @@ def svg_styles(theme: str | None = None, animate: bool = True) -> str:
             '@keyframes stack-register{0%{opacity:1;transform:translateX(0)}99%{opacity:1}100%{opacity:0;transform:translateX(var(--scan-width))}}',
             '@keyframes seal-pieces{from{opacity:1}to{opacity:0}}',
             '@keyframes seal-fragment{from{opacity:0}to{opacity:1}}',
+            # A small fixed halo avoids interpolating blur filters on every frame.
             # Long lit stretches, gentle drift, then two brief irregular brownouts.
             '@keyframes seal-flicker{'
-            '0%,12%,26%,40%,52%,68%,84%,100%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}'
-            '6%,20%,34%,60%,76%,94%{opacity:.86;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}'
-            '43%,80%{opacity:.94;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 4px var(--seal-glow))}'
-            '44.2%,81.2%{opacity:.18;filter:none}'
-            '45.6%,82.8%{opacity:.92;filter:drop-shadow(0 0 1px var(--seal-glow)) drop-shadow(0 0 3px var(--seal-glow))}'
-            '46.8%{opacity:.42;filter:none}'
-            '48.4%{opacity:1;filter:drop-shadow(0 0 2px var(--seal-glow)) drop-shadow(0 0 6px var(--seal-glow))}'
+            '0%,12%,26%,40%,52%,68%,84%,100%{opacity:.9}'
+            '6%,20%,34%,60%,76%,94%{opacity:.78}'
+            '43%,80%{opacity:.86}'
+            '44.2%,81.2%{opacity:.18}'
+            '45.6%,82.8%{opacity:.84}'
+            '46.8%{opacity:.42}'
+            '48.4%{opacity:.9}'
             '}',
         ])
     return '\n'.join(rules)

@@ -580,9 +580,11 @@ class DashboardTests(unittest.TestCase):
             self.assertIn('.seal-pieces{animation:seal-pieces', motion)
             self.assertIn('.seal-fragment{animation:seal-fragment', motion)
             self.assertIn(
-                f'.seal-light{{animation:seal-flicker {dashboard.SEAL_LIGHT_DURATION_MS}ms linear {dashboard.SEAL_TOTAL_MS}ms infinite}}',
+                f'.seal-light{{animation:seal-flicker {dashboard.SEAL_LIGHT_DURATION_MS}ms linear {dashboard.SEAL_TOTAL_MS}ms infinite;filter:',
                 motion,
             )
+            flicker = styles.split('@keyframes seal-flicker{', 1)[1]
+            self.assertEqual(set(re.findall(r'([\w-]+):', flicker)), {'opacity'})
             self.assertGreaterEqual(dashboard.SEAL_LIGHT_DURATION_MS, 10000)
             self.assertNotIn('seal-flicker', styles.split('@media (prefers-reduced-motion: no-preference){', 1)[0])
             self.assertNotIn('seal-fragment', dashboard.svg_styles(animate=False))

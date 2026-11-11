@@ -482,7 +482,7 @@ class Canvas:
         self.stack_rows = 0
         name = ' '.join(config['name'])
         title = title or f'{name} / engineering profile'
-        description = description or f'{name}, estudante de Engenharia de Software na FIAP e estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
+        description = description or f'{name}, estudante de Engenharia de Software na FIAP e desenvolvedor júnior de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Estudando: {config["learning"]}. Prática: {config["practice"]}. Calendário e métricas reais do GitHub, com datas de snapshot. 開発 significa desenvolvimento.'
         self.parts = [
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">',
             f'<title id="title">{escape(title)}</title>',

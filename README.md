@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <source media="(max-width: 640px)" srcset="./assets/dashboard-mobile.svg" />
-    <img src="./assets/dashboard.svg" width="100%" alt="Thiago Nascimento — estudante de Engenharia de Software na FIAP, estagiário de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Dashboard com contribuições reais do GitHub e stack atual." />
+    <img src="./assets/dashboard.svg" width="100%" alt="Thiago Nascimento — estudante de Engenharia de Software na FIAP, desenvolvedor júnior de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Dashboard com contribuições reais do GitHub e stack atual." />
   </picture>
 </div>
 

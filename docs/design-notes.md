@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Perfil de um estudante de Engenharia de Software da FIAP, estagiário de Produto e Desenvolvimento, com projetos de APIs, automação e IA aplicada. O leitor encontra este conteúdo dentro do retângulo do README, ao lado da coluna nativa do GitHub. A direção solicitada é japonesa, cyberpunk/cyberpink e corporativa, inspirada em Arasaka.
+Perfil de um estudante de Engenharia de Software da FIAP, desenvolvedor júnior de Produto e Desenvolvimento, com projetos de APIs, automação e IA aplicada. O leitor encontra este conteúdo dentro do retângulo do README, ao lado da coluna nativa do GitHub. A direção solicitada é japonesa, cyberpunk/cyberpink e corporativa, inspirada em Arasaka.
 
 ## Tokens
 
@@ -26,7 +26,7 @@ Alinhamento à esquerda, viewBox desktop de 880 px, pensado para aproximadamente
 ```text
 ┌─ README do GitHub ──────────────────────────────┐
 │ Thiago Nascimento                         開    │
-│ FIAP / estágio / backend                   発    │
+│ FIAP / dev júnior / backend                発    │
 │                                                │
 │ Contribuições                  período real    │
 │ [ calendário dos últimos 12 meses ]             │

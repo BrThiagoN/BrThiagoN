@@ -4,7 +4,7 @@
   "education": ["Engenharia de Software", "FIAP · estudante"],
   "location": "São Paulo, Brasil",
   "focus": ["Backend / Cloud", "IA aplicada"],
-  "role": ["Desenvolvedor júnior", "de Produto e Desenvolvimento."],
+  "role": ["Desenvolvedor de", "Software Júnior"],
   "building": "APIs, produtos digitais e automações.",
   "learning": "Testes · Arquitetura · Cloud · IA aplicada",
   "practice": "Desenvolvimento ágil",
@@ -39,11 +39,11 @@
       "description": "Gestão de uma loja pelo terminal: CRUD, estruturas de dados e validação de entrada."
     },
     {
-      "slug": "vinharia-agnello",
-      "name": "Vinharia Agnello",
-      "url": "https://github.com/BrThiagoN/vinharia-agnelo-arduino",
-      "stack": ["C++", "Arduino"],
-      "description": "Monitoramento de luminosidade e temperatura com sensores e alertas visuais e sonoros."
+      "slug": "path-to-link",
+      "name": "Path-to-Link",
+      "url": "https://github.com/BrThiagoN/path-to-link",
+      "stack": ["Rust", "MCP", "CLI"],
+      "description": "Compartilha arquivos locais com agentes de IA por links HTTP temporários e revogáveis."
     }
   ]
 }

@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <source media="(max-width: 640px)" srcset="./assets/dashboard-mobile.svg" />
-    <img src="./assets/dashboard.svg" width="100%" alt="Thiago Nascimento — estudante de Engenharia de Software na FIAP, desenvolvedor júnior de Produto e Desenvolvimento. Backend, cloud e IA aplicada. Dashboard com contribuições reais do GitHub e stack atual." />
+    <img src="./assets/dashboard.svg" width="100%" alt="Thiago Nascimento — estudante de Engenharia de Software na FIAP e desenvolvedor de software júnior. Backend, cloud e IA aplicada. Dashboard com contribuições reais do GitHub e stack atual." />
   </picture>
 </div>
 
@@ -28,10 +28,10 @@
       <img src="./assets/footer/music-store-cli.svg" width="100%" alt="Music Store CLI — Python. Gestão de uma loja pelo terminal: CRUD, estruturas de dados e validação de entrada." />
     </picture>
   </a>
-  <a href="https://github.com/BrThiagoN/vinharia-agnelo-arduino">
+  <a href="https://github.com/BrThiagoN/path-to-link">
     <picture>
-      <source media="(max-width: 640px)" srcset="./assets/footer/vinharia-agnello-mobile.svg" />
-      <img src="./assets/footer/vinharia-agnello.svg" width="100%" alt="Vinharia Agnello — C++ e Arduino. Monitoramento de luminosidade e temperatura com sensores e alertas visuais e sonoros." />
+      <source media="(max-width: 640px)" srcset="./assets/footer/path-to-link-mobile.svg" />
+      <img src="./assets/footer/path-to-link.svg" width="100%" alt="Path-to-Link — Rust, MCP e CLI. Compartilha arquivos locais com agentes de IA por links HTTP temporários e revogáveis." />
     </picture>
   </a>
 </div>

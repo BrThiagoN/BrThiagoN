@@ -636,7 +636,7 @@ class DashboardTests(unittest.TestCase):
             self.assertTrue((dashboard.ROOT / "assets" / name).is_file())
         self.assertIn(self.config["contact"]["linkedin"], readme)
         self.assertIn("mailto:" + self.config["contact"]["email"], readme)
-        for repo in ("serah-googleExtension", "AI-skills-setup", "music-store-cli", "vinharia-agnelo-arduino"):
+        for repo in ("serah-googleExtension", "AI-skills-setup", "music-store-cli", "path-to-link"):
             self.assertIn(f"https://github.com/{self.config['login']}/{repo}", readme)
 
     def test_footer_keeps_every_project_readable_and_links_clickable(self):

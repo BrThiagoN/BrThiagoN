@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Perfil de um estudante de Engenharia de Software da FIAP, desenvolvedor júnior de Produto e Desenvolvimento, com projetos de APIs, automação e IA aplicada. O leitor encontra este conteúdo dentro do retângulo do README, ao lado da coluna nativa do GitHub. A direção solicitada é japonesa, cyberpunk/cyberpink e corporativa, inspirada em Arasaka.
+Perfil de um estudante de Engenharia de Software da FIAP, desenvolvedor de software júnior, com projetos de APIs, automação e IA aplicada. O leitor encontra este conteúdo dentro do retângulo do README, ao lado da coluna nativa do GitHub. A direção solicitada é japonesa, cyberpunk/cyberpink e corporativa, inspirada em Arasaka.
 
 ## Tokens
 

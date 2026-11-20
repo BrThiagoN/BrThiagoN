@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="160" viewBox="0 0 440 160" role="img" aria-labelledby="title description">
-<title id="title">Vinharia Agnello</title>
-<desc id="description">Monitoramento de luminosidade e temperatura com sensores e alertas visuais e sonoros.</desc>
+<title id="title">Path-to-Link</title>
+<desc id="description">Compartilha arquivos locais com agentes de IA por links HTTP temporários e revogáveis.</desc>
 <style>
 text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
 .display{font-family:"Bahnschrift","DIN Condensed","Nimbus Sans Narrow","Arial Narrow","Liberation Sans Narrow",sans-serif;font-weight:700}
@@ -88,11 +88,11 @@ text{fill:#24292f}
 @keyframes seal-flicker{0%,12%,26%,40%,52%,68%,84%,100%{opacity:.9}6%,20%,34%,60%,76%,94%{opacity:.78}43%,80%{opacity:.86}44.2%,81.2%{opacity:.18}45.6%,82.8%{opacity:.84}46.8%{opacity:.42}48.4%{opacity:.9}}
 </style>
 <g data-panel="project" data-bounds="0 0 440 160">
-<text x="20" y="28" font-size="20" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">Vinharia Agnello</text>
-<text x="20" y="56" font-size="16" fill="#a5a1ad" class="muted" text-anchor="start">C++ / Arduino</text>
-<text x="20" y="88" font-size="18" fill="#f3ece8" class="" text-anchor="start">Monitoramento de luminosidade e</text>
-<text x="20" y="112" font-size="18" fill="#f3ece8" class="" text-anchor="start">temperatura com sensores e alertas</text>
-<text x="20" y="136" font-size="18" fill="#f3ece8" class="" text-anchor="start">visuais e sonoros.</text>
+<text x="20" y="28" font-size="20" fill="#ef8fb4" class="pink" text-anchor="start" text-decoration="underline">Path-to-Link</text>
+<text x="20" y="56" font-size="16" fill="#a5a1ad" class="muted" text-anchor="start">Rust / MCP / CLI</text>
+<text x="20" y="88" font-size="18" fill="#f3ece8" class="" text-anchor="start">Compartilha arquivos locais com</text>
+<text x="20" y="112" font-size="18" fill="#f3ece8" class="" text-anchor="start">agentes de IA por links HTTP</text>
+<text x="20" y="136" font-size="18" fill="#f3ece8" class="" text-anchor="start">temporários e revogáveis.</text>
 </g>
 <path d="M20 159L420 159" class="rule divider" pathLength="1" stroke="#3d3342" fill="none"/>
 </svg>
